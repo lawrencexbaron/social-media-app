@@ -1,0 +1,88 @@
+const mongoose = require("mongoose");
+
+// Create Post schema that belongs to User
+const PostSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    content: {
+      type: String,
+      required: true,
+      min: 1,
+      max: 500,
+    },
+    image: {
+      type: String,
+      default: "",
+    },
+    likes: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      },
+    ],
+    comments: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+        text: {
+          type: String,
+          required: true,
+          min: 1,
+          max: 500,
+        },
+        date: {
+          type: Date,
+          default: Date.now,
+        },
+        likes: [
+          {
+            user: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "User",
+            },
+          },
+        ],
+        replies: [
+          {
+            user: {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "User",
+            },
+            text: {
+              type: String,
+              required: true,
+              min: 1,
+              max: 500,
+            },
+            date: {
+              type: Date,
+              default: Date.now,
+            },
+            likes: [
+              {
+                user: {
+                  type: mongoose.Schema.Types.ObjectId,
+                  ref: "User",
+                },
+              },
+            ],
+          },
+        ],
+        date: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model("Post", PostSchema);
