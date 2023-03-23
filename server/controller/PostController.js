@@ -413,7 +413,8 @@ module.exports = {
   deleteCommentComment,
   likeCommentComment,
   unlikeCommentComment,
+  getPostById,
   getTimelinePosts,
   getProfilePosts,
-  getPost,
+  getPosts,
 };
