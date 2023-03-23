@@ -46,12 +46,14 @@ const registerUser = async (req, res) => {
 
     // validate user input
     if (!(email && password && firstname && lastname && username)) {
-      res.status(400).send("All input is required");
+      return res.status(400).send({ message: "All input is required" });
     }
     const checkUser = await User.findOne({ email });
 
     if (checkUser) {
-      return res.status(409).send("User Already Exist. Please Login");
+      return res
+        .status(409)
+        .send({ message: "User already exist. Please Login" });
     }
     let hashedPassword = await bcrypt.hash(password, 10);
 
@@ -89,7 +91,7 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
     // validate user input
     if (!(email && password)) {
-      res.status(400).send("All input is required");
+      return res.status(400).send({ message: "All input is required" });
     }
     // validate if user exist in our database
     const user = await User.findOne({ email });
@@ -105,9 +107,9 @@ const loginUser = async (req, res) => {
       // save user token
       user.token = token;
       // user
-      res.status(200).json(user);
+      return res.status(200).json(user);
     }
-    res.status(400).send("Invalid Credentials");
+    return res.status(400).send({ message: "Invalid Credentials" });
   } catch (err) {
     console.log(err);
   }
@@ -118,12 +120,18 @@ const loginUser = async (req, res) => {
 // @access  Private
 const updateUser = async (req, res) => {
   try {
-    const { firstname, lastname, username, email, password } = req.body;
-
-    // only accept valid input
-    if (!(email && password && firstname && lastname && username)) {
-      res.status(400).send("All input is required");
-    }
+    const {
+      firstname,
+      lastname,
+      username,
+      email,
+      password,
+      profilePicture,
+      coverPicture,
+      city,
+      from,
+      relationship,
+    } = req.body;
 
     // check if user exist
     const user = await User.findById(req.params.id);
@@ -136,19 +144,27 @@ const updateUser = async (req, res) => {
       return res.status(401).json({ msg: "Not authorized" });
     }
 
-    const updateUser = await User.findByIdAndUpdate(
+    // update user
+    const updated = await User.findByIdAndUpdate(
       req.params.id,
       {
-        firstname,
-        lastname,
-        username,
-        email: email.toLowerCase(), // sanitize: convert email to lowercase
-        password: hashedPassword,
+        $set: {
+          firstname,
+          lastname,
+          username,
+          email,
+          password,
+          profilePicture,
+          coverPicture,
+          city,
+          from,
+          relationship,
+        },
       },
       { new: true }
     );
 
-    return res.status(200).json(updateUser);
+    return res.status(200).json(updated);
   } catch (err) {
     console.log(err);
   }
@@ -177,6 +193,58 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const followUser = async (req, res) => {
+  try {
+    // check if user exist
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // check if user is authorized to follow
+    if (user._id.toString() === req.user.id) {
+      return res.status(401).json({ msg: "You cannot follow yourself" });
+    }
+
+    // check if user has already been followed
+    if (user.followers.includes(req.user.id)) {
+      return res.status(401).json({ msg: "You already follow this user" });
+    }
+
+    await user.updateOne({ $push: { followers: req.user.id } });
+    await user.save();
+    return res.status(200).json({ msg: "User followed successfully" });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const unfollowUser = async (req, res) => {
+  try {
+    // check if user exist
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    // check if user is authorized to follow
+    if (user._id.toString() === req.user.id) {
+      return res.status(401).json({ msg: "You cannot unfollow yourself" });
+    }
+
+    // check if user has already been followed
+    if (!user.followers.includes(req.user.id)) {
+      return res.status(401).json({ msg: "You don't follow this user" });
+    }
+
+    await user.updateOne({ $pull: { followers: req.user.id } });
+    await user.save();
+    return res.status(200).json({ msg: "User unfollowed successfully" });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 module.exports = {
   getUsers,
   getUserById,
@@ -184,4 +252,6 @@ module.exports = {
   loginUser,
   updateUser,
   deleteUser,
+  followUser,
+  unfollowUser,
 };
