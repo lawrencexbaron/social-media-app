@@ -7,20 +7,10 @@ const router = express.Router();
 // @access  Public
 router.get("/", UserController.getUsers);
 
-// @route   GET api/users/login
-// @desc    Login user
-// @access  Public
-router.post("/login", UserController.loginUser);
-
 // @route   GET api/users/:id
 // @desc    Get user by ID
 // @access  Public
 router.get("/:id", UserController.getUserById);
-
-// @route   POST api/users
-// @desc    Register user
-// @access  Public
-router.post("/register", UserController.registerUser);
 
 // @route   PUT api/users/:id
 // @desc    Update user
