@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const PostController = require("../controller/postController");
+const validateToken = require("../utilities/validateToken");
 
 // @route   GET api/posts
 // @desc    Get all posts
@@ -15,7 +16,7 @@ router.get("/:id", PostController.getPostById);
 // @route   POST api/posts
 // @desc    Create post
 // @access  Private
-router.post("/", PostController.createPost);
+router.post("/", validateToken, PostController.createPost);
 
 // @route   PUT api/posts/:id
 // @desc    Update post
