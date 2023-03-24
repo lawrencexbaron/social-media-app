@@ -1,5 +1,7 @@
 const Post = require("../models/Post");
 const mongoose = require("mongoose");
+const { postValidation } = require("../utilities/Validation");
+const validateToken = require("../utilities/validateToken");
 
 // @route   GET api/posts
 // @desc    Get all posts
@@ -7,10 +9,10 @@ const mongoose = require("mongoose");
 const getPosts = async (req, res) => {
   try {
     const posts = await Post.find();
-    res.json(posts);
+    return res.json({ message: "Posts fetched successfully", data: posts });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send({ message: "Server Error", error: err });
   }
 };
 
@@ -20,17 +22,17 @@ const getPosts = async (req, res) => {
 const getPostById = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(400).json({ msg: "Invalid post ID" });
+      return res.status(400).json({ message: "Invalid post ID" });
     }
 
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
-    res.json(post);
+    return res.json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send({ message: "Server Error", error: err });
   }
 };
 
@@ -42,8 +44,11 @@ const createPost = async (req, res) => {
     const { user, content, image } = req.body;
 
     // validate user input
-    if (!(user && content)) {
-      res.status(400).send("All input is required");
+    const { error } = postValidation(req.body);
+
+    if (error) {
+      const messages = error.details.map((detail) => detail.message);
+      return res.status(400).json({ message: messages });
     }
 
     const post = await Post.create({
@@ -52,10 +57,10 @@ const createPost = async (req, res) => {
       image,
     });
 
-    res.status(201).json(post);
+    return res.status(201).json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -67,10 +72,10 @@ const updatePost = async (req, res) => {
     const { user, content, image } = req.body;
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
     if (post.user != user) {
-      return res.status(401).json({ msg: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
     const updatedPost = await Post.findByIdAndUpdate(
       req.params.id,
@@ -80,10 +85,10 @@ const updatePost = async (req, res) => {
       },
       { new: true }
     );
-    res.status(200).json(updatedPost);
+    return res.status(200).json(updatedPost);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -95,16 +100,16 @@ const deletePost = async (req, res) => {
     const { user } = req.body;
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
     if (post.user != user) {
-      return res.status(401).json({ msg: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
     await Post.findByIdAndDelete(req.params.id);
-    res.status(200).json({ msg: "Post deleted" });
+    return res.status(200).json({ message: "Post deleted" });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -113,17 +118,17 @@ const likePost = async (req, res) => {
     const { user } = req.body;
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
     if (post.likes.includes(user)) {
-      return res.status(400).json({ msg: "Post already liked" });
+      return res.status(400).json({ message: "Post already liked" });
     }
     post.likes.push(user);
     await post.save();
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -132,17 +137,17 @@ const unlikePost = async (req, res) => {
     const { user } = req.body;
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
     if (!post.likes.includes(user)) {
-      return res.status(400).json({ msg: "Post has not yet been liked" });
+      return res.status(400).json({ message: "Post has not yet been liked" });
     }
     post.likes.pull(user);
     await post.save();
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -150,8 +155,15 @@ const commentPost = async (req, res) => {
   try {
     const { user, content } = req.body;
     const post = await Post.findById(req.params.id);
+
+    // validate commnet
+    const { error } = commentValidation(req.body);
+    if (error) {
+      const messages = error.details.map((detail) => detail.message);
+      return res.status(400).json({ message: messages });
+    }
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
     const comment = {
       user,
@@ -159,10 +171,10 @@ const commentPost = async (req, res) => {
     };
     post.comments.push(comment);
     await post.save();
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -171,23 +183,23 @@ const deleteComment = async (req, res) => {
     const { user } = req.body;
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
     const comment = post.comments.find(
       (comment) => comment.id === req.params.comment_id
     );
     if (!comment) {
-      return res.status(404).json({ msg: "Comment does not exist" });
+      return res.status(404).json({ message: "Comment does not exist" });
     }
     if (comment.user != user) {
-      return res.status(401).json({ msg: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
     post.comments.pull(comment.id);
     await post.save();
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -196,23 +208,23 @@ const likeComment = async (req, res) => {
     const { user } = req.body;
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
     const comment = post.comments.find(
       (comment) => comment.id === req.params.comment_id
     );
     if (!comment) {
-      return res.status(404).json({ msg: "Comment does not exist" });
+      return res.status(404).json({ message: "Comment does not exist" });
     }
     if (comment.likes.includes(user)) {
-      return res.status(400).json({ msg: "Comment already liked" });
+      return res.status(400).json({ message: "Comment already liked" });
     }
     comment.likes.push(user);
     await post.save();
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -221,23 +233,25 @@ const unlikeComment = async (req, res) => {
     const { user } = req.body;
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
     const comment = post.comments.find(
       (comment) => comment.id === req.params.comment_id
     );
     if (!comment) {
-      return res.status(404).json({ msg: "Comment does not exist" });
+      return res.status(404).json({ message: "Comment does not exist" });
     }
     if (!comment.likes.includes(user)) {
-      return res.status(400).json({ msg: "Comment has not yet been liked" });
+      return res
+        .status(400)
+        .json({ message: "Comment has not yet been liked" });
     }
     comment.likes.pull(user);
     await post.save();
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -246,13 +260,13 @@ const commentComment = async (req, res) => {
     const { user, content } = req.body;
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
     const comment = post.comments.find(
       (comment) => comment.id === req.params.comment_id
     );
     if (!comment) {
-      return res.status(404).json({ msg: "Comment does not exist" });
+      return res.status(404).json({ message: "Comment does not exist" });
     }
     const commentComment = {
       user,
@@ -260,10 +274,10 @@ const commentComment = async (req, res) => {
     };
     comment.comments.push(commentComment);
     await post.save();
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -272,29 +286,29 @@ const deleteCommentComment = async (req, res) => {
     const { user } = req.body;
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
     const comment = post.comments.find(
       (comment) => comment.id === req.params.comment_id
     );
     if (!comment) {
-      return res.status(404).json({ msg: "Comment does not exist" });
+      return res.status(404).json({ message: "Comment does not exist" });
     }
     const commentComment = comment.comments.find(
       (commentComment) => commentComment.id === req.params.comment_comment_id
     );
     if (!commentComment) {
-      return res.status(404).json({ msg: "Comment does not exist" });
+      return res.status(404).json({ message: "Comment does not exist" });
     }
     if (commentComment.user != user) {
-      return res.status(401).json({ msg: "Unauthorized" });
+      return res.status(401).json({ message: "Unauthorized" });
     }
     comment.comments.pull(commentComment.id);
     await post.save();
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -303,29 +317,29 @@ const likeCommentComment = async (req, res) => {
     const { user } = req.body;
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
     const comment = post.comments.find(
       (comment) => comment.id === req.params.comment_id
     );
     if (!comment) {
-      return res.status(404).json({ msg: "Comment does not exist" });
+      return res.status(404).json({ message: "Comment does not exist" });
     }
     const commentComment = comment.comments.find(
       (commentComment) => commentComment.id === req.params.comment_comment_id
     );
     if (!commentComment) {
-      return res.status(404).json({ msg: "Comment does not exist" });
+      return res.status(404).json({ message: "Comment does not exist" });
     }
     if (commentComment.likes.includes(user)) {
-      return res.status(400).json({ msg: "Comment already liked" });
+      return res.status(400).json({ message: "Comment already liked" });
     }
     commentComment.likes.push(user);
     await post.save();
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -334,29 +348,31 @@ const unlikeCommentComment = async (req, res) => {
     const { user } = req.body;
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
     const comment = post.comments.find(
       (comment) => comment.id === req.params.comment_id
     );
     if (!comment) {
-      return res.status(404).json({ msg: "Comment does not exist" });
+      return res.status(404).json({ message: "Comment does not exist" });
     }
     const commentComment = comment.comments.find(
       (commentComment) => commentComment.id === req.params.comment_comment_id
     );
     if (!commentComment) {
-      return res.status(404).json({ msg: "Comment does not exist" });
+      return res.status(404).json({ message: "Comment does not exist" });
     }
     if (!commentComment.likes.includes(user)) {
-      return res.status(400).json({ msg: "Comment has not yet been liked" });
+      return res
+        .status(400)
+        .json({ message: "Comment has not yet been liked" });
     }
     commentComment.likes.pull(user);
     await post.save();
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -369,20 +385,20 @@ const getTimelinePosts = async (req, res) => {
         return Post.find({ user: friendId });
       })
     );
-    res.status(200).json(userPosts.concat(...friendPosts));
+    return res.status(200).json(userPosts.concat(...friendPosts));
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
 const getProfilePosts = async (req, res) => {
   try {
     const posts = await Post.find({ user: req.params.id });
-    res.status(200).json(posts);
+    return res.status(200).json(posts);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 
@@ -390,12 +406,12 @@ const getPost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ msg: "Post not found" });
+      return res.status(404).json({ message: "Post not found" });
     }
-    res.status(200).json(post);
+    return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server Error");
+    return res.status(500).send("Server Error");
   }
 };
 

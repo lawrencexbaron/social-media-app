@@ -8,6 +8,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
+const validateToken = require("./utilities/validateToken");
 
 // Import Routes
 const userRoutes = require("./routes/userRoutes");
