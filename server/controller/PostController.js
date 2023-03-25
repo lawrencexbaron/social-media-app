@@ -41,7 +41,9 @@ const getPostById = async (req, res) => {
 // @access  Private
 const createPost = async (req, res) => {
   try {
-    const { user, content, image } = req.body;
+    const { content, image } = req.body;
+    // get user from req.user
+    const user = req.user.id;
 
     // validate user input
     const { error } = postValidation(req.body);
