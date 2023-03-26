@@ -20,13 +20,13 @@ const registerUser = async (req, res) => {
 
     if (error) {
       const messages = error.details.map((detail) => detail.message);
-      return res.status(400).send({ message: messages });
+      return res.status(400).send({ messages });
     }
 
     // Check user if exists using email or username
     const checkUser = await User.findOne({ $or: [{ email }, { username }] });
     if (checkUser) {
-      return res.status(400).send({ message: "User already exists" });
+      return res.status(400).send({ messages: "User already exists" });
     }
 
     let hashedPassword = await bcrypt.hash(password, 10);

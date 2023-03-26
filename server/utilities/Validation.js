@@ -46,6 +46,18 @@ const registerValidation = (data) => {
       "any.required": "Password is required",
       "string.min": `Password should have a minimum length of {#limit}`,
     }),
+    confirmPassword: Joi.string()
+      .min(6)
+      .max(1024)
+      .required()
+      .valid(Joi.ref("password"))
+      .messages({
+        "string.empty": `Confirm password is required`,
+        "string.required": "Confirm password is required",
+        "any.required": "Confirm password is required",
+        "string.min": `Confirm password should have a minimum length of {#limit}`,
+        "any.only": `Password and confirm password do not match`,
+      }),
   });
 
   return schema.validate(data, baseOptions);
