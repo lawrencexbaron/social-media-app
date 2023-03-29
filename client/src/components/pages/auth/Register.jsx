@@ -4,9 +4,10 @@ import Button from "../../common/Button";
 import Label from "../../common/Label";
 import { Link } from "react-router-dom";
 import { register } from "../../utils/api/Auth";
+import Spinner from "../../common/Spinner";
 import axios from "axios";
 
-function Login() {
+function Register() {
   const BASE_URL = "http://localhost:4000";
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
@@ -16,6 +17,7 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const register = async (data) => {
     try {
@@ -59,6 +61,7 @@ function Login() {
     <>
       <div className="mx-auto bg-white shadow-md px-6 py-8 sm:w-1/4 h-3/4">
         <h1 className="text-2xl font-bold text-center">Register</h1>
+        <Spinner isLoading={isLoading} />
         {error && (
           <div
             className="bg-red-100 border flex flex-col border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
@@ -158,4 +161,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
