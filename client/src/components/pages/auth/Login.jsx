@@ -6,8 +6,10 @@ import { Link } from "react-router-dom";
 import { useQueryClient, useQuery, useMutation } from "react-query";
 import { login } from "../../utils/api/Auth";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
   const BASE_URL = "http://localhost:4000";
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
@@ -22,6 +24,10 @@ function Login() {
       setSuccess(true);
       setError(null);
       clearForm();
+      // redirect to feed page after login after 3 seconds
+      setTimeout(() => {
+        navigate("/feed");
+      }, 2000);
     } catch (err) {
       setError(err.response.data.message);
       setSuccess(false);
@@ -43,7 +49,7 @@ function Login() {
 
   return (
     <>
-      <div className="mx-auto bg-white shadow-md px-6 py-8 sm:w-1/4 h-3/4">
+      <div className="mx-auto bg-white shadow-md px-6 py-8 h-3/4">
         <h1 className="text-2xl font-bold text-center">Login</h1>
         {error && (
           <div
@@ -91,9 +97,7 @@ function Login() {
               className="mb-2"
             />
           </div>
-          <div className="flex items-center justify-between">
-            <Button type="submit">Login</Button>
-
+          <div className="flex  items-center justify-between space-x-2">
             {/* <a
               className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
               href="#"
@@ -112,6 +116,9 @@ function Login() {
             >
               Forgot Password?
             </a>
+          </div>
+          <div className="flex items-center justify-end mt-2">
+            <Button type="submit">Login</Button>
           </div>
         </form>
       </div>
