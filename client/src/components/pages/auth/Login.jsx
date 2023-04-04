@@ -49,7 +49,7 @@ function Login() {
 
   return (
     <>
-      <div className="mx-auto bg-white shadow-md px-6 py-8 h-3/4">
+      <div className="mx-auto bg-white shadow-md px-6 py-8 w-3/4 sm:w-1/4 h-3/4 my-10">
         <h1 className="text-2xl font-bold text-center">Login</h1>
         {error && (
           <div
@@ -72,6 +72,7 @@ function Login() {
           >
             <p className="font-bold">Success!</p>
             <p className="block sm:inline">You are logged in!</p>
+            <p className="block">Redirecting...</p>
           </div>
         )}
 

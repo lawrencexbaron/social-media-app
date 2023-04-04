@@ -59,7 +59,7 @@ function Register() {
 
   return (
     <>
-      <div className="mx-auto bg-white shadow-md px-6 py-8 sm:w-1/4 h-3/4">
+      <div className="mx-auto bg-white shadow-md px-6 py-8 w-3/4 sm:w-1/4 h-3/4 mt-10">
         <h1 className="text-2xl font-bold text-center">Register</h1>
         <Spinner isLoading={isLoading} />
         {error && (
