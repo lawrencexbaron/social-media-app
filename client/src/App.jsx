@@ -1,11 +1,12 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/pages/Home";
 import Login from "./components/pages/auth/Login";
 import Register from "./components/pages/auth/Register";
 import Feed from "./components/pages/Feed";
+import Settings from "./components/pages/Settings";
+
+import { useAuthStore } from "./stores/authStore";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -18,6 +19,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/feed" element={<Feed />} />
+          <Route path="/profile/settings" element={<Settings />} />
         </Routes>
       </Router>
     </div>
