@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Input from "../../common/Input";
+import TextInput from "../../common/TextInput";
 import Button from "../../common/Button";
 import Label from "../../common/Label";
 import { Link } from "react-router-dom";
@@ -27,6 +27,7 @@ function Login() {
         setLoading(false);
       }, 3000);
     },
+    onError: () => setLoading(false),
   });
 
   const handleSubmit = (e) => {
@@ -61,7 +62,7 @@ function Login() {
         <form className="mt-4" onSubmit={handleSubmit}>
           <div className="mb-4">
             <Label htmlFor="email">Email</Label>
-            <Input
+            <TextInput
               id="email"
               type="email"
               placeholder="Email"
@@ -71,7 +72,7 @@ function Login() {
             />
 
             <Label htmlFor="password">Password</Label>
-            <Input
+            <TextInput
               id="password"
               type="password"
               placeholder="Password"
@@ -101,7 +102,10 @@ function Login() {
             </a>
           </div>
           <div className="flex items-center justify-end mt-2">
-            <Button type="submit" className={`bg-blue-500 hover:bg-blue-400`}>
+            <Button
+              type="submit"
+              className={`bg-blue-500 hover:bg-blue-400 text-white`}
+            >
               {loading ? "Loading..." : "Login"}
             </Button>
           </div>

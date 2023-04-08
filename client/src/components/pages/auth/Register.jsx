@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Input from "../../common/Input";
+import TextInput from "../../common/TextInput";
 import Button from "../../common/Button";
 import Label from "../../common/Label";
 import { Link } from "react-router-dom";
@@ -90,7 +90,7 @@ function Register() {
         <form className="mt-4" onSubmit={handleSubmit}>
           <div className="mb-4">
             <Label htmlFor="email">Email</Label>
-            <Input
+            <TextInput
               id="email"
               type="email"
               placeholder="Email"
@@ -99,7 +99,7 @@ function Register() {
               className="mb-2"
             />
             <Label htmlFor="firstName">First Name</Label>
-            <Input
+            <TextInput
               id="firstName"
               type="text"
               placeholder="First Name"
@@ -108,7 +108,7 @@ function Register() {
               className="mb-2"
             />
             <Label htmlFor="lastName">Last Name</Label>
-            <Input
+            <TextInput
               id="lastName"
               type="text"
               placeholder="Last Name"
@@ -117,7 +117,7 @@ function Register() {
               className="mb-2"
             />
             <Label htmlFor="username">Username</Label>
-            <Input
+            <TextInput
               id="username"
               type="text"
               placeholder="Username"
@@ -127,7 +127,7 @@ function Register() {
             />
 
             <Label htmlFor="password">Password</Label>
-            <Input
+            <TextInput
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -137,7 +137,7 @@ function Register() {
             />
 
             <Label htmlFor="password">Confirm Password</Label>
-            <Input
+            <TextInput
               id="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -146,16 +146,19 @@ function Register() {
               className="mb-2"
             />
           </div>
-          <div className="flex items-center justify-between">
-            <Button type="submit" className={`bg-blue-500 hover:bg-blue-400`}>
-              Submit
-            </Button>
+          <div className="flex flex-col items-end justify-between space-y-2">
             <Link
               className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
               to="/login"
             >
-              Login
+              Already have an account? Login
             </Link>
+            <Button
+              type="submit"
+              className={`bg-blue-500 hover:bg-blue-400 text-white`}
+            >
+              Submit
+            </Button>
           </div>
         </form>
       </div>
