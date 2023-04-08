@@ -101,7 +101,9 @@ function Login() {
             </a>
           </div>
           <div className="flex items-center justify-end mt-2">
-            <Button type="submit">{loading ? "Loading..." : "Login"}</Button>
+            <Button type="submit" className={`bg-blue-500 hover:bg-blue-400`}>
+              {loading ? "Loading..." : "Login"}
+            </Button>
           </div>
         </form>
       </div>

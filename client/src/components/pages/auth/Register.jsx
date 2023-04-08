@@ -147,7 +147,9 @@ function Register() {
             />
           </div>
           <div className="flex items-center justify-between">
-            <Button type="submit">Register</Button>
+            <Button type="submit" className={`bg-blue-500 hover:bg-blue-400`}>
+              Submit
+            </Button>
             <Link
               className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
               to="/login"
