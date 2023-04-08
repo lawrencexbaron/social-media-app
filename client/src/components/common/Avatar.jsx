@@ -1,10 +1,10 @@
 import React from "react";
 
-function Avatar({ avatar, size }) {
+function Avatar({ avatar, size, className }) {
   return (
     <>
       <div
-        className={`w-16 flex justify-center h-full rounded-full overflow-hidden border-4 border-white`}
+        className={`w-16 flex justify-center h-full rounded-full overflow-hidden border-4 border-white ${className}}`}
       >
         <img
           className={`w-${size} h-${size} object-cover rounded-full`}
