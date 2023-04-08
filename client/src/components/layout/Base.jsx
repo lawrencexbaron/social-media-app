@@ -27,7 +27,7 @@ function Base(props) {
 
   return (
     <>
-      <div className="bg-gray-100 h-full w-full ">
+      <div className="bg-gray-100 h-full w-full">
         {/* Mobile Navbar  */}
         <div className="sm:hidden sticky top-0 w-full h-16 flex align-middle my-auto bg-white border-b border-gray-200 px-5">
           <button
@@ -49,7 +49,10 @@ function Base(props) {
               ></path>
             </svg>
           </button>
-          <div className="my-auto px-5 justify-start w-full">
+          <div
+            className="my-auto px-5 justify-start w-full"
+            onClick={() => setIsOpen(false)}
+          >
             <TextInput
               placeholder="Search"
               icon={<BiSearch className="text-gray-500" />}
