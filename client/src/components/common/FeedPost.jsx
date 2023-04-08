@@ -1,6 +1,6 @@
 import React from "react";
 import Avatar from "./Avatar";
-import Input from "./Input";
+import TextInput from "./TextInput";
 import Button from "./Button";
 import { BiLike, BiComment, BiShare } from "react-icons/bi";
 import NewsFeed from "./NewsFeed";
@@ -28,11 +28,11 @@ function FeedPost({ avatar, onPost }) {
   return (
     <div className="sm:w-3/5 h-full sm:sticky mt-16 top-16">
       <div className="bg-white rounded px-6 py-5 border border-slate-200 overflow-y-auto flex space-x-2">
-        <Avatar avatar={avatar} size={10} />
-        <Input
+        <Avatar avatar={avatar} size={10} className={`my-auto`} />
+        <TextInput
           type="text"
           placeholder="What's on your mind?"
-          className="w-full border border-gray-200 rounded px-4 py-2"
+          className="w-full border border-gray-200 rounded px-4 py-3"
         />
         <Button
           type="button"
