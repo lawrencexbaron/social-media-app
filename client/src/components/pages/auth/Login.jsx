@@ -3,69 +3,51 @@ import Input from "../../common/Input";
 import Button from "../../common/Button";
 import Label from "../../common/Label";
 import { Link } from "react-router-dom";
-import { useQueryClient, useQuery, useMutation } from "react-query";
-import { login } from "../../utils/api/Auth";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "react-query";
+import { useAuthStore } from "../../../stores/authStore";
+import { login } from "../../../utils/api.jsx";
 
 function Login() {
   const navigate = useNavigate();
-  const BASE_URL = "http://localhost:4000";
   const [email, setEmail] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(null);
-
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const setUser = useAuthStore((state) => state.setUser);
 
-  const submitLogin = async (data) => {
-    try {
-      const res = await axios.post(`${BASE_URL}/api/auth/login`, data);
-      console.log(res.data);
-      setSuccess(true);
-      setError(null);
-      clearForm();
-      // redirect to feed page after login after 3 seconds
+  const loginMutation = useMutation(login, {
+    onMutate: () => setLoading(true),
+    onSuccess: (data) => {
+      setUser(data.data._id);
+      // set success for login mutation
+      loginMutation.isSuccess = true;
+      // navigate after 3 seconds
       setTimeout(() => {
         navigate("/feed");
-      }, 2000);
-    } catch (err) {
-      setError(err.response.data.message);
-      setSuccess(false);
-    }
-  };
-
-  const clearForm = () => {
-    setEmail("");
-    setPassword("");
-  };
+        setLoading(false);
+      }, 3000);
+    },
+  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    submitLogin({
-      email,
-      password,
-    });
+    loginMutation.mutate({ email, password });
   };
 
   return (
     <>
-      <div className="mx-auto bg-white shadow-md px-6 py-8 w-3/4 sm:w-1/4 h-3/4 my-10">
+      <div className="mx-auto bg-white shadow-md px-6 py-8 w-3/4 md:w-1/2 lg:w-1/4 h-3/4 my-10">
         <h1 className="text-2xl font-bold text-center">Login</h1>
-        {error && (
+        {loginMutation.isError && (
           <div
             className="bg-red-100 border flex flex-col border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
             role="alert"
           >
             <p className="font-bold">Error!</p>
-
-            {Array.isArray(error) ? (
-              error.map((err) => <p key={err}>{err}</p>)
-            ) : (
-              <p>{error}</p>
-            )}
+            <p>{loginMutation.error.message}</p>
           </div>
         )}
-        {success && (
+        {loginMutation.isSuccess && (
           <div
             className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mt-4"
             role="alert"
@@ -119,7 +101,7 @@ function Login() {
             </a>
           </div>
           <div className="flex items-center justify-end mt-2">
-            <Button type="submit">Login</Button>
+            <Button type="submit">{loading ? "Loading..." : "Login"}</Button>
           </div>
         </form>
       </div>

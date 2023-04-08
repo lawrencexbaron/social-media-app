@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import Base from "../layout/Base";
 
 function Feed() {
