@@ -1,42 +1,29 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useAuthStore } from "../../stores/authStore";
 import { useNavigate } from "react-router-dom";
 import { BiSearch } from "react-icons/bi";
 import TextInput from "../common/TextInput";
 import { Link } from "react-router-dom";
+import { useAuthStore } from "../../stores/authStore";
 
 function Base(props) {
+  const { user, logout, isAuth } = useAuthStore();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const logout = useAuthStore((state) => state.logout);
-  const loggedUser = useAuthStore((state) => state.user);
-
-  // redirect to login page if loggedUser is null
-  useEffect(() => {
-    if (!loggedUser) {
-      navigate("/login");
-    }
-  }, [loggedUser, navigate]);
-
-  // return null if loggedUser is null
-  if (!loggedUser) {
-    return null;
-  }
+  const name = user?.firstname + " " + user?.lastname;
 
   const handleLogout = () => {
     logout();
-    // navigate after 1.5 seconds
-    setTimeout(() => {
-      navigate("/login");
-    }, 800);
+    navigate("/login");
   };
 
-  const user = {
-    name: loggedUser.firstname + " " + loggedUser.lastname,
-    avatarUrl: loggedUser.profilePicture,
-  };
+  useEffect(() => {
+    // if localstorage user and token is empty then navigate to login page
+    if (!isAuth) {
+      navigate("/login");
+    }
+  }, [isAuth]);
 
   return (
     <>
@@ -142,10 +129,10 @@ function Base(props) {
               >
                 <img
                   className="w-8 h-8 rounded-full"
-                  src={user.avatarUrl}
+                  src={user.profilePicture}
                   alt="Avatar"
                 />
-                <span className="font-semibold text-gray-700">{user.name}</span>
+                <span className="font-semibold text-gray-700">{name}</span>
               </button>
               {dropdownOpen && (
                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
