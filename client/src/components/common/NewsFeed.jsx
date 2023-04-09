@@ -64,21 +64,21 @@ const NewsFeed = ({ avatar, user, author, date, content }) => {
           <div className="flex space-x-2 justify-around mx-auto w-full">
             <Button
               type="button"
-              className="inline-flex items-center text-black hover:text-slate-500 font-bold py-2 px-4 focus:outline-none focus:shadow-outline"
+              className="inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline"
             >
               <BiLike className="mr-1 mt-1" />
               Like
             </Button>
             <Button
               type="button"
-              className="inline-flex items-center text-black hover:text-slate-500 font-bold py-2 px-4 focus:outline-none focus:shadow-outline"
+              className="inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline"
             >
               <BiComment className="mr-1 mt-1" />
               Comment
             </Button>
             <Button
               type="button"
-              className="inline-flex items-center text-black hover:text-slate-500 font-bold py-2 px-4 focus:outline-none focus:shadow-outline"
+              className="inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline"
             >
               <BiShare className="mr-1 mt-1" />
               Share
