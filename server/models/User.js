@@ -39,11 +39,11 @@ const UserSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: "",
+      default: "https://i.pravatar.cc/150?img=1",
     },
     coverPicture: {
       type: String,
-      default: "",
+      default: "https://source.unsplash.com/random/800x600",
     },
     // followers and following will be an array of user object ids from User model (array of object ids)
     followers: {
