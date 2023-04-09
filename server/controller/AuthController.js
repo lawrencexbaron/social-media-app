@@ -74,7 +74,9 @@ const loginUser = async (req, res) => {
       const token = jwt.sign({ id: user._id, email }, process.env.TOKEN_KEY, {
         expiresIn: "2h",
       });
-      // save user token
+      //remove password from user object
+      user.password = undefined;
+      // add token to user object
       user.token = token;
       // user
       return res
