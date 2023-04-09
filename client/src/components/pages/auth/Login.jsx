@@ -14,11 +14,13 @@ function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const setUser = useAuthStore((state) => state.setUser);
+  const setToken = useAuthStore((state) => state.setToken);
 
   const loginMutation = useMutation(login, {
     onMutate: () => setLoading(true),
     onSuccess: (data) => {
-      setUser(data.data._id);
+      setUser(data.data);
+      setToken(data.token);
       // set success for login mutation
       loginMutation.isSuccess = true;
       // navigate after 3 seconds
