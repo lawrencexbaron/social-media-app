@@ -11,18 +11,28 @@ function Base(props) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const logout = useAuthStore((state) => state.logout);
+  const loggedUser = useAuthStore((state) => state.user);
+
+  // logout and redirect to login page if loggedUser is null
+  useEffect(() => {
+    if (!loggedUser) {
+      logout();
+      navigate("/login");
+    }
+  }, [loggedUser, logout, navigate]);
 
   const handleLogout = () => {
     logout();
     // navigate after 1.5 seconds
     setTimeout(() => {
       navigate("/login");
-    }, 1500);
+    }, 800);
   };
 
   const user = {
-    name: "John Doe",
-    avatarUrl: "https://via.placeholder.com/40",
+    // use loggedUser
+    name: loggedUser.firstname + " " + loggedUser.lastname,
+    avatarUrl: loggedUser.profilePicture,
   };
 
   return (
