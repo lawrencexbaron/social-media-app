@@ -14,8 +14,8 @@ function Feed() {
   const handlePost = () => {
     console.log("Post");
   };
-  const { user, getUser, redirectIfNotLoggedIn } = useAuthStore();
   const loggedUser = useAuthStore((state) => state.user);
+
   const [users, setUsers] = useState([]);
 
   const {
@@ -60,8 +60,8 @@ function Feed() {
           <FeedPost avatar={userData.avatar} />
           <div className="sm:w-1/5 h-full sm:sticky sm:top-16 top-auto hidden sm:block">
             <div className="bg-white rounded px-6 py-8 border border-slate-200">
-              {users.map((user) => (
-                <div className="flex mt-2">
+              {users.map((user, index) => (
+                <div className="flex mt-2" key={index}>
                   <Avatar
                     avatar={user.profilePicture}
                     size={10}
