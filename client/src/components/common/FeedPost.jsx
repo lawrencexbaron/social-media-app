@@ -1,41 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Avatar from "./Avatar";
 import TextInput from "./TextInput";
 import Button from "./Button";
 import { BiLike, BiComment, BiShare } from "react-icons/bi";
 import NewsFeed from "./NewsFeed";
-import { useMutation, useQuery } from "react-query";
-import { getPosts, createPost } from "../../utils/api";
-import { postStore } from "../../stores/postStore";
+import { useMutation } from "react-query";
+import { usePostStore } from "../../stores/postStore";
+import { createPost } from "../../utils/api";
 
 function FeedPost({ avatar }) {
   const [content, setContent] = useState("");
-  const setPosts = postStore((state) => state.setPosts);
-  const {
-    data: posts,
-    isLoading,
-    isError,
-  } = useQuery("posts", () => getPosts());
+  const { getPosts, posts, isError, isLoading } = usePostStore();
+  const { error, setError } = useState(null);
 
   const createPostMutation = useMutation(createPost, {
     onSuccess: (data) => {
-      setPosts((posts) => [...posts, data]);
-      createPostCacheUpdate(data);
+      getPosts();
+    },
+    onError: (error) => {
+      setError(error);
+      console.log("err" + error);
     },
   });
 
-  const createPostCacheUpdate = (data) => {
-    const updatedPosts = (posts || []).concat(data);
-    createPostMutation.mutate(updatedPosts, { exact: true });
-  };
-
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error...</div>;
-
-  const handlePost = () => {
+  const handlePost = useCallback(() => {
     createPostMutation.mutate({ content });
     setContent("");
-  };
+  }, [createPostMutation, content]);
+
+  useEffect(() => {
+    getPosts();
+  }, [getPosts]);
 
   return (
     <div className="sm:w-3/5 h-full sm:sticky mt-16 top-16">
@@ -44,7 +39,10 @@ function FeedPost({ avatar }) {
         <TextInput
           type="text"
           placeholder="What's on your mind?"
-          className="w-full border border-gray-200 rounded px-4 py-3"
+          // add red border if error
+          className={`${
+            isError ? "border-red-500" : "border-slate-200"
+          } border rounded w-full p-2`}
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
@@ -56,16 +54,20 @@ function FeedPost({ avatar }) {
           Post
         </Button>
       </div>
-      {posts.map((post, index) => (
-        <NewsFeed
-          key={index}
-          avatar={post.user}
-          user={post.user}
-          author={post.author}
-          date={post.createdAt}
-          content={post.content}
-        />
-      ))}
+      {posts.length ? (
+        posts.map((post, index) => (
+          <NewsFeed
+            key={index}
+            avatar={post.user}
+            user={post.user}
+            author={post.author}
+            date={post.createdAt}
+            content={post.content}
+          />
+        ))
+      ) : (
+        <p>No posts to display.</p>
+      )}
     </div>
   );
 }
