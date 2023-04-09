@@ -5,17 +5,13 @@ import FeedPost from "../common/FeedPost";
 import Avatar from "../common/Avatar";
 import { useAuthStore } from "../../stores/authStore";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import { useUserStore } from "../../stores/userStore";
 import { getUsers } from "../../utils/api";
 
 function Feed() {
   const navigate = useNavigate();
-  const handlePost = () => {
-    console.log("Post");
-  };
   const loggedUser = useAuthStore((state) => state.user);
-
   const [users, setUsers] = useState([]);
 
   const {
@@ -24,7 +20,7 @@ function Feed() {
     isError,
   } = useQuery("users", getUsers, {
     onSuccess: (data) => {
-      console.log(data.data);
+      console.log(data);
       setUsers(data.data);
     },
   });
@@ -36,15 +32,20 @@ function Feed() {
   }, [loggedUser, navigate]);
 
   const userData = {
-    avatar: loggedUser.profilePicture,
-    coverPhoto: loggedUser.coverPicture,
-    name: loggedUser.firstname + " " + loggedUser.lastname,
-    followers: loggedUser.followers.length,
-    following: loggedUser.following.length,
+    avatar: loggedUser?.profilePicture || "",
+    coverPhoto: loggedUser?.coverPicture || "",
+    name: loggedUser ? `${loggedUser.firstname} ${loggedUser.lastname}` : "",
+    followers: loggedUser?.followers?.length || 0,
+    following: loggedUser?.following?.length || 0,
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error...</div>;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error...</div>;
+  }
 
   return (
     <>
