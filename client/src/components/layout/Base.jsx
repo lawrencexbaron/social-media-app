@@ -13,13 +13,17 @@ function Base(props) {
   const logout = useAuthStore((state) => state.logout);
   const loggedUser = useAuthStore((state) => state.user);
 
-  // logout and redirect to login page if loggedUser is null
+  // redirect to login page if loggedUser is null
   useEffect(() => {
     if (!loggedUser) {
-      logout();
       navigate("/login");
     }
-  }, [loggedUser, logout, navigate]);
+  }, [loggedUser, navigate]);
+
+  // return null if loggedUser is null
+  if (!loggedUser) {
+    return null;
+  }
 
   const handleLogout = () => {
     logout();
@@ -30,7 +34,6 @@ function Base(props) {
   };
 
   const user = {
-    // use loggedUser
     name: loggedUser.firstname + " " + loggedUser.lastname,
     avatarUrl: loggedUser.profilePicture,
   };
