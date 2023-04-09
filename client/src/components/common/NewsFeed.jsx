@@ -1,7 +1,7 @@
 import React from "react";
 import Avatar from "./Avatar"; // Import the Avatar component
 import Button from "./Button"; // Import the Button component
-import { BiLike, BiComment, BiShare } from "react-icons/bi"; // Import the necessary icons from react-icons
+import { BiLike, BiComment, BiShare, BiGlobe } from "react-icons/bi"; // Import the necessary icons from react-icons
 
 const NewsFeed = ({ avatar, user, author, date, content }) => {
   // check if user is object
@@ -43,21 +43,24 @@ const NewsFeed = ({ avatar, user, author, date, content }) => {
   };
 
   return (
-    <div className="mt-2 bg-white rounded border-gray-200 border px-6 py-6 flex">
+    <div className="mt-2 bg-white rounded border-gray-200 border px-6 pt-6 pb-2 flex">
       <div className="flex flex-col w-full justify-start">
         <div className="flex justify-start">
           <Avatar avatar={avatar} size={10} />
           <div className="ml-2">
             <h1 className="text-lg">{author}</h1>
-            <p className="text-xs text-slate-500">{postedAgo(date)}</p>
+            <p className="text-xs text-slate-500 flex my-auto">
+              <BiGlobe className="my-auto mr-1" />
+              {postedAgo(date)}
+            </p>
           </div>
         </div>
-        <div className="mt-2 border border-t-gray-300 w-full"></div>
-        <div className="py-4">
+        <div className="mt-2 border border-t-gray-100 w-full"></div>
+        <div className="py-8">
           <p className="text-gray-700">{content}</p>
         </div>
-        <div className="mt-2 border border-t-gray-300 w-full"></div>
-        <div className="flex justify-between py-4">
+        <div className="mt-2 border border-t-gray-100 w-full"></div>
+        <div className="flex justify-between py-2">
           <div className="flex space-x-2 justify-around mx-auto w-full">
             <Button
               type="button"
