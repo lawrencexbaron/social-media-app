@@ -8,8 +8,13 @@ const validateToken = require("../utilities/validateToken");
 // @access  Public
 const getPosts = async (req, res) => {
   try {
-    const posts = await Post.find();
-    return res.json({ message: "Posts fetched successfully", data: posts });
+    // add referenced user with data but not password who posted the post then sort by date
+    const posts = await Post.find()
+      .populate("user", ["profilePicture", "firstname", "lastname"])
+      .sort({
+        createdAt: -1,
+      });
+    return res.status(200).json({ data: posts });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send({ message: "Server Error", error: err });
