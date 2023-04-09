@@ -6,8 +6,6 @@ import Register from "./components/pages/auth/Register";
 import Feed from "./components/pages/Feed";
 import Settings from "./components/pages/Settings";
 
-import { useAuthStore } from "./stores/authStore";
-
 function App() {
   const [count, setCount] = useState(0);
 
