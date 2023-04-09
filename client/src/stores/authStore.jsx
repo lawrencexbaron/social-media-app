@@ -29,6 +29,8 @@ export const useAuthStore = create((set, get, api) => {
     },
     isLoggedIn: () => !!get().user,
     logout: () => {
+      console.log(get().user);
+      set({ user: null });
       console.log("logout");
       localStorage.removeItem("token");
       localStorage.removeItem("user");
