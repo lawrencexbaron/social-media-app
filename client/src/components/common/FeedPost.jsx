@@ -4,33 +4,26 @@ import TextInput from "./TextInput";
 import Button from "./Button";
 import { BiLike, BiComment, BiShare } from "react-icons/bi";
 import NewsFeed from "./NewsFeed";
-import { useMutation } from "react-query";
 import { usePostStore } from "../../stores/postStore";
-import { createPost } from "../../utils/api";
 
 function FeedPost({ avatar }) {
   const [content, setContent] = useState("");
-  const { getPosts, posts, isError, isLoading } = usePostStore();
-  const { error, setError } = useState(null);
-
-  const createPostMutation = useMutation(createPost, {
-    onSuccess: (data) => {
-      getPosts();
-    },
-    onError: (error) => {
-      setError(error);
-      console.log("err" + error);
-    },
-  });
-
-  const handlePost = useCallback(() => {
-    createPostMutation.mutate({ content });
-    setContent("");
-  }, [createPostMutation, content]);
+  const { getPosts, createPost, posts, isError, isLoading } = usePostStore();
+  const [error, setError] = useState("null");
 
   useEffect(() => {
     getPosts();
   }, [getPosts]);
+
+  const handlePost = useCallback(async () => {
+    if (content.length === 0) {
+      setError("Please enter a post.");
+      return;
+    }
+    await createPost(content);
+    setContent("");
+    getPosts();
+  }, [content, createPost]);
 
   return (
     <div className="sm:w-3/5 h-full sm:sticky mt-16 top-16">
@@ -40,9 +33,7 @@ function FeedPost({ avatar }) {
           type="text"
           placeholder="What's on your mind?"
           // add red border if error
-          className={`${
-            isError ? "border-red-500" : "border-slate-200"
-          } border rounded w-full p-2`}
+          className="border-slate-200"
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
