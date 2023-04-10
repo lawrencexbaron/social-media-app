@@ -41,7 +41,6 @@ export const useUserStore = create((set) => {
             state.error = null;
           })
         );
-        console.log(res.data.data);
         return res.data.data;
       } catch (error) {
         set(
@@ -60,6 +59,63 @@ export const useUserStore = create((set) => {
         set(
           produce((state) => {
             state.user = res.data.data;
+            state.error = null;
+          })
+        );
+      } catch (error) {
+        set(
+          produce((state) => {
+            state.error = error.response.data;
+            state.success = false;
+          })
+        );
+      }
+    },
+
+    followUser: async (id) => {
+      try {
+        const res = await axios.post(
+          `${base_api}/api/users/follow`,
+          {
+            id: id,
+          },
+          {
+            headers: authHeader(),
+          }
+        );
+        set(
+          produce((state) => {
+            state.user = res.data.data;
+            state.getUsers();
+            state.getUser(id);
+            state.error = null;
+          })
+        );
+      } catch (error) {
+        set(
+          produce((state) => {
+            state.error = error.response.data;
+            state.success = false;
+          })
+        );
+      }
+    },
+    unfollowUser: async (id) => {
+      try {
+        const res = await axios.post(
+          `${base_api}/api/users/unfollow`,
+          {
+            id: id,
+          },
+          {
+            headers: authHeader(),
+          }
+        );
+        set(
+          produce((state) => {
+            state.user = res.data.data;
+            state.getUsers();
+            state.getUser(id);
             state.error = null;
           })
         );
