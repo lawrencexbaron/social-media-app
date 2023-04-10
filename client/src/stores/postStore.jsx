@@ -1,21 +1,18 @@
 import create from "zustand";
-import {
-  getPosts,
-  getPost,
-  createPost,
-  updatePost,
-  deletePost,
-  likePost,
-  unlikePost,
-  getTimelinePosts,
-  getProfilePosts,
-  commentPost,
-  deleteComment,
-  likeComment,
-  unlikeComment,
-} from "../utils/api";
+import axios from "axios";
+import produce from "immer";
+
+const base_api = "http://localhost:4000";
 
 export const usePostStore = create((set) => {
+  const authHeader = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      return { Authorization: `Bearer ${token}` };
+    }
+    return {};
+  };
+
   return {
     posts: [],
     post: null,
@@ -27,107 +24,179 @@ export const usePostStore = create((set) => {
     getPosts: async () => {
       set({ isLoading: true });
       try {
-        const posts = await getPosts();
-        set({ posts, isLoading: false });
+        const res = await axios.get(`${base_api}/api/posts`);
+        set(
+          produce((state) => {
+            state.posts = res.data.data;
+            state.isLoading = false;
+          })
+        );
+      } catch (err) {
+        set(
+          produce((state) => {
+            state.isError = true;
+            state.isLoading = false;
+          })
+        );
+      }
+    },
+
+    getPost: async (id) => {
+      set({ isLoading: true });
+      try {
+        const res = await axios.get(`${base_api}/api/posts/${id}`);
+        set({ post: res.data.data, isLoading: false });
       } catch (err) {
         set({ isError: true, isLoading: false });
       }
     },
 
-    getPost: async (id) => {
-      const post = await getPost(id);
-      set({ post });
-    },
-
     createPost: async (content) => {
-      const post = await createPost(content);
-      set((state) => ({ posts: [...state.posts, post] }));
+      set({ isLoading: true });
+      try {
+        // include token in header
+        const res = await axios.post(
+          `${base_api}/api/posts`,
+          {
+            content: content,
+          },
+          {
+            headers: authHeader(),
+          }
+        );
+        set({
+          posts: [res.data.data, ...posts],
+          isLoading: false,
+          isError: false,
+        });
+      } catch (err) {
+        set({ isError: true, isLoading: false });
+      }
     },
-
     updatePost: async (id, content) => {
-      const post = await updatePost(id, content);
-      set((state) => ({
-        posts: state.posts.map((p) => (p._id === id ? post : p)),
-      }));
+      set({ isLoading: true });
+      try {
+        const res = await axios.put(`${base_api}/api/posts/${id}`, { content });
+        set({
+          posts: posts.map((p) => (p._id === id ? res.data.data : p)),
+          isLoading: false,
+        });
+      } catch (err) {
+        set({ isError: true, isLoading: false });
+      }
     },
 
     deletePost: async (id) => {
-      await deletePost(id);
-      set((state) => ({ posts: state.posts.filter((p) => p._id !== id) }));
+      set({ isLoading: true });
+      try {
+        await axios.delete(`${base_api}/api/posts/${id}`);
+        set({
+          posts: posts.filter((p) => p._id !== id),
+          isLoading: false,
+        });
+      } catch (err) {
+        set({ isError: true, isLoading: false });
+      }
     },
 
     likePost: async (id) => {
-      const post = await likePost(id);
-      set((state) => ({
-        posts: state.posts.map((p) => (p._id === id ? post : p)),
-      }));
+      set({ isLoading: true });
+      try {
+        const res = await axios.put(`${base_api}/api/posts/${id}/like`);
+      } catch (err) {
+        set({ isError: true, isLoading: false });
+      }
     },
 
     unlikePost: async (id) => {
-      const post = await unlikePost(id);
-      set((state) => ({
-        posts: state.posts.map((p) => (p._id === id ? post : p)),
-      }));
+      set({ isLoading: true });
+      try {
+        const res = await axios.put(`${base_api}/api/posts/${id}/unlike`);
+      } catch (err) {
+        set({ isError: true, isLoading: false });
+      }
     },
 
     getTimelinePosts: async () => {
-      const posts = await getTimelinePosts();
-      set({ posts });
+      set({ isLoading: true });
+      try {
+        const res = await axios.get(`${base_api}/api/posts/timeline/all`);
+        set({ posts: res.data.data, isLoading: false });
+      } catch (err) {
+        set({ isError: true, isLoading: false });
+      }
     },
 
     getProfilePosts: async (username) => {
-      const posts = await getProfilePosts(username);
-      set({ posts });
+      set({ isLoading: true });
+      try {
+        const res = await axios.get(
+          `${base_api}/api/posts/profile/${username}`
+        );
+        set({ posts: res.data.data, isLoading: false });
+      } catch (err) {
+        set({ isError: true, isLoading: false });
+      }
     },
 
     commentPost: async (id, content) => {
-      const post = await commentPost(id, content);
-      set((state) => ({
-        posts: state.posts.map((p) => (p._id === id ? post : p)),
-      }));
+      set({ isLoading: true });
+      try {
+        const res = await axios.post(`${base_api}/api/posts/${id}/comment`, {
+          content,
+        });
+        set({
+          posts: posts.map((p) => (p._id === id ? res.data.data : p)),
+          isLoading: false,
+        });
+      } catch (err) {
+        set({ isError: true, isLoading: false });
+      }
     },
 
     deleteComment: async (id, commentId) => {
-      const post = await deleteComment(id, commentId);
-      set((state) => ({
-        posts: state.posts.map((p) => (p._id === id ? post : p)),
-      }));
+      set({ isLoading: true });
+      try {
+        const res = await axios.delete(
+          `${base_api}/api/posts/${id}/comment/${commentId}`
+        );
+        set({
+          posts: posts.map((p) => (p._id === id ? res.data.data : p)),
+          isLoading: false,
+        });
+      } catch (err) {
+        set({ isError: true, isLoading: false });
+      }
     },
 
     likeComment: async (id, commentId) => {
-      const post = await likeComment(id, commentId);
-      set((state) => ({
-        posts: state.posts.map((p) => (p._id === id ? post : p)),
-      }));
+      set({ isLoading: true });
+      try {
+        const res = await axios.put(
+          `${base_api}/api/posts/${id}/comment/${commentId}/like`
+        );
+        set({
+          posts: posts.map((p) => (p._id === id ? res.data.data : p)),
+          isLoading: false,
+        });
+      } catch (err) {
+        set({ isError: true, isLoading: false });
+      }
     },
 
     unlikeComment: async (id, commentId) => {
-      const post = await unlikeComment(id, commentId);
-      set((state) => ({
-        posts: state.posts.map((p) => (p._id === id ? post : p)),
-      }));
+      set({ isLoading: true });
+      try {
+        const res = await axios.put(
+          `${base_api}/api/posts/${id}/comment/${commentId}/unlike`
+        );
+        set({
+          posts: posts.map((p) => (p._id === id ? res.data.data : p)),
+          isLoading: false,
+        });
+      } catch (err) {
+        set({ isError: true, isLoading: false });
+      }
     },
-
-    reset: () => set({ posts: [], post: null }),
-
-    resetPost: () => set({ post: null }),
-
-    resetPosts: () => set({ posts: [] }),
-
-    resetPostAndPosts: () => set({ posts: [], post: null }),
-
-    resetPostAndPostsAndUser: () => set({ posts: [], post: null, user: null }),
-
-    resetPostAndPostsAndUserAndUsers: () =>
-      set({ posts: [], post: null, user: null, users: [] }),
-
-    resetPostAndPostsAndUserAndUsersAndNotifications: () =>
-      set({
-        posts: [],
-        post: null,
-        user: null,
-        users: [],
-        notifications: [],
-      }),
   };
 });
