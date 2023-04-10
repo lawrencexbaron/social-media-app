@@ -9,7 +9,7 @@ import { useUserStore } from "../../stores/userStore";
 
 function Feed() {
   const navigate = useNavigate();
-  const { getUsers, users } = useUserStore();
+  const { getUsers, users, followUser, unfollowUser } = useUserStore();
   const { user, isAuthenticated } = useAuthStore((state) => state);
 
   const userData = {
@@ -18,16 +18,10 @@ function Feed() {
     name: user ? `${user.firstname} ${user.lastname}` : "",
     followers: user?.followers?.length || 0,
     following: user?.following?.length || 0,
+    id: user?._id || "",
   };
 
   useEffect(() => {
-    console.log(user);
-    if (!isAuthenticated) {
-      navigate("/login");
-    }
-    if (users === null) {
-      navigate("/login");
-    }
     getUsers();
   }, [isAuthenticated]);
 
@@ -57,9 +51,21 @@ function Feed() {
                       <h3 className="text-sm font-semibold inline-block mx-auto my-auto">
                         {user.firstname + " " + user.lastname}
                       </h3>
-                      <p className="text-left text-xs my-auto mx-auto text-slate-700 font-semibold cursor-pointer">
-                        Follow
-                      </p>
+                      {user.followers.includes(userData.id) ? (
+                        <p
+                          className="text-left text-xs my-auto mx-auto text-slate-700 font-semibold cursor-pointer"
+                          onClick={() => unfollowUser(user._id)}
+                        >
+                          <span className="mx-auto">Unfollow</span>
+                        </p>
+                      ) : (
+                        <p
+                          className="text-left text-xs my-auto mx-auto text-slate-700 font-semibold cursor-pointer"
+                          onClick={() => followUser(user._id)}
+                        >
+                          <span className="mx-auto">Follow</span>
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
