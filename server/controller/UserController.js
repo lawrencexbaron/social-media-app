@@ -120,11 +120,19 @@ const deleteUser = async (req, res) => {
 
 const followUser = async (req, res) => {
   try {
+    const { id } = req.body;
+
     // check if user exist
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    // check if user is authorized to follow
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const req_user = await User.findById(req.user.id);
 
     // check if user is authorized to follow
     if (user._id.toString() === req.user.id) {
@@ -137,21 +145,30 @@ const followUser = async (req, res) => {
     }
 
     await user.updateOne({ $push: { followers: req.user.id } });
+    // get req.user.id from req.user then update followings
+    await req_user.updateOne({ $push: { following: user._id } });
     await user.save();
     return res.status(200).json({ message: "User followed successfully" });
   } catch (err) {
     console.log(err);
-    return res.status(500).send({ message: "Server Error", error: err });
   }
 };
 
 const unfollowUser = async (req, res) => {
   try {
+    const { id } = req.body;
+
     // check if user exist
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const req_user = await User.findById(req.user.id);
 
     // check if user is authorized to follow
     if (user._id.toString() === req.user.id) {
@@ -164,6 +181,8 @@ const unfollowUser = async (req, res) => {
     }
 
     await user.updateOne({ $pull: { followers: req.user.id } });
+    // get req.user.id from req.user then update following
+    await req_user.updateOne({ $pull: { following: user._id } });
     await user.save();
     return res.status(200).json({ message: "User unfollowed successfully" });
   } catch (err) {

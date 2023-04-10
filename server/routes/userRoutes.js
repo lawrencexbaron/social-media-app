@@ -1,6 +1,7 @@
 const express = require("express");
 const UserController = require("../controller/userController");
 const router = express.Router();
+const validateToken = require("../utilities/validateToken");
 
 // @route   GET api/users
 // @desc    Get all users
@@ -25,11 +26,11 @@ router.delete("/:id", UserController.deleteUser);
 // @route   POST api/users/follow
 // @desc    Follow a user
 // @access  Private
-router.post("/follow", UserController.followUser);
+router.post("/follow", validateToken, UserController.followUser);
 
 // @route   POST api/users/unfollow
 // @desc    Unfollow a user
 // @access  Private
-router.post("/unfollow", UserController.unfollowUser);
+router.post("/unfollow", validateToken, UserController.unfollowUser);
 
 module.exports = router;
