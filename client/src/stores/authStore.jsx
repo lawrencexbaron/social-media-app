@@ -27,8 +27,27 @@ export const useAuthStore = create((set) => ({
       return false;
     }
   },
-  getUser: () => {
-    return get().user;
+  getUser: async (id) => {
+    try {
+      // get user id from localstorage
+
+      const res = await axios.get(`${base_api}/api/users/${id}`, {
+        headers: authHeader(),
+      });
+      set(
+        produce((state) => {
+          state.user = res.data.data;
+          state.error = null;
+        })
+      );
+    } catch (error) {
+      set(
+        produce((state) => {
+          state.error = error.response.data;
+          state.success = false;
+        })
+      );
+    }
   },
 
   // actions
@@ -37,6 +56,33 @@ export const useAuthStore = create((set) => ({
       const res = await axios.post(`${base_api}/api/auth/login`, {
         email,
         password,
+      });
+      set(
+        produce((state) => {
+          state.user = res.data.data;
+          state.success = true;
+          state.error = null;
+          state.isAuth = true;
+        })
+      );
+      localStorage.setItem("user", JSON.stringify(res.data.data));
+      localStorage.setItem("token", res.data.token);
+    } catch (error) {
+      set(
+        produce((state) => {
+          state.error = error.response.data;
+          state.success = false;
+          state.isAuth = false;
+        })
+      );
+    }
+  },
+
+  // refresh user data
+  refresh: async () => {
+    try {
+      const res = await axios.get(`${base_api}/api/auth/refresh`, {
+        headers: authHeader(),
       });
       set(
         produce((state) => {
