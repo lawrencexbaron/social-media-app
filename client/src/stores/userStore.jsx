@@ -87,10 +87,10 @@ export const useUserStore = create((set) => {
           produce((state) => {
             state.user = res.data.data;
             state.getUsers();
-            state.getUser(id);
             state.error = null;
           })
         );
+        console.log("followed:" + res.data.data);
       } catch (error) {
         set(
           produce((state) => {

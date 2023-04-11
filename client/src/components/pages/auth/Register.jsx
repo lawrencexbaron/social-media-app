@@ -3,8 +3,7 @@ import TextInput from "../../common/TextInput";
 import Button from "../../common/Button";
 import Label from "../../common/Label";
 import { Link } from "react-router-dom";
-import { register } from "../../utils/api/Auth";
-import Spinner from "../../common/Spinner";
+import { RxAvatar } from "react-icons/rx";
 import axios from "axios";
 
 function Register() {
@@ -18,20 +17,6 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-
-  const register = async (data) => {
-    try {
-      const res = await axios.post(`${BASE_URL}/api/auth/register`, data);
-      console.log(res.data);
-      setSuccess(true);
-      setError(null);
-      clearForm();
-    } catch (err) {
-      console.log(err.response.data.messages);
-      setError(err.response.data.messages);
-      setSuccess(false);
-    }
-  };
 
   const clearForm = () => {
     setEmail("");
@@ -47,6 +32,7 @@ function Register() {
     if (password !== confirmPassword) {
       setError("Passwords do not match");
     }
+
     register({
       email,
       firstname,
@@ -57,11 +43,25 @@ function Register() {
     });
   };
 
+  const register = async (data) => {
+    try {
+      const res = await axios.post(`${BASE_URL}/api/auth/register`, data);
+
+      console.log(res.data);
+      setSuccess(true);
+      setError(null);
+      clearForm();
+    } catch (err) {
+      console.log(err.response.data.messages);
+      setError(err.response.data.messages);
+      setSuccess(false);
+    }
+  };
+
   return (
     <>
       <div className="mx-auto bg-white shadow-md px-6 py-8 w-3/4 sm:w-1/4 h-3/4 mt-10">
         <h1 className="text-2xl font-bold text-center">Register</h1>
-        <Spinner isLoading={isLoading} />
         {error && (
           <div
             className="bg-red-100 border flex flex-col border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
