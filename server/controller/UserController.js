@@ -93,6 +93,33 @@ const updateUser = async (req, res) => {
     return res.status(500).send({ message: "Server Error", error: err });
   }
 };
+// get list of followers and following
+const getFollowers = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    // list followers from user model
+    const followers = await Promise.all(
+      user.followers.map((followerId) => {
+        return User.findById(followerId);
+      })
+    );
+    // list following from user model
+    const following = await Promise.all(
+      user.following.map((followingId) => {
+        return User.findById(followingId);
+      })
+    );
+
+    return res.status(200).json({
+      message: "Followers and following fetched successfully",
+      followers,
+      following,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Server Error", error: err });
+  }
+};
 
 // @route   DELETE api/users/:id
 // @desc    Delete user
@@ -196,5 +223,6 @@ module.exports = {
   updateUser,
   deleteUser,
   followUser,
+  getFollowers,
   unfollowUser,
 };
