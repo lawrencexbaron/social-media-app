@@ -24,7 +24,9 @@ export const usePostStore = create((set) => {
     getPosts: async () => {
       set({ isLoading: true });
       try {
-        const res = await axios.get(`${base_api}/api/posts`);
+        const res = await axios.get(`${base_api}/api/posts`, {
+          headers: authHeader(),
+        });
         set(
           produce((state) => {
             state.posts = res.data.data;
