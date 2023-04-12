@@ -20,7 +20,7 @@ const validateToken = require("../utilities/validateToken");
 // @route   GET api/posts
 // @desc    Get all posts
 // @access  Public
-router.get("/", getPosts);
+router.get("/", validateToken, getPosts);
 
 // @route   GET api/posts/:id
 // @desc    Get post by ID

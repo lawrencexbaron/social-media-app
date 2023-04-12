@@ -1,5 +1,6 @@
 const Post = require("../models/Post");
 const mongoose = require("mongoose");
+const User = require("../models/User");
 const { postValidation } = require("../utilities/Validation");
 const validateToken = require("../utilities/validateToken");
 
@@ -8,12 +9,18 @@ const validateToken = require("../utilities/validateToken");
 // @access  Public
 const getPosts = async (req, res) => {
   try {
-    // add referenced user with data but not password who posted the post then sort by date
-    const posts = await Post.find()
+    // get all ids inside user's following array
+    const following = await User.findById(req.user.id).select("following");
+    // add user's id to following array
+    following.following.push(req.user.id);
+
+    // get all posts from users in following array
+    const posts = await Post.find({ user: { $in: following.following } })
       .populate("user", ["profilePicture", "firstname", "lastname"])
       .sort({
         createdAt: -1,
       });
+
     return res.status(200).json({ data: posts });
   } catch (err) {
     console.error(err.message);
