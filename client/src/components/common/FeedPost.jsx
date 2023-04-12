@@ -57,7 +57,12 @@ function FeedPost({ avatar }) {
           />
         ))
       ) : (
-        <p>No posts to display.</p>
+        // loading
+        <div className="flex justify-center mt-20 mx-auto my-auto">
+          <p className="text-2xl mx-auto mt-50 text-slate-700 font-semibold">
+            No Available Posts
+          </p>
+        </div>
       )}
     </div>
   );
