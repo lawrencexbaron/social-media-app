@@ -19,6 +19,8 @@ export const useUserStore = create((set) => {
     isLoading: false,
     error: null,
     success: false,
+    following: [],
+    followers: [],
 
     // setters
     setSuccess: (success) => {
@@ -51,6 +53,30 @@ export const useUserStore = create((set) => {
         );
       }
     },
+
+    getFollowers: async (id) => {
+      try {
+        const res = await axios.get(`${base_api}/api/users/${id}/followers`, {
+          headers: authHeader(),
+        });
+        set(
+          produce((state) => {
+            state.followers = res.data.followers;
+            state.following = res.data.following;
+            state.error = null;
+          })
+        );
+        return res.data.data;
+      } catch (error) {
+        set(
+          produce((state) => {
+            state.error = error;
+            state.success = false;
+          })
+        );
+      }
+    },
+
     getUser: async (id) => {
       try {
         const res = await axios.get(`${base_api}/api/users/${id}`, {
@@ -86,11 +112,11 @@ export const useUserStore = create((set) => {
         set(
           produce((state) => {
             state.user = res.data.data;
+            state.getUser(id);
             state.getUsers();
             state.error = null;
           })
         );
-        console.log("followed:" + res.data.data);
       } catch (error) {
         set(
           produce((state) => {
