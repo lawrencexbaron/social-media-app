@@ -29,7 +29,7 @@ function Base(props) {
     <>
       <div className="bg-gray-100 h-full w-full">
         {/* Mobile Navbar  */}
-        <div className="sm:hidden sticky top-0 w-full h-16 flex align-middle my-auto bg-white border-b border-gray-200 px-5">
+        <div className="sm:hidden sticky top-0 w-full z-99 h-16 flex align-middle my-auto bg-white border-b border-gray-200 px-5">
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="w-10 flex my-auto h-10 items-center justify-center"
@@ -171,7 +171,7 @@ function Base(props) {
         </div>
 
         <div
-          className="max-w-full mx-auto py-6 sm:px-6 lg:px-16"
+          className="max-w-full mx-auto pb-6 sm:px-6 lg:px-16"
           onClick={() => setIsOpen(false)}
         >
           {props.children}
