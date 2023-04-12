@@ -1,34 +1,178 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Base from "../layout/Base";
 import ProfileCard from "../common/ProfileCard";
 import FeedPost from "../common/FeedPost";
 import Avatar from "../common/Avatar";
 import { useAuthStore } from "../../stores/authStore";
 import { useUserStore } from "../../stores/userStore";
+import Modal from "../common/Modal";
 
 function Feed() {
-  const { getUsers, users, followUser, unfollowUser } = useUserStore();
+  const {
+    getUsers,
+    users,
+    followUser,
+    unfollowUser,
+    getFollowers,
+    following,
+    followers,
+  } = useUserStore();
   const { user, getUser } = useAuthStore();
+  const [isOpen, setIsOpen] = useState(false);
+  const [followingModalOpen, setFollowingModalOpen] = useState(false);
+  const [followersModalOpen, setFollowersModalOpen] = useState(false);
+
+  const handleFollowingModal = () => {
+    setFollowingModalOpen(!followingModalOpen);
+  };
+
+  const handleFollowersModal = () => {
+    setFollowersModalOpen(!followersModalOpen);
+  };
+
+  const toggleModal = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleModal = () => {
+    toggleModal();
+  };
 
   useEffect(() => {
     getUsers();
+    getFollowers(user._id);
   }, []);
 
   const handleFollow = async (userId) => {
     await followUser(userId);
+    await getFollowers(user._id);
     await getUser(user._id);
   };
 
   const handleUnfollow = async (userId) => {
     await unfollowUser(userId);
+    await getFollowers(user._id);
     await getUser(user._id);
+  };
+
+  const followingModal = () => {
+    return (
+      <Modal
+        isOpen={followingModalOpen}
+        onClose={handleFollowingModal}
+        title="Following"
+      >
+        {following && following.length ? (
+          <div className="flex flex-col justify-between w-full overflow-y-auto h-full">
+            {following.map((follow) => {
+              const name = `${follow.firstname} ${follow.lastname}`;
+              return (
+                <div className="flex mt-2 w-full" key={follow._id}>
+                  <Avatar
+                    avatar={follow.profilePicture}
+                    size={10}
+                    className="rounded-full mx-auto my-auto"
+                  />
+                  <div className="flex justify-between w-full">
+                    <div className="flex flex-col sm:pl-2">
+                      <h3 className="text-sm font-semibold inline-block my-auto overflow-hidden whitespace-nowrap max-w-xs">
+                        {name.length > 20 ? name.slice(0, 20) + "..." : name}
+                      </h3>
+                      <p className="text-xs text-slate-700 font-semibold">
+                        {follow.email}
+                      </p>
+                    </div>
+                    <div className="flex flex-col sm:pl-2 my-auto">
+                      <button
+                        className="text-xs text-slate-700 font-semibold"
+                        onClick={() => handleUnfollow(follow._id)}
+                      >
+                        Unfollow
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <p className="text-sm text-slate-700 font-semibold">No following</p>
+          </div>
+        )}
+      </Modal>
+    );
+  };
+
+  const followersModal = () => {
+    return (
+      <Modal
+        isOpen={followersModalOpen}
+        onClose={handleFollowersModal}
+        title="Followers"
+      >
+        {followers && followers.length ? (
+          <div className="flex flex-col justify-between w-full overflow-y-auto h-full">
+            {followers.map((follow) => {
+              const name = `${follow.firstname} ${follow.lastname}`;
+              return (
+                <div className="flex mt-2 w-full" key={follow._id}>
+                  <Avatar
+                    avatar={follow.profilePicture}
+                    size={10}
+                    className="rounded-full mx-auto my-auto"
+                  />
+                  <div className="flex justify-between w-full">
+                    <div className="flex flex-col sm:pl-2">
+                      <h3 className="text-sm font-semibold inline-block my-auto overflow-hidden whitespace-nowrap max-w-xs">
+                        {name.length > 20 ? name.slice(0, 20) + "..." : name}
+                      </h3>
+                      <p className="text-xs text-slate-700 font-semibold">
+                        {follow.email}
+                      </p>
+                    </div>
+                    <div className="flex flex-col sm:pl-2 my-auto">
+                      {follow.followers.includes(user._id) ? (
+                        <button
+                          className="text-xs text-slate-700 font-semibold"
+                          onClick={() => handleUnfollow(follow._id)}
+                        >
+                          Unfollow
+                        </button>
+                      ) : (
+                        <button
+                          className="text-xs text-slate-700 font-semibold"
+                          onClick={() => handleFollow(follow._id)}
+                        >
+                          Follow
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <p className="text-sm text-slate-700 font-semibold">No followers</p>
+          </div>
+        )}
+      </Modal>
+    );
   };
 
   return (
     <Base>
+      {followingModal()}
+      {followersModal()}
       <div className="sm:flex justify-center space-y-2 sm:space-y-0 sm:space-x-2">
         <ProfileCard
+          handleModal={handleModal}
+          openFollowingModal={handleFollowingModal}
+          openFollowersModal={handleFollowersModal}
           avatar={user.profilePicture}
+          userId={user._id}
           coverPhoto={user.coverPicture}
           name={`${user.firstname} ${user.lastname}`}
           followers={user.followers.length || 0}
