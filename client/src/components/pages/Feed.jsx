@@ -5,6 +5,7 @@ import FeedPost from "../common/FeedPost";
 import Avatar from "../common/Avatar";
 import { useAuthStore } from "../../stores/authStore";
 import { useUserStore } from "../../stores/userStore";
+import { usePostStore } from "../../stores/postStore";
 import Modal from "../common/Modal";
 
 function Feed() {
@@ -18,6 +19,7 @@ function Feed() {
     followers,
   } = useUserStore();
   const { user, getUser } = useAuthStore();
+  const { posts, getPosts } = usePostStore();
   const [isOpen, setIsOpen] = useState(false);
   const [followingModalOpen, setFollowingModalOpen] = useState(false);
   const [followersModalOpen, setFollowersModalOpen] = useState(false);
@@ -47,12 +49,14 @@ function Feed() {
     await followUser(userId);
     await getFollowers(user._id);
     await getUser(user._id);
+    await getPosts();
   };
 
   const handleUnfollow = async (userId) => {
     await unfollowUser(userId);
     await getFollowers(user._id);
     await getUser(user._id);
+    await getPosts();
   };
 
   const followingModal = () => {
@@ -161,7 +165,6 @@ function Feed() {
       </Modal>
     );
   };
-
   return (
     <Base>
       {followingModal()}
