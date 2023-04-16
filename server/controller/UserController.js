@@ -38,6 +38,22 @@ const getUserById = async (req, res) => {
   }
 };
 
+// get user by username
+const getUserByUsername = async (req, res) => {
+  try {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res
+      .status(200)
+      .json({ message: "User fetched successfully", data: user });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send({ message: "Server Error", error: err });
+  }
+};
+
 // @route   PUT api/users/:id
 // @desc    Update user
 // @access  Private
@@ -225,4 +241,5 @@ module.exports = {
   followUser,
   getFollowers,
   unfollowUser,
+  getUserByUsername,
 };
