@@ -5,6 +5,7 @@ import Login from "./components/pages/auth/Login";
 import Register from "./components/pages/auth/Register";
 import Feed from "./components/pages/Feed";
 import Settings from "./components/pages/Settings";
+import Profile from "./components/pages/Profile";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -17,6 +18,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/feed" element={<Feed />} />
+          <Route path="/profile/:username" element={<Profile />} />
           <Route path="/profile/settings" element={<Settings />} />
         </Routes>
       </Router>
