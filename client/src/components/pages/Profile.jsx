@@ -20,6 +20,8 @@ function Profile() {
     getPosts(username);
   }, [getUserByUsername, username]);
 
+  if (!profile) return null;
+
   return (
     <>
       <Base>
@@ -35,6 +37,7 @@ function Profile() {
           <FeedPost
             username={username}
             posts={posts}
+            profile={true}
             avatar={profile.profilePicture}
           />
           <div className="sm:w-1/5 h-full sm:sticky sm:top-16 top-auto hidden md:block"></div>
