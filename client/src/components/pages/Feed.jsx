@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Base from "../layout/Base";
 import ProfileCard from "../common/ProfileCard";
 import FeedPost from "../common/FeedPost";
@@ -6,6 +6,7 @@ import Avatar from "../common/Avatar";
 import { useAuthStore } from "../../stores/authStore";
 import { useUserStore } from "../../stores/userStore";
 import { usePostStore } from "../../stores/postStore";
+import { Link } from "react-router-dom";
 import Modal from "../common/Modal";
 
 function Feed() {
@@ -19,10 +20,11 @@ function Feed() {
     followers,
   } = useUserStore();
   const { user, getUser } = useAuthStore();
-  const { posts, getPosts } = usePostStore();
+  const { posts, getPosts, createPost } = usePostStore();
   const [isOpen, setIsOpen] = useState(false);
   const [followingModalOpen, setFollowingModalOpen] = useState(false);
   const [followersModalOpen, setFollowersModalOpen] = useState(false);
+  const [feedPosts, setFeedPosts] = useState([]);
 
   const handleFollowingModal = () => {
     setFollowingModalOpen(!followingModalOpen);
@@ -41,15 +43,21 @@ function Feed() {
   };
 
   useEffect(() => {
+    getPosts();
     getUsers();
     getFollowers(user._id);
   }, []);
+
+  useEffect(() => {
+    setFeedPosts(posts);
+  }, [posts]);
 
   const handleFollow = async (userId) => {
     await followUser(userId);
     await getFollowers(user._id);
     await getUser(user._id);
     await getPosts();
+    // setFeedPosts(posts);
   };
 
   const handleUnfollow = async (userId) => {
@@ -57,6 +65,7 @@ function Feed() {
     await getFollowers(user._id);
     await getUser(user._id);
     await getPosts();
+    // setFeedPosts(posts);
   };
 
   const followingModal = () => {
@@ -181,9 +190,9 @@ function Feed() {
           followers={user.followers.length || 0}
           following={user.following.length || 0}
         />
-        <FeedPost avatar={user.profilePicture} />
-        <div className="sm:w-1/5 h-full sm:sticky sm:top-16 top-auto hidden sm:block">
-          <div className="bg-white rounded px-6 py-8 border border-slate-200">
+        <FeedPost posts={posts} avatar={user.profilePicture} />
+        <div className="sm:w-1/5 h-full sm:sticky sm:top-16 top-auto hidden md:block">
+          <div className="bg-white rounded px-5 py-6 border border-slate-200">
             {users &&
               users.map((mappedUser) => {
                 if (mappedUser._id === user._id) {
@@ -198,9 +207,13 @@ function Feed() {
                       className="rounded-full mx-auto my-auto"
                     />
                     <div className="flex justify-around w-full">
-                      <h3 className="text-sm font-semibold inline-block mx-auto my-auto">
+                      <Link
+                        to={`/profile/${mappedUser.username}`}
+                        className="text-sm font-semibold inline-block mx-auto my-auto"
+                      >
                         {`${mappedUser.firstname} ${mappedUser.lastname}`}
-                      </h3>
+                      </Link>
+                      <h3 className="text-sm font-semibold inline-block mx-auto my-auto"></h3>
                       {user.following.includes(mappedUser._id) ? (
                         <p
                           className="text-left text-xs my-auto mx-auto text-slate-700 font-semibold cursor-pointer"
