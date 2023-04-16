@@ -16,6 +16,7 @@ export const useUserStore = create((set) => {
   return {
     users: [],
     user: {},
+    profile: {},
     isLoading: false,
     error: null,
     success: false,
@@ -142,6 +143,31 @@ export const useUserStore = create((set) => {
             state.user = res.data.data;
             state.getUsers();
             state.getUser(id);
+            state.error = null;
+          })
+        );
+      } catch (error) {
+        set(
+          produce((state) => {
+            state.error = error.response.data;
+            state.success = false;
+          })
+        );
+      }
+    },
+
+    // get user by username
+    getUserByUsername: async (username) => {
+      try {
+        const res = await axios.get(
+          `${base_api}/api/users/username/${username}`,
+          {
+            headers: authHeader(),
+          }
+        );
+        set(
+          produce((state) => {
+            state.profile = res.data.data;
             state.error = null;
           })
         );
