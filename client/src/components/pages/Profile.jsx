@@ -20,7 +20,11 @@ function Profile() {
     getPosts(username);
   }, [getUserByUsername, username]);
 
-  if (!profile) return null;
+  const followers = profile.followers.length || 0;
+  const following = profile.following.length || 0;
+
+  // return loading if profile is empty
+  if (!profile) return <div>Loading...</div>;
 
   return (
     <>
@@ -31,8 +35,8 @@ function Profile() {
             name={`${profile.firstname} ${profile.lastname}`}
             avatar={profile.profilePicture}
             coverPhoto={profile.coverPicture}
-            following={profile.following.length || 0}
-            followers={profile.followers.length || 0}
+            following={followers}
+            followers={following}
           />
           <FeedPost
             username={username}
