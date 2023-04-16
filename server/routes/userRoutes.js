@@ -6,6 +6,7 @@ const {
   deleteUser,
   followUser,
   unfollowUser,
+  getUserByUsername,
   getFollowers,
 } = require("../controller/userController");
 const router = express.Router();
@@ -45,5 +46,10 @@ router.post("/unfollow", validateToken, unfollowUser);
 // @desc    Get followers of a user
 // @access  Private
 router.get("/:id/followers", getFollowers);
+
+// @route   GET api/users/:username
+// @desc    Get user by username
+// @access  Public
+router.get("/username/:username", getUserByUsername);
 
 module.exports = router;
