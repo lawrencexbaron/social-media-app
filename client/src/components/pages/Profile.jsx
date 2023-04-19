@@ -20,8 +20,8 @@ function Profile() {
     getPosts(username);
   }, [getUserByUsername, username]);
 
-  const followers = profile.followers.length || 0;
-  const following = profile.following.length || 0;
+  const followers = profile && profile.followers ? profile.followers.length : 0;
+  const following = profile && profile.following ? profile.following.length : 0;
 
   // return loading if profile is empty
   if (!profile) return <div>Loading...</div>;
