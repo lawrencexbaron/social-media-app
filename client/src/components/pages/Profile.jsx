@@ -11,14 +11,32 @@ import { useParams } from "react-router-dom";
 
 function Profile() {
   const { profile, getUserByUsername } = useUserStore();
-  const { getPosts, posts } = usePostStore();
+  const { posts, getProfilePosts } = usePostStore();
+  const [followingModalOpen, setFollowingModalOpen] = useState(false);
+  const [followersModalOpen, setFollowersModalOpen] = useState(false);
 
   const { username } = useParams();
 
+  const handleFollowingModal = () => {
+    setFollowingModalOpen(!followingModalOpen);
+  };
+
+  const handleFollowersModal = () => {
+    setFollowersModalOpen(!followersModalOpen);
+  };
+
+  const toggleModal = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const handleModal = () => {
+    toggleModal();
+  };
+
   useEffect(() => {
     getUserByUsername(username);
-    getPosts(username);
-  }, [getUserByUsername, username]);
+    getProfilePosts(username);
+  }, [getUserByUsername, username, getProfilePosts]);
 
   const followers = profile && profile.followers ? profile.followers.length : 0;
   const following = profile && profile.following ? profile.following.length : 0;
@@ -31,7 +49,12 @@ function Profile() {
       <Base>
         <div className="sm:flex justify-start space-y-2 sm:space-y-0 sm:space-x-2">
           <ProfileCard
+            // {followingModal()}
+            // {followersModal()}
             user={profile}
+            handleModal={handleModal}
+            openFollowingModal={handleFollowingModal}
+            openFollowersModal={handleFollowersModal}
             name={`${profile.firstname} ${profile.lastname}`}
             avatar={profile.profilePicture}
             coverPhoto={profile.coverPicture}

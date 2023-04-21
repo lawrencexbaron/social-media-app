@@ -408,8 +408,16 @@ const getTimelinePosts = async (req, res) => {
 
 const getProfilePosts = async (req, res) => {
   try {
-    const posts = await Post.find({ user: req.params.id });
-    return res.status(200).json(posts);
+    const currentUser = await User.find({ username: req.params.username });
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    // get all posts that belongs to the currentUser includes user profilePicture, firstname and lastname then sort by date
+    const userPosts = await Post.find({ user: currentUser[0]._id })
+      .populate("user", ["profilePicture", "firstname", "lastname"])
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json(userPosts);
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server Error");
