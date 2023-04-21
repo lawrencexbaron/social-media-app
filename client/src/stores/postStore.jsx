@@ -135,7 +135,6 @@ export const usePostStore = create((set) => {
         const res = await axios.get(
           `${base_api}/api/posts/profile/${username}`
         );
-        console.log(res);
         set({ posts: res.data, isLoading: false });
       } catch (err) {
         set({ isError: true, isLoading: false });
