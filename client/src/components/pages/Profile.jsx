@@ -11,9 +11,10 @@ import { useParams } from "react-router-dom";
 
 function Profile() {
   const { profile, getUserByUsername } = useUserStore();
-  const { posts, getProfilePosts } = usePostStore();
+  const { posts, getProfilePosts, isLoading } = usePostStore();
   const [followingModalOpen, setFollowingModalOpen] = useState(false);
   const [followersModalOpen, setFollowersModalOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const { username } = useParams();
 
@@ -33,6 +34,16 @@ function Profile() {
     toggleModal();
   };
 
+  // if isLoading is true then set loading to true after 1.5 seconds using setTimeout
+  setTimeout(() => {
+    if (isLoading) {
+      setLoading(true);
+    }
+    setTimeout(() => {
+      setLoading(false);
+    }, 100);
+  }, 100);
+
   useEffect(() => {
     getUserByUsername(username);
     getProfilePosts(username);
@@ -41,13 +52,24 @@ function Profile() {
   const followers = profile && profile.followers ? profile.followers.length : 0;
   const following = profile && profile.following ? profile.following.length : 0;
 
+  // if isLoading is true, return loading with tailwindcss spinner vertically and horizontally centered
+  if (loading) {
+    return (
+      <Base>
+        <div className="flex justify-center items-center h-screen m-auto">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+        </div>
+      </Base>
+    );
+  }
+
   // return loading if profile is empty
   if (!profile) return <div>Loading...</div>;
 
   return (
     <>
       <Base>
-        <div className="sm:flex justify-start space-y-2 sm:space-y-0 sm:space-x-2">
+        <div className="transition duration-150 ease-out sm:flex justify-start space-y-2 sm:space-y-0 sm:space-x-2">
           <ProfileCard
             // {followingModal()}
             // {followersModal()}
