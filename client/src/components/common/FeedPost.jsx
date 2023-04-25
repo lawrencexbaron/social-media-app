@@ -5,7 +5,7 @@ import Button from "../common/Button";
 import NewsFeed from "../common/NewsFeed";
 import { usePostStore } from "../../stores/postStore";
 
-function FeedPost({ avatar, posts, profile }) {
+function FeedPost({ avatar, posts, user, profile }) {
   const [content, setContent] = useState("");
   const { createPost, getPosts } = usePostStore();
 
@@ -55,6 +55,7 @@ function FeedPost({ avatar, posts, profile }) {
               comments={post.comments}
               postId={post._id}
               user={post.user}
+              author={user}
             />
           );
         })
