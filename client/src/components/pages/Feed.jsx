@@ -190,7 +190,7 @@ function Feed() {
           followers={user.followers.length || 0}
           following={user.following.length || 0}
         />
-        <FeedPost posts={posts} avatar={user.profilePicture} />
+        <FeedPost posts={posts} user={user} avatar={user.profilePicture} />
         <div className="sm:w-1/5 h-full sm:sticky sm:top-16 top-auto hidden md:block">
           <div className="bg-white rounded px-5 py-6 border border-slate-200">
             {users &&

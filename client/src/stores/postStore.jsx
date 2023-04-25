@@ -91,7 +91,9 @@ export const usePostStore = create((set) => {
     deletePost: async (id) => {
       set({ isLoading: true });
       try {
-        await axios.delete(`${base_api}/api/posts/${id}`);
+        await axios.delete(`${base_api}/api/posts/${id}`, {
+          headers: authHeader(),
+        });
         set({
           posts: posts.filter((p) => p._id !== id),
           isLoading: false,
