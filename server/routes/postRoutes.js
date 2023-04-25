@@ -40,7 +40,7 @@ router.put("/:id", updatePost);
 // @route   DELETE api/posts/:id
 // @desc    Delete post
 // @access  Private
-router.delete("/:id", deletePost);
+router.delete("/:id", validateToken, deletePost);
 
 // @route   PUT api/posts/:id/like
 // @desc    Like a post

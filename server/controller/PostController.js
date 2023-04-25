@@ -111,15 +111,23 @@ const updatePost = async (req, res) => {
 // @access  Private
 const deletePost = async (req, res) => {
   try {
-    const { user } = req.body;
-    const post = await Post.findById(req.params.id);
+    const { id } = req.user;
+
+    // include user data in post from populate
+    const post = await Post.findById(req.params.id).populate("user");
+
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
-    if (post.user != user) {
+
+    // check if user is authorized to delete post
+    if (post.user._id.toString() !== id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    await Post.findByIdAndDelete(req.params.id);
+
+    // finally remove post
+    await Post.findByIdAndRemove(req.params.id);
+
     return res.status(200).json({ message: "Post deleted" });
   } catch (err) {
     console.error(err.message);
