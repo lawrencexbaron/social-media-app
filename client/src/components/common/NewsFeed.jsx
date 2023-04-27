@@ -103,7 +103,7 @@ const NewsFeed = ({ avatar, user, postId, author, date, content }) => {
             </div>
           </div>
           <div onClick={handleClickOutside} className="flex justify-end">
-            {author._id === user._id ? (
+            {author && author._id === user._id ? (
               <BiDotsVerticalRounded
                 className="my-auto cursor-pointer relative"
                 onClick={() => setDropdownOpen(!dropdownOpen)}
