@@ -137,16 +137,19 @@ const deletePost = async (req, res) => {
 
 const likePost = async (req, res) => {
   try {
-    const { user } = req.body;
+    const { id } = req.user;
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
-    if (post.likes.includes(user)) {
+    // if post.likes array includes user id, return error
+    if (post.likes.indexOf(id) !== -1) {
       return res.status(400).json({ message: "Post already liked" });
     }
-    post.likes.push(user);
+
+    post.likes.push(id);
     await post.save();
+
     return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
@@ -156,16 +159,19 @@ const likePost = async (req, res) => {
 
 const unlikePost = async (req, res) => {
   try {
-    const { user } = req.body;
+    const { id } = req.user;
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
-    if (!post.likes.includes(user)) {
+    // if post.likes array includes user id, return error
+    if (post.likes.indexOf(id) === -1) {
       return res.status(400).json({ message: "Post has not yet been liked" });
     }
-    post.likes.pull(user);
+
+    post.likes.pull(id);
     await post.save();
+
     return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);

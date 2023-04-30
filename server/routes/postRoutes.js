@@ -45,12 +45,12 @@ router.delete("/:id", validateToken, deletePost);
 // @route   PUT api/posts/:id/like
 // @desc    Like a post
 // @access  Private
-router.put("/:id/like", likePost);
+router.put("/:id/like", validateToken, likePost);
 
 // @route   PUT api/posts/:id/unlike
 // @desc    Unlike a post
 // @access  Private
-router.put("/:id/unlike", unlikePost);
+router.put("/:id/unlike", validateToken, unlikePost);
 
 // @route   POST api/posts/:id/comment
 // @desc    Comment on a post
