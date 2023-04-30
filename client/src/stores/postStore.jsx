@@ -106,7 +106,13 @@ export const usePostStore = create((set) => {
     likePost: async (id) => {
       set({ isLoading: true });
       try {
-        const res = await axios.put(`${base_api}/api/posts/${id}/like`);
+        const res = await axios.put(
+          `${base_api}/api/posts/${id}/like`,
+          {},
+          {
+            headers: authHeader(),
+          }
+        );
       } catch (err) {
         set({ isError: true, isLoading: false });
       }
@@ -115,7 +121,13 @@ export const usePostStore = create((set) => {
     unlikePost: async (id) => {
       set({ isLoading: true });
       try {
-        const res = await axios.put(`${base_api}/api/posts/${id}/unlike`);
+        const res = await axios.put(
+          `${base_api}/api/posts/${id}/unlike`,
+          {},
+          {
+            headers: authHeader(),
+          }
+        );
       } catch (err) {
         set({ isError: true, isLoading: false });
       }
