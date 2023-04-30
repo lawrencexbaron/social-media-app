@@ -11,12 +11,26 @@ import {
 
 import { usePostStore } from "../../stores/postStore";
 
-const NewsFeed = ({ avatar, user, postId, author, date, content }) => {
+const NewsFeed = ({
+  avatar,
+  user,
+  postId,
+  author,
+  date,
+  content,
+  post,
+  likes,
+}) => {
   const [fullName, setFullName] = useState(
     `${user.firstname} ${user.lastname}`
   );
 
-  const { deletePost, getPosts } = usePostStore();
+  const { deletePost, getPosts, likePost, unlikePost } = usePostStore();
+
+  // add isLiked if author is on likes props
+  const [isLiked, setIsLiked] = useState(
+    likes && likes.includes(author._id) ? true : false
+  );
 
   const dropdownRef = useRef(null);
 
@@ -49,6 +63,26 @@ const NewsFeed = ({ avatar, user, postId, author, date, content }) => {
       // get the posts again
       await getPosts();
     }
+  };
+
+  // handleLike
+  const handleLike = async () => {
+    // like the post
+    await likePost(postId);
+    console.log("liked");
+
+    // set the isLiked to true
+    setIsLiked(true);
+  };
+
+  // handleUnlike
+  const handleUnlike = async () => {
+    // unlike the post
+    await unlikePost(postId);
+    console.log("unliked");
+
+    // set the isLiked to false
+    setIsLiked(false);
   };
 
   // check if user is object
@@ -164,8 +198,23 @@ const NewsFeed = ({ avatar, user, postId, author, date, content }) => {
               type="button"
               className="inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline"
             >
-              <BiLike className="mr-1 mt-1" />
-              Like
+              {isLiked ? (
+                <p
+                  className="flex my-auto justify-between"
+                  onClick={() => handleUnlike(postId)}
+                >
+                  <BiLike className="mr-1 mt-1 text-blue-500" />
+                  Liked
+                </p>
+              ) : (
+                <p
+                  className="flex my-auto justify-between"
+                  onClick={() => handleLike(postId)}
+                >
+                  <BiLike className="mr-1 mt-1" />
+                  Like
+                </p>
+              )}
             </Button>
             <Button
               type="button"

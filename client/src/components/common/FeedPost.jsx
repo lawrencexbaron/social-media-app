@@ -54,6 +54,7 @@ function FeedPost({ avatar, posts, user, profile }) {
               date={post.createdAt}
               comments={post.comments}
               postId={post._id}
+              post={post}
               user={post.user}
               author={user}
             />
