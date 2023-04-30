@@ -17,14 +17,9 @@ const PostSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    likes: [
-      {
-        user: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-      },
-    ],
+    // add likes for array of users id without reference to User model
+    likes: [],
+
     comments: [
       {
         user: {
