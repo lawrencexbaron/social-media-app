@@ -151,19 +151,21 @@ export const usePostStore = create((set) => {
         );
         set({ posts: res.data, isLoading: false });
       } catch (err) {
-        set({ isError: true, isLoading: false });
+        set({ isError: true });
       }
     },
 
     commentPost: async (id, content) => {
-      set({ isLoading: true });
+      // set({ isLoading: true });
       try {
-        const res = await axios.post(`${base_api}/api/posts/${id}/comment`, {
-          content,
-        });
+        const res = await axios.post(
+          `${base_api}/api/posts/${id}/comment`,
+          { text: content },
+          { headers: authHeader() }
+        );
         set({
           posts: posts.map((p) => (p._id === id ? res.data.data : p)),
-          isLoading: false,
+          // isLoading: false,
         });
       } catch (err) {
         set({ isError: true, isLoading: false });

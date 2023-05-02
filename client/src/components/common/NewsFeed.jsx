@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import Avatar from "./Avatar"; // Import the Avatar component
 import Button from "./Button"; // Import the Button component
+import TextInput from "./TextInput"; // Import the TextInput component
+import Label from "./Label"; // Import the Label component
+import { postAgo } from "../utils/api/timeUtils";
+import { useParams } from "react-router-dom";
+
 import {
   BiLike,
   BiComment,
@@ -25,12 +30,23 @@ const NewsFeed = ({
     `${user.firstname} ${user.lastname}`
   );
 
-  const { deletePost, getPosts, likePost, unlikePost } = usePostStore();
+  const [comment, setComment] = useState("");
+
+  const {
+    deletePost,
+    getPosts,
+    likePost,
+    unlikePost,
+    commentPost,
+    getProfilePosts,
+  } = usePostStore();
 
   // add isLiked if author is on likes props
   const [isLiked, setIsLiked] = useState(
-    likes && likes.includes(author._id) ? true : false
+    author && likes && likes.includes(author._id) ? true : false
   );
+
+  const { username } = useParams();
 
   const dropdownRef = useRef(null);
 
@@ -44,6 +60,9 @@ const NewsFeed = ({
     }
   };
 
+  // chcek if its on the profile page
+  const isProfile = window.location.pathname.includes("/profile");
+
   // handle click outside of dropdown
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -51,6 +70,41 @@ const NewsFeed = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   });
+
+  // handleComment
+  const handleComment = async () => {
+    // if comment is not empty
+    if (comment.length > 0) {
+      // comment the post
+      await commentPost(postId, comment);
+
+      if (isProfile) {
+        // get the profile posts again
+        await getProfilePosts(username);
+      } else {
+        // get the posts again
+        await getPosts();
+      }
+
+      // set the comment to empty
+      setComment("");
+    } else {
+      // alert the user to enter a comment
+      alert("Please enter a comment");
+    }
+  };
+
+  // handleKeyDown
+  const handleKeyDown = (e) => {
+    // if the key is enter
+    if (e.key === "Enter" || e.key === 13) {
+      // call the handleComment function
+      e.preventDefault();
+      handleComment();
+      setComment("");
+      console.log("commented");
+    }
+  };
 
   // handleDelete
   const handleDelete = async () => {
@@ -96,32 +150,6 @@ const NewsFeed = ({
   // add default if avatar is undefined
   avatar = avatar || "https://via.placeholder.com/150";
 
-  // Format date with posted ago time
-  const postedAgo = (date) => {
-    const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-    let interval = Math.floor(seconds / 31536000);
-    if (interval > 1) {
-      return `${interval} years ago`;
-    }
-    interval = Math.floor(seconds / 2592000);
-    if (interval > 1) {
-      return `${interval} months ago`;
-    }
-    interval = Math.floor(seconds / 86400);
-    if (interval > 1) {
-      return `${interval} days ago`;
-    }
-    interval = Math.floor(seconds / 3600);
-    if (interval > 1) {
-      return `${interval} hours ago`;
-    }
-    interval = Math.floor(seconds / 60);
-    if (interval > 1) {
-      return `${interval} minutes ago`;
-    }
-    return `${Math.floor(seconds)} seconds ago`;
-  };
-
   return (
     <div className="mt-2 bg-white rounded border-gray-200 border px-6 pt-6 pb-2 flex">
       <div className="flex flex-col w-full justify-start">
@@ -132,7 +160,7 @@ const NewsFeed = ({
               <h1 className="text-lg">{fullName}</h1>
               <p className="text-xs text-slate-500 flex my-auto">
                 <BiGlobe className="my-auto mr-1" />
-                {postedAgo(date)}
+                {postAgo(date)}
               </p>
             </div>
           </div>
@@ -230,6 +258,56 @@ const NewsFeed = ({
               <BiShare className="mr-1 mt-1" />
               Share
             </Button>
+          </div>
+        </div>
+        <div className="flex flex-col border-t items-center my-auto py-2 justify-between border-t-gray-200 w-full">
+          {post && post.comments.length > 0 ? (
+            <div className="w-full">
+              <p className="float-right text-xs cursor-pointer text-gray-600 font-semibold">
+                View more comments{" "}
+              </p>
+              {post.comments.slice(0, 5).map((comment, index) => (
+                <div key={index} className="flex w-full py-1 my-1">
+                  <Avatar avatar={avatar} size={10} />
+                  <div className="flex flex-col w-full">
+                    <div className="flex flex-col w-full">
+                      <Label className={`w-full font-semibold text-slate-800`}>
+                        {comment.user.firstname} {comment.user.lastname}
+                      </Label>
+                      <Label className={`w-full`}>{comment.text}</Label>
+                      <div className="flex w-full justify-start mt-2 space-x-4">
+                        <Label
+                          className={` text-slate-500 text-xs font-semibold cursor-pointer`}
+                        >
+                          Like
+                        </Label>
+                        <Label
+                          className={` text-slate-500 text-xs font-semibold cursor-pointer`}
+                        >
+                          Reply
+                        </Label>
+                        <Label
+                          className={` text-slate-500 text-xs font-semibold cursor-pointer`}
+                        >
+                          {postAgo(comment.date)}
+                        </Label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+          <div className="flex w-full">
+            <Avatar avatar={avatar} size={10} />
+            <TextInput
+              type="text"
+              onKeyDown={handleKeyDown}
+              onChange={(e) => setComment(e.target.value)}
+              value={comment}
+              placeholder="Write a comment..."
+              className="px-3 py-2 w-full border my-auto border-gray-200 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent"
+            />
           </div>
         </div>
       </div>
