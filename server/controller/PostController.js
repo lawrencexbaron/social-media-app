@@ -1,7 +1,10 @@
 const Post = require("../models/Post");
 const mongoose = require("mongoose");
 const User = require("../models/User");
-const { postValidation } = require("../utilities/Validation");
+const {
+  postValidation,
+  commentValidation,
+} = require("../utilities/Validation");
 const validateToken = require("../utilities/validateToken");
 
 // @route   GET api/posts
@@ -14,9 +17,10 @@ const getPosts = async (req, res) => {
     // add user's id to following array
     following.following.push(req.user.id);
 
-    // get all posts from users in following array
+    // get all posts from users in following array and user from comment
     const posts = await Post.find({ user: { $in: following.following } })
       .populate("user", ["profilePicture", "firstname", "lastname"])
+      .populate("comments.user", ["profilePicture", "firstname", "lastname"])
       .sort({
         createdAt: -1,
       });
@@ -181,10 +185,12 @@ const unlikePost = async (req, res) => {
 
 const commentPost = async (req, res) => {
   try {
-    const { user, content } = req.body;
+    const { text } = req.body;
+
+    const user = req.user.id;
     const post = await Post.findById(req.params.id);
 
-    // validate commnet
+    // validate comment
     const { error } = commentValidation(req.body);
     if (error) {
       const messages = error.details.map((detail) => detail.message);
@@ -193,15 +199,19 @@ const commentPost = async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
+
     const comment = {
-      user,
-      content,
+      user: user,
+      text: text,
     };
+
     post.comments.push(comment);
     await post.save();
+
     return res.status(200).json(post);
   } catch (err) {
     console.error(err.message);
+    console.log(err);
     return res.status(500).send("Server Error");
   }
 };
@@ -429,6 +439,7 @@ const getProfilePosts = async (req, res) => {
     // get all posts that belongs to the currentUser includes user profilePicture, firstname and lastname then sort by date
     const userPosts = await Post.find({ user: currentUser[0]._id })
       .populate("user", ["profilePicture", "firstname", "lastname"])
+      .populate("comments.user", ["profilePicture", "firstname", "lastname"])
       .sort({ createdAt: -1 });
 
     return res.status(200).json(userPosts);

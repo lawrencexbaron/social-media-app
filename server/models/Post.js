@@ -28,7 +28,7 @@ const PostSchema = new mongoose.Schema(
         },
         text: {
           type: String,
-          required: true,
+          // required: true,
           min: 1,
           max: 500,
         },
@@ -52,7 +52,7 @@ const PostSchema = new mongoose.Schema(
             },
             text: {
               type: String,
-              required: true,
+              // required: true,
               min: 1,
               max: 500,
             },

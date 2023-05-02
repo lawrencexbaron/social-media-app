@@ -55,7 +55,7 @@ router.put("/:id/unlike", validateToken, unlikePost);
 // @route   POST api/posts/:id/comment
 // @desc    Comment on a post
 // @access  Private
-router.post("/:id/comment", commentPost);
+router.post("/:id/comment", validateToken, commentPost);
 
 // @route   DELETE api/posts/:id/comment/:comment_id
 // @desc    Delete comment
@@ -65,7 +65,7 @@ router.delete("/:id/comment/:comment_id", deleteComment);
 // @route   PUT api/posts/:id/comment/:comment_id/like
 // @desc    Like a comment
 // @access  Private
-router.put("/:id/comment/:comment_id/like", likeComment);
+router.put("/:id/comment/:comment_id/like", validateToken, likeComment);
 
 // @route   PUT api/posts/:id/comment/:comment_id/unlike
 // @desc    Unlike a comment
