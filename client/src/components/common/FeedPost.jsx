@@ -24,7 +24,7 @@ function FeedPost({ avatar, posts, user, profile }) {
   return (
     <div className="sm:w-3/5 h-full sm:sticky mt-16 top-16">
       {!profile && (
-        <div className="bg-white mt-2 rounded px-6 py-5 border border-slate-200 overflow-y-auto flex space-x-2">
+        <div className="bg-white rounded px-6 py-5 border border-slate-200 overflow-y-auto flex space-x-2">
           <Avatar avatar={avatar} size={10} className={`my-auto`} />
           <TextInput
             type="text"
