@@ -35,14 +35,6 @@ function Profile() {
   };
 
   // if isLoading is true then set loading to true after 1.5 seconds using setTimeout
-  setTimeout(() => {
-    if (isLoading) {
-      setLoading(true);
-    }
-    setTimeout(() => {
-      setLoading(false);
-    }, 100);
-  }, 100);
 
   useEffect(() => {
     getUserByUsername(username);
@@ -53,15 +45,15 @@ function Profile() {
   const following = profile && profile.following ? profile.following.length : 0;
 
   // if isLoading is true, return loading with tailwindcss spinner vertically and horizontally centered
-  if (loading) {
-    return (
-      <Base>
-        <div className="flex justify-center items-center h-screen m-auto">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-        </div>
-      </Base>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <Base>
+  //       <div className="flex justify-center items-center h-screen m-auto">
+  //         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+  //       </div>
+  //     </Base>
+  //   );
+  // }
 
   // return loading if profile is empty
   if (!profile) return <div>Loading...</div>;
@@ -87,6 +79,7 @@ function Profile() {
             username={username}
             posts={posts}
             profile={true}
+            user={profile}
             avatar={profile.profilePicture}
           />
           <div className="sm:w-1/5 h-full sm:sticky sm:top-16 top-auto hidden md:block"></div>
