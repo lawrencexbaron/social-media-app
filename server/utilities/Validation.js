@@ -96,11 +96,10 @@ const postValidation = (data) => {
 
 const commentValidation = (data) => {
   const schema = Joi.object({
-    text: Joi.string().min(3).max(255).required().messages({
+    text: Joi.string().max(255).required().messages({
       "string.empty": `Comment is required`,
       "string.required": "Comment is required",
       "any.required": "Comment is required",
-      "string.min": `Comment should have a minimum length of {#limit}`,
     }),
   });
 
