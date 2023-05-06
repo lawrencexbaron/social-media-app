@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import axios from "axios";
 import produce from "immer";
 
@@ -184,7 +184,9 @@ export const useUserStore = create((set) => {
     updateUser: async (id, data) => {
       try {
         const res = await axios.put(`${base_api}/api/users/${id}`, data, {
-          headers: authHeader(),
+          headers: {
+            ...authHeader(),
+          },
         });
         set(
           produce((state) => {
