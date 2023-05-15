@@ -60,7 +60,7 @@ router.post("/:id/comment", validateToken, commentPost);
 // @route   DELETE api/posts/:id/comment/:comment_id
 // @desc    Delete comment
 // @access  Private
-router.delete("/:id/comment/:comment_id", deleteComment);
+router.delete("/:id/comment/:comment_id", validateToken, deleteComment);
 
 // @route   PUT api/posts/:id/comment/:comment_id/like
 // @desc    Like a comment
@@ -70,7 +70,7 @@ router.put("/:id/comment/:comment_id/like", validateToken, likeComment);
 // @route   PUT api/posts/:id/comment/:comment_id/unlike
 // @desc    Unlike a comment
 // @access  Private
-router.put("/:id/comment/:comment_id/unlike", unlikeComment);
+router.put("/:id/comment/:comment_id/unlike", validateToken, unlikeComment);
 
 // @route   GET api/posts/timeline/all
 // @desc    Get all posts from following users
