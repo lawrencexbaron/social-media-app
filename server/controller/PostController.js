@@ -161,6 +161,68 @@ const likePost = async (req, res) => {
   }
 };
 
+const likeComment = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const comment = post.comments.find(
+      (comment) => comment.id === req.params.comment_id
+    );
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment does not exist" });
+    }
+
+    // if post.comments.likes array includes user id, return error
+    if (comment.likes.indexOf(id) !== -1) {
+      return res.status(400).json({ message: "Comment already liked" });
+    }
+
+    comment.likes.push(id);
+    await post.save();
+
+    return res.status(200).json(comment);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send("Server Error");
+  }
+};
+
+const unlikeComment = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    const comment = post.comments.find(
+      (comment) => comment.id === req.params.comment_id
+    );
+    if (!comment) {
+      return res.status(404).json({ message: "Comment does not exist" });
+    }
+
+    if (comment.likes.indexOf(id) !== -1) {
+      // The id exists in the comment.likes array
+      comment.likes.pull(id);
+      await post.save();
+      return res.status(200).json(post);
+    } else {
+      // The id does not exist in the comment.likes array
+      return res
+        .status(400)
+        .json({ message: "Comment has not yet been liked" });
+    }
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send("Server Error");
+  }
+};
+
 const unlikePost = async (req, res) => {
   try {
     const { id } = req.user;
@@ -218,7 +280,10 @@ const commentPost = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   try {
-    const { user } = req.body;
+    console.log(req.user);
+    console.log(req.body);
+    const { id } = req.user;
+
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -229,62 +294,12 @@ const deleteComment = async (req, res) => {
     if (!comment) {
       return res.status(404).json({ message: "Comment does not exist" });
     }
-    if (comment.user != user) {
+    // check if user is authorized to delete post
+    if (post.user._id.toString() !== id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
+
     post.comments.pull(comment.id);
-    await post.save();
-    return res.status(200).json(post);
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).send("Server Error");
-  }
-};
-
-const likeComment = async (req, res) => {
-  try {
-    const { user } = req.body;
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-    const comment = post.comments.find(
-      (comment) => comment.id === req.params.comment_id
-    );
-    if (!comment) {
-      return res.status(404).json({ message: "Comment does not exist" });
-    }
-    if (comment.likes.includes(user)) {
-      return res.status(400).json({ message: "Comment already liked" });
-    }
-    comment.likes.push(user);
-    await post.save();
-    return res.status(200).json(post);
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).send("Server Error");
-  }
-};
-
-const unlikeComment = async (req, res) => {
-  try {
-    const { user } = req.body;
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-    const comment = post.comments.find(
-      (comment) => comment.id === req.params.comment_id
-    );
-    if (!comment) {
-      return res.status(404).json({ message: "Comment does not exist" });
-    }
-    if (!comment.likes.includes(user)) {
-      return res
-        .status(400)
-        .json({ message: "Comment has not yet been liked" });
-    }
-    comment.likes.pull(user);
     await post.save();
     return res.status(200).json(post);
   } catch (err) {
