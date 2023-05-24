@@ -155,6 +155,23 @@ export const usePostStore = create((set) => {
       }
     },
 
+    deleteComment: async (id, commentId) => {
+      console.log(id, commentId);
+      set({ isLoading: true });
+      try {
+        const res = await axios.delete(
+          `${base_api}/api/posts/${id}/comment/${commentId}`,
+          { headers: authHeader() }
+        );
+        set({
+          posts: posts.map((p) => (p._id === id ? res.data.data : p)),
+          isLoading: false,
+        });
+      } catch (err) {
+        set({ isError: true, isLoading: false });
+      }
+    },
+
     commentPost: async (id, content) => {
       // set({ isLoading: true });
       try {
@@ -172,26 +189,13 @@ export const usePostStore = create((set) => {
       }
     },
 
-    deleteComment: async (id, commentId) => {
-      set({ isLoading: true });
-      try {
-        const res = await axios.delete(
-          `${base_api}/api/posts/${id}/comment/${commentId}`
-        );
-        set({
-          posts: posts.map((p) => (p._id === id ? res.data.data : p)),
-          isLoading: false,
-        });
-      } catch (err) {
-        set({ isError: true, isLoading: false });
-      }
-    },
-
     likeComment: async (id, commentId) => {
       set({ isLoading: true });
       try {
         const res = await axios.put(
-          `${base_api}/api/posts/${id}/comment/${commentId}/like`
+          `${base_api}/api/posts/${id}/comment/${commentId}/like`,
+          {},
+          { headers: authHeader() }
         );
         set({
           posts: posts.map((p) => (p._id === id ? res.data.data : p)),
@@ -206,7 +210,9 @@ export const usePostStore = create((set) => {
       set({ isLoading: true });
       try {
         const res = await axios.put(
-          `${base_api}/api/posts/${id}/comment/${commentId}/unlike`
+          `${base_api}/api/posts/${id}/comment/${commentId}/unlike`,
+          {},
+          { headers: authHeader() }
         );
         set({
           posts: posts.map((p) => (p._id === id ? res.data.data : p)),
