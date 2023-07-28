@@ -25,6 +25,8 @@ const NewsFeed = ({
   content,
   post,
   likes,
+  comments,
+  commentsLikes,
 }) => {
   const [fullName, setFullName] = useState(
     `${user.firstname} ${user.lastname}`
@@ -39,11 +41,21 @@ const NewsFeed = ({
     unlikePost,
     commentPost,
     getProfilePosts,
+    deleteComment,
+    unlikeComment,
+    likeComment,
   } = usePostStore();
 
   // add isLiked if author is on likes props
   const [isLiked, setIsLiked] = useState(
     author && likes && likes.includes(author._id) ? true : false
+  );
+
+  // isLiked but for comment
+  const [isCommentLiked, setIsCommentLiked] = useState(
+    author && comments.likes && commentsLikes.includes(author._id)
+      ? true
+      : false
   );
 
   const { username } = useParams();
@@ -71,13 +83,20 @@ const NewsFeed = ({
     };
   });
 
+  useEffect(() => {
+    // get the initial isLiked state from local storage
+    const storedIsCommentLiked = localStorage.getItem("isCommentLiked");
+    if (storedIsCommentLiked) {
+      setIsCommentLiked(JSON.parse(storedIsCommentLiked));
+    }
+  }, []);
+
   // handleComment
   const handleComment = async () => {
     // if comment is not empty
     if (comment.length > 0) {
       // comment the post
       await commentPost(postId, comment);
-
       if (isProfile) {
         // get the profile posts again
         await getProfilePosts(username);
@@ -85,7 +104,6 @@ const NewsFeed = ({
         // get the posts again
         await getPosts();
       }
-
       // set the comment to empty
       setComment("");
     } else {
@@ -113,16 +131,53 @@ const NewsFeed = ({
     if (confirm("Are you sure you want to delete this post?")) {
       // delete the post
       await deletePost(postId);
-
       // get the posts again
       await getPosts();
     }
   };
 
+  const handleLikeComment = async (commentId) => {
+    // like the comment
+    await likeComment(postId, commentId);
+    console.log("liked");
+
+    // update the isCommentLiked state and store it in local storage
+    setIsCommentLiked((prevIsCommentLiked) => {
+      const updatedIsCommentLiked = {
+        ...prevIsCommentLiked,
+        [commentId]: true,
+      };
+      localStorage.setItem(
+        "isCommentLiked",
+        JSON.stringify(updatedIsCommentLiked)
+      );
+      return updatedIsCommentLiked;
+    });
+  };
+
+  const handleUnlikeComment = async (commentId) => {
+    // unlike the comment
+    await unlikeComment(postId, commentId);
+    console.log("unliked");
+
+    // update the isCommentLiked state and store it in local storage
+    setIsCommentLiked((prevIsCommentLiked) => {
+      const updatedIsCommentLiked = {
+        ...prevIsCommentLiked,
+        [commentId]: false,
+      };
+      localStorage.setItem(
+        "isCommentLiked",
+        JSON.stringify(updatedIsCommentLiked)
+      );
+      return updatedIsCommentLiked;
+    });
+  };
   // handleLike
   const handleLike = async () => {
     // like the post
     await likePost(postId);
+    console.log(postId);
     console.log("liked");
 
     // set the isLiked to true
@@ -134,9 +189,28 @@ const NewsFeed = ({
     // unlike the post
     await unlikePost(postId);
     console.log("unliked");
-
     // set the isLiked to false
     setIsLiked(false);
+  };
+
+  // handleDeleteComment
+  const handleDeleteComment = async (commentId) => {
+    console.log(commentId);
+    console.log(postId);
+    // are you sure you want to delete this comment?
+    // if yes, delete the comment
+    if (confirm("Are you sure you want to delete this comment?")) {
+      // delete the comment
+      await deleteComment(postId, commentId);
+
+      // get the posts again
+      await getPosts();
+
+      if (isProfile) {
+        // get the profile posts again
+        await getProfilePosts(username);
+      }
+    }
   };
 
   // check if user is object
@@ -151,23 +225,23 @@ const NewsFeed = ({
   avatar = avatar || "https://via.placeholder.com/150";
 
   return (
-    <div className="mt-2 bg-white rounded border-gray-200 border px-6 pt-6 pb-2 flex">
-      <div className="flex flex-col w-full justify-start">
-        <div className="flex justify-between">
-          <div className="flex justify-start">
+    <div className='mt-2 bg-white rounded border-gray-200 border px-6 pt-6 pb-2 flex'>
+      <div className='flex flex-col w-full justify-start'>
+        <div className='flex justify-between'>
+          <div className='flex justify-start'>
             <Avatar avatar={avatar} size={10} />
-            <div className="ml-2">
-              <h1 className="text-lg">{fullName}</h1>
-              <p className="text-xs text-slate-500 flex my-auto">
-                <BiGlobe className="my-auto mr-1" />
+            <div className='ml-2'>
+              <h1 className='text-lg'>{fullName}</h1>
+              <p className='text-xs text-slate-500 flex my-auto'>
+                <BiGlobe className='my-auto mr-1' />
                 {postAgo(date)}
               </p>
             </div>
           </div>
-          <div onClick={handleClickOutside} className="flex justify-end">
+          <div onClick={handleClickOutside} className='flex justify-end'>
             {author && author._id === user._id ? (
               <BiDotsVerticalRounded
-                className="my-auto cursor-pointer relative"
+                className='my-auto cursor-pointer relative'
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               />
             ) : null}
@@ -176,37 +250,37 @@ const NewsFeed = ({
             {dropdownOpen ? (
               <div
                 ref={dropdownRef}
-                className="absolute right-0 mt-10 py-2 w-48 bg-white border rounded-md shadow-xl z-10"
+                className='absolute right-0 mt-10 py-2 w-48 bg-white border rounded-md shadow-xl z-10'
               >
                 <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  role="menuitem"
+                  href='#'
+                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                  role='menuitem'
                   onClick={() => handleDelete()}
                 >
                   Delete
                 </a>
 
                 <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  role="menuitem"
+                  href='#'
+                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                  role='menuitem'
                 >
                   Edit
                 </a>
 
                 <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  role="menuitem"
+                  href='#'
+                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                  role='menuitem'
                 >
                   Report
                 </a>
 
                 <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  role="menuitem"
+                  href='#'
+                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                  role='menuitem'
                 >
                   Turn off notifications
                 </a>
@@ -215,76 +289,94 @@ const NewsFeed = ({
           </div>
         </div>
 
-        <div className="mt-2 border border-t-gray-100 w-full"></div>
-        <div className="py-8">
-          <p className="text-gray-700">{content}</p>
+        <div className='mt-2 border border-t-gray-100 w-full'></div>
+        <div className='py-8'>
+          <p className='text-gray-700'>{content}</p>
         </div>
-        <div className="mt-2 border border-t-gray-100 w-full"></div>
-        <div className="flex justify-between py-2">
-          <div className="flex space-x-2 justify-around mx-auto w-full">
+        <div className='mt-2 border border-t-gray-100 w-full'></div>
+        <div className='flex justify-between py-2'>
+          <div className='flex space-x-2 justify-around mx-auto w-full'>
             <Button
-              type="button"
-              className="inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline"
+              type='button'
+              className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
             >
               {isLiked ? (
                 <p
-                  className="flex my-auto justify-between"
+                  className='flex my-auto justify-between'
                   onClick={() => handleUnlike(postId)}
                 >
-                  <BiLike className="mr-1 mt-1 text-blue-500" />
+                  <BiLike className='mr-1 mt-1 text-blue-500' />
                   Liked
                 </p>
               ) : (
                 <p
-                  className="flex my-auto justify-between"
+                  className='flex my-auto justify-between'
                   onClick={() => handleLike(postId)}
                 >
-                  <BiLike className="mr-1 mt-1" />
+                  <BiLike className='mr-1 mt-1' />
                   Like
                 </p>
               )}
             </Button>
             <Button
-              type="button"
-              className="inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline"
+              type='button'
+              className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
             >
-              <BiComment className="mr-1 mt-1" />
+              <BiComment className='mr-1 mt-1' />
               Comment
             </Button>
             <Button
-              type="button"
-              className="inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline"
+              type='button'
+              className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
             >
-              <BiShare className="mr-1 mt-1" />
+              <BiShare className='mr-1 mt-1' />
               Share
             </Button>
           </div>
         </div>
-        <div className="flex flex-col border-t items-center my-auto py-2 justify-between border-t-gray-200 w-full">
+        <div className='flex flex-col border-t items-center my-auto py-2 justify-between border-t-gray-200 w-full'>
           {post && post.comments.length > 0 ? (
-            <div className="w-full">
-              <p className="float-right text-xs cursor-pointer text-gray-600 font-semibold">
-                View more comments{" "}
-              </p>
+            <div className='w-full'>
+              {post.comments.length > 5 ? (
+                <p className='float-right text-xs cursor-pointer text-gray-600 font-semibold'>
+                  View more comments{" "}
+                </p>
+              ) : null}
+
               {post.comments.slice(0, 5).map((comment, index) => (
-                <div key={index} className="flex w-full py-1 my-1">
+                <div key={index} className='flex w-full py-1 my-1'>
                   <Avatar avatar={avatar} size={10} />
-                  <div className="flex flex-col w-full">
-                    <div className="flex flex-col w-full">
+                  <div className='flex w-full justify-between'>
+                    <div className='flex flex-col w-full'>
                       <Label className={`w-full font-semibold text-slate-800`}>
                         {comment.user.firstname} {comment.user.lastname}
                       </Label>
                       <Label className={`w-full`}>{comment.text}</Label>
-                      <div className="flex w-full justify-start mt-2 space-x-4">
+                      <div className='flex w-full justify-start mt-2 space-x-4'>
                         <Label
-                          className={` text-slate-500 text-xs font-semibold cursor-pointer`}
+                          className={`text-slate-500 text-xs font-semibold cursor-pointer`}
                         >
-                          Like
+                          <p
+                            onClick={() =>
+                              isCommentLiked[comment._id]
+                                ? handleUnlikeComment(comment._id)
+                                : handleLikeComment(comment._id)
+                            }
+                          >
+                            {isCommentLiked[comment._id] ? "Unlike" : "Like"}
+                          </p>
                         </Label>
                         <Label
                           className={` text-slate-500 text-xs font-semibold cursor-pointer`}
                         >
                           Reply
+                        </Label>
+                        <Label
+                          className={` text-slate-500 text-xs font-semibold cursor-pointer`}
+                        >
+                          <p onClick={() => handleDeleteComment(comment._id)}>
+                            Delete
+                          </p>
                         </Label>
                         <Label
                           className={` text-slate-500 text-xs font-semibold cursor-pointer`}
@@ -298,15 +390,15 @@ const NewsFeed = ({
               ))}
             </div>
           ) : null}
-          <div className="flex w-full">
+          <div className='flex w-full'>
             <Avatar avatar={avatar} size={10} />
             <TextInput
-              type="text"
+              type='text'
               onKeyDown={handleKeyDown}
               onChange={(e) => setComment(e.target.value)}
               value={comment}
-              placeholder="Write a comment..."
-              className="px-3 py-2 w-full border my-auto border-gray-200 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent"
+              placeholder='Write a comment...'
+              className='px-3 py-2 w-full border my-auto border-gray-200 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent'
             />
           </div>
         </div>
