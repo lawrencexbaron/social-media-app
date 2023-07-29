@@ -294,9 +294,11 @@ const deleteComment = async (req, res) => {
     if (!comment) {
       return res.status(404).json({ message: "Comment does not exist" });
     }
-    // check if user is authorized to delete post
-    if (post.user._id.toString() !== id) {
-      return res.status(401).json({ message: "Unauthorized" });
+
+    if (comment.user.toString() !== id) {
+      if (post.user.toString() !== id) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
     }
 
     post.comments.pull(comment.id);
@@ -353,7 +355,7 @@ const deleteCommentComment = async (req, res) => {
     if (!commentComment) {
       return res.status(404).json({ message: "Comment does not exist" });
     }
-    if (commentComment.user != user) {
+    if (commentComment.user != user && post.user != user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     comment.comments.pull(commentComment.id);
