@@ -61,7 +61,7 @@ function Profile() {
   return (
     <>
       <Base>
-        <div className="transition duration-150 ease-out sm:flex justify-start space-y-2 sm:space-y-0 sm:space-x-2">
+        <div className='transition duration-150 ease-out sm:flex justify-start space-y-2 sm:space-y-0 sm:space-x-2 mt-2'>
           <ProfileCard
             // {followingModal()}
             // {followersModal()}
@@ -82,7 +82,7 @@ function Profile() {
             user={profile}
             avatar={profile.profilePicture}
           />
-          <div className="sm:w-1/5 h-full sm:sticky sm:top-16 top-auto hidden md:block"></div>
+          <div className='sm:w-1/5 h-full sm:sticky sm:top-16 top-auto hidden md:block'></div>
         </div>
       </Base>
     </>
