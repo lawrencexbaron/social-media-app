@@ -73,31 +73,31 @@ function Feed() {
       <Modal
         isOpen={followingModalOpen}
         onClose={handleFollowingModal}
-        title="Following"
+        title='Following'
       >
         {following && following.length ? (
-          <div className="flex flex-col justify-between w-full overflow-y-auto h-full">
+          <div className='flex flex-col justify-between w-full overflow-y-auto h-full'>
             {following.map((follow) => {
               const name = `${follow.firstname} ${follow.lastname}`;
               return (
-                <div className="flex mt-2 w-full" key={follow._id}>
+                <div className='flex mt-2 w-full' key={follow._id}>
                   <Avatar
                     avatar={follow.profilePicture}
                     size={10}
-                    className="rounded-full mx-auto my-auto"
+                    className='rounded-full mx-auto my-auto'
                   />
-                  <div className="flex justify-between w-full">
-                    <div className="flex flex-col sm:pl-2">
-                      <h3 className="text-sm font-semibold inline-block my-auto overflow-hidden whitespace-nowrap max-w-xs">
+                  <div className='flex justify-between w-full'>
+                    <div className='flex flex-col sm:pl-2'>
+                      <h3 className='text-sm font-semibold inline-block my-auto overflow-hidden whitespace-nowrap max-w-xs'>
                         {name.length > 20 ? name.slice(0, 20) + "..." : name}
                       </h3>
-                      <p className="text-xs text-slate-700 font-semibold">
+                      <p className='text-xs text-slate-700 font-semibold'>
                         {follow.email}
                       </p>
                     </div>
-                    <div className="flex flex-col sm:pl-2 my-auto">
+                    <div className='flex flex-col sm:pl-2 my-auto'>
                       <button
-                        className="text-xs text-slate-700 font-semibold"
+                        className='text-xs text-slate-700 font-semibold'
                         onClick={() => handleUnfollow(follow._id)}
                       >
                         Unfollow
@@ -109,8 +109,8 @@ function Feed() {
             })}
           </div>
         ) : (
-          <div className="flex justify-center">
-            <p className="text-sm text-slate-700 font-semibold">No following</p>
+          <div className='flex justify-center'>
+            <p className='text-sm text-slate-700 font-semibold'>No following</p>
           </div>
         )}
       </Modal>
@@ -122,39 +122,39 @@ function Feed() {
       <Modal
         isOpen={followersModalOpen}
         onClose={handleFollowersModal}
-        title="Followers"
+        title='Followers'
       >
         {followers && followers.length ? (
-          <div className="flex flex-col justify-between w-full overflow-y-auto h-full">
+          <div className='flex flex-col justify-between w-full overflow-y-auto h-full'>
             {followers.map((follow) => {
               const name = `${follow.firstname} ${follow.lastname}`;
               return (
-                <div className="flex mt-2 w-full" key={follow._id}>
+                <div className='flex mt-2 w-full' key={follow._id}>
                   <Avatar
                     avatar={follow.profilePicture}
                     size={10}
-                    className="rounded-full mx-auto my-auto"
+                    className='rounded-full mx-auto my-auto'
                   />
-                  <div className="flex justify-between w-full">
-                    <div className="flex flex-col sm:pl-2">
-                      <h3 className="text-sm font-semibold inline-block my-auto overflow-hidden whitespace-nowrap max-w-xs">
+                  <div className='flex justify-between w-full'>
+                    <div className='flex flex-col sm:pl-2'>
+                      <h3 className='text-sm font-semibold inline-block my-auto overflow-hidden whitespace-nowrap max-w-xs'>
                         {name.length > 20 ? name.slice(0, 20) + "..." : name}
                       </h3>
-                      <p className="text-xs text-slate-700 font-semibold">
+                      <p className='text-xs text-slate-700 font-semibold'>
                         {follow.email}
                       </p>
                     </div>
-                    <div className="flex flex-col sm:pl-2 my-auto">
+                    <div className='flex flex-col sm:pl-2 my-auto'>
                       {follow.followers.includes(user._id) ? (
                         <button
-                          className="text-xs text-slate-700 font-semibold"
+                          className='text-xs text-slate-700 font-semibold'
                           onClick={() => handleUnfollow(follow._id)}
                         >
                           Unfollow
                         </button>
                       ) : (
                         <button
-                          className="text-xs text-slate-700 font-semibold"
+                          className='text-xs text-slate-700 font-semibold'
                           onClick={() => handleFollow(follow._id)}
                         >
                           Follow
@@ -167,8 +167,8 @@ function Feed() {
             })}
           </div>
         ) : (
-          <div className="flex justify-center">
-            <p className="text-sm text-slate-700 font-semibold">No followers</p>
+          <div className='flex justify-center'>
+            <p className='text-sm text-slate-700 font-semibold'>No followers</p>
           </div>
         )}
       </Modal>
@@ -178,7 +178,7 @@ function Feed() {
     <Base>
       {followingModal()}
       {followersModal()}
-      <div className="sm:flex justify-center space-y-2 sm:space-y-0 sm:space-x-2">
+      <div className='sm:flex justify-center space-y-2 sm:space-y-0 sm:space-x-2'>
         <ProfileCard
           handleModal={handleModal}
           openFollowingModal={handleFollowingModal}
@@ -191,8 +191,8 @@ function Feed() {
           following={user.following.length || 0}
         />
         <FeedPost posts={posts} user={user} avatar={user.profilePicture} />
-        <div className="sm:w-1/5 h-full sm:sticky sm:top-16 top-auto hidden md:block">
-          <div className="bg-white rounded px-5 py-6 border border-slate-200">
+        <div className='sm:w-1/5 h-full sm:sticky sm:top-16 top-auto hidden md:block'>
+          <div className='bg-white rounded px-5 py-6 border border-slate-200 mt-2'>
             {users &&
               users.map((mappedUser) => {
                 if (mappedUser._id === user._id) {
@@ -200,33 +200,33 @@ function Feed() {
                   return null;
                 }
                 return (
-                  <div className="flex mt-2" key={mappedUser._id}>
+                  <div className='flex mt-2' key={mappedUser._id}>
                     <Avatar
                       avatar={mappedUser.profilePicture}
                       size={10}
-                      className="rounded-full mx-auto my-auto"
+                      className='rounded-full mx-auto my-auto'
                     />
-                    <div className="flex justify-around w-full">
+                    <div className='flex justify-around w-full'>
                       <Link
                         to={`/profile/${mappedUser.username}`}
-                        className="text-sm font-semibold inline-block mx-auto my-auto"
+                        className='text-sm font-semibold inline-block mx-auto my-auto'
                       >
                         {`${mappedUser.firstname} ${mappedUser.lastname}`}
                       </Link>
-                      <h3 className="text-sm font-semibold inline-block mx-auto my-auto"></h3>
+                      <h3 className='text-sm font-semibold inline-block mx-auto my-auto'></h3>
                       {user.following.includes(mappedUser._id) ? (
                         <p
-                          className="text-left text-xs my-auto mx-auto text-slate-700 font-semibold cursor-pointer"
+                          className='text-left text-xs my-auto mx-auto text-slate-700 font-semibold cursor-pointer'
                           onClick={() => handleUnfollow(mappedUser._id)}
                         >
-                          <span className="mx-auto">Unfollow</span>
+                          <span className='mx-auto'>Unfollow</span>
                         </p>
                       ) : (
                         <p
-                          className="text-left text-xs my-auto mx-auto text-slate-700 font-semibold cursor-pointer"
+                          className='text-left text-xs my-auto mx-auto text-slate-700 font-semibold cursor-pointer'
                           onClick={() => handleFollow(mappedUser._id)}
                         >
-                          <span className="mx-auto">Follow</span>
+                          <span className='mx-auto'>Follow</span>
                         </p>
                       )}
                     </div>
