@@ -8,7 +8,9 @@ const {
   unfollowUser,
   getUserByUsername,
   getFollowers,
-} = require("../controller/userController");
+  changeProfilePicture,
+} = require("../controller/UserController");
+
 const router = express.Router();
 const validateToken = require("../utilities/validateToken");
 
@@ -51,5 +53,10 @@ router.get("/:id/followers", getFollowers);
 // @desc    Get user by username
 // @access  Public
 router.get("/username/:username", getUserByUsername);
+
+// @route   PUT api/users/:id/profilePicture
+// @desc    Change profile picture
+// @access  Private
+router.put("/:id/profilePicture", changeProfilePicture);
 
 module.exports = router;
