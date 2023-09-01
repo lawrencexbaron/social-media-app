@@ -1,5 +1,20 @@
 const User = require("../models/User");
 const mongoose = require("mongoose");
+const cloudinary = require("cloudinary").v2;
+const dotenv = require("dotenv").config();
+
+const multer = require("multer");
+
+// import dotenv from "dotenv";
+
+// dotenv.config();
+
+// cloudinary config
+const cloud = cloudinary.config({
+  cloud_name: dotenv.parsed.CLOUDINARY_CLOUD_NAME,
+  api_key: dotenv.parsed.CLOUDINARY_API_KEY,
+  api_secret: dotenv.parsed.CLOUDINARY_API_SECRET,
+});
 
 // @route   GET api/users
 // @desc    Get all users
@@ -199,7 +214,7 @@ const followUser = async (req, res) => {
 
 const changeProfilePicture = async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id } = req.params;
 
     // check if user exist
     const user = await User.findById(id);
@@ -220,13 +235,22 @@ const changeProfilePicture = async (req, res) => {
 
     // handle upload profile picture
     if (req.file) {
-      const profilePicture = req.file.path;
+      const filePath = req.file.path;
+
+      const uploadResponse = await cloudinary.uploader.upload(filePath, {
+        folder: "profile-pictures",
+      });
+
+      const profilePicture = uploadResponse.secure_url;
+
       await user.updateOne({ $set: { profilePicture } });
       await user.save();
+
       return res.status(200).json({ message: "Profile picture updated" });
     }
   } catch (err) {
     console.log(err);
+    return res.status(500).send({ message: "Server Error", error: err });
   }
 };
 

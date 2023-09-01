@@ -11,6 +11,9 @@ const {
   changeProfilePicture,
 } = require("../controller/UserController");
 
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+
 const router = express.Router();
 const validateToken = require("../utilities/validateToken");
 
@@ -57,6 +60,11 @@ router.get("/username/:username", getUserByUsername);
 // @route   PUT api/users/:id/profile-picture
 // @desc    Change profile picture
 // @access  Private
-router.put("/:id/profile-picture", validateToken, changeProfilePicture);
+router.put(
+  "/:id/profile-picture",
+  upload.single("profilePicture"),
+  validateToken,
+  changeProfilePicture
+);
 
 module.exports = router;
