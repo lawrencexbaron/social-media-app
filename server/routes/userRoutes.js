@@ -54,9 +54,9 @@ router.get("/:id/followers", getFollowers);
 // @access  Public
 router.get("/username/:username", getUserByUsername);
 
-// @route   PUT api/users/:id/profilePicture
+// @route   PUT api/users/:id/profile-picture
 // @desc    Change profile picture
 // @access  Private
-router.put("/:id/profilePicture", changeProfilePicture);
+router.put("/:id/profile-picture", validateToken, changeProfilePicture);
 
 module.exports = router;
