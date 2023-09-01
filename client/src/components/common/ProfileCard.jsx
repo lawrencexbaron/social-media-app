@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useUserStore } from "../../stores/userStore";
 
 function ProfileCard({
   avatar,
@@ -13,7 +14,9 @@ function ProfileCard({
   const [image, setImage] = useState(null);
   const [ImagePreview, setImagePreview] = useState("");
 
-  const handleImageChange = (e) => {
+  const { changeProfilePicture } = useUserStore();
+
+  const handleImageChange = async (e) => {
     e.preventDefault();
 
     const reader = new FileReader();
@@ -26,7 +29,8 @@ function ProfileCard({
 
     if (file) {
       reader.readAsDataURL(file);
-      console.log(file);
+      console.log(userId);
+      await changeProfilePicture(userId, file);
     }
   };
 
