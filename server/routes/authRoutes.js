@@ -3,7 +3,8 @@ const {
   loginUser,
   registerUser,
   refreshToken,
-} = require("../controller/authController");
+} = require("../controller/AuthController");
+
 const router = express.Router();
 
 // @route   GET api/auth/login

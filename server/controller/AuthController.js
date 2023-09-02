@@ -11,7 +11,9 @@ const {
 // refresh token
 const refreshToken = async (req, res) => {
   try {
-    const { token } = req.body;
+    // get token from authorization header
+    const token = req.headers["authorization"].split(" ")[1];
+
     if (!token) {
       return res.status(401).send({ message: "Unauthorized" });
     }
@@ -36,6 +38,8 @@ const refreshToken = async (req, res) => {
       }
     );
 
+    // remove password from user object
+    user.password = undefined;
     user.token = newToken;
 
     return res
