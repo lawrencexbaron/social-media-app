@@ -115,6 +115,39 @@ export const useAuthStore = create(
         }
       },
 
+      refreshToken: async () => {
+        try {
+          const res = await axios.post(
+            `${base_api}/api/auth/refresh`,
+            {},
+            {
+              headers: authHeader(),
+            }
+          );
+          set(
+            produce((state) => {
+              state.user = res.data.data;
+              state.success = true;
+              state.isAuth = true;
+              state.error = null;
+            })
+          );
+          // delete localstorage user and token then set new one
+          localStorage.removeItem("user");
+          localStorage.removeItem("token");
+          localStorage.setItem("user", JSON.stringify(res.data.data));
+          localStorage.setItem("token", res.data.token);
+        } catch (error) {
+          set(
+            produce((state) => {
+              state.error = error.response.data;
+              state.success = false;
+              state.isAuth = false;
+            })
+          );
+        }
+      },
+
       logout: () => {
         localStorage.removeItem("user");
         localStorage.removeItem("token");

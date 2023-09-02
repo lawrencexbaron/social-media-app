@@ -55,6 +55,42 @@ export const useUserStore = create((set) => {
       }
     },
 
+    changeProfilePicture: async (id, data) => {
+      const formData = new FormData();
+      formData.append("profilePicture", data);
+
+      try {
+        const res = await axios.put(
+          `${base_api}/api/users/${id}/profile-picture`,
+          formData,
+          {
+            headers: {
+              ...authHeader(),
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        set(
+          produce((state) => {
+            state.user = res.data.data; // Make sure the server returns the updated user data here
+            state.error = null;
+            state.success = true; // Setting success to true
+          })
+        );
+      } catch (error) {
+        console.error("Error updating profile picture:", error); // Logging the error
+        set(
+          produce((state) => {
+            state.error = error.response
+              ? error.response.data
+              : "An error occurred";
+            state.success = false;
+          })
+        );
+      }
+    },
+
     getFollowers: async (id) => {
       try {
         const res = await axios.get(`${base_api}/api/users/${id}/followers`, {
