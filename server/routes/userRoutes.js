@@ -9,6 +9,7 @@ const {
   getUserByUsername,
   getFollowers,
   changeProfilePicture,
+  changeCoverPicture,
 } = require("../controller/UserController");
 
 const multer = require("multer");
@@ -65,6 +66,16 @@ router.put(
   upload.single("profilePicture"),
   validateToken,
   changeProfilePicture
+);
+
+// @route   PUT api/users/:id/cover-picture
+// @desc    Change cover picture
+// @access  Private
+router.put(
+  "/:id/cover-picture",
+  upload.single("coverPicture"),
+  validateToken,
+  changeCoverPicture
 );
 
 module.exports = router;

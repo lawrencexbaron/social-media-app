@@ -212,6 +212,49 @@ const followUser = async (req, res) => {
   }
 };
 
+const changeCoverPicture = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // check if user exist
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // check if user is authorized to follow
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // check if user is authorized to change cover picture
+    if (user._id.toString() !== req.user.id) {
+      return res
+        .status(401)
+        .json({ message: "You cannot change this user's cover picture" });
+    }
+
+    // handle upload cover picture
+    if (req.file) {
+      const filePath = req.file.path;
+
+      const uploadResponse = await cloudinary.uploader.upload(filePath, {
+        folder: "cover-pictures",
+      });
+
+      const coverPicture = uploadResponse.secure_url;
+
+      await user.updateOne({ $set: { coverPicture } });
+      await user.save();
+
+      return res.status(200).json({ message: "Cover picture updated" });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(500).send({ message: "Server Error", error: err });
+  }
+};
+
 const changeProfilePicture = async (req, res) => {
   try {
     const { id } = req.params;
@@ -300,4 +343,5 @@ module.exports = {
   unfollowUser,
   getUserByUsername,
   changeProfilePicture,
+  changeCoverPicture,
 };
