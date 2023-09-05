@@ -55,7 +55,7 @@ function ProfileCard({
             className='absolute -top-10 left-1/2 transform -translate-x-1/2 w-24 h-24 rounded-full overflow-hidden border-4 border-white'
           >
             <img
-              className='w-full h-full object-cover'
+              className='w-full hover:cursor-pointer h-full object-cover'
               src={ImagePreview ? ImagePreview : avatar}
               alt='Avatar'
             />
