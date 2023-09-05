@@ -55,6 +55,42 @@ export const useUserStore = create((set) => {
       }
     },
 
+    changeCoverPhoto: async (id, data) => {
+      const formData = new FormData();
+      formData.append("coverPicture", data);
+
+      try {
+        const res = await axios.put(
+          `${base_api}/api/users/${id}/cover-picture`,
+          formData,
+          {
+            headers: {
+              ...authHeader(),
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        set(
+          produce((state) => {
+            state.user = res.data.data; // Make sure the server returns the updated user data here
+            state.error = null;
+            state.success = true; // Setting success to true
+          })
+        );
+      } catch (error) {
+        console.error("Error updating cover photo:", error); // Logging the error
+        set(
+          produce((state) => {
+            state.error = error.response
+              ? error.response.data
+              : "An error occurred";
+            state.success = false;
+          })
+        );
+      }
+    },
+
     changeProfilePicture: async (id, data) => {
       const formData = new FormData();
       formData.append("profilePicture", data);

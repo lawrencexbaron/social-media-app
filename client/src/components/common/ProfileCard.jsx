@@ -15,7 +15,10 @@ function ProfileCard({
   const [image, setImage] = useState(null);
   const [ImagePreview, setImagePreview] = useState("");
 
-  const { changeProfilePicture } = useUserStore();
+  const [coverImage, setCoverImage] = useState(null);
+  const [coverImagePreview, setCoverImagePreview] = useState("");
+
+  const { changeProfilePicture, changeCoverPhoto } = useUserStore();
   const { refreshToken } = useAuthStore();
 
   const handleImageChange = async (e) => {
@@ -42,13 +45,48 @@ function ProfileCard({
     document.getElementById("fileInput").click();
   };
 
+  const handleCoverImageChange = async (e) => {
+    e.preventDefault();
+
+    const reader = new FileReader();
+    const file = e.target.files[0];
+
+    reader.onloadend = () => {
+      setCoverImage(file);
+      setCoverImagePreview(reader.result);
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+      await changeCoverPhoto(userId, file);
+      await refreshToken();
+    }
+
+    console.log(file);
+  };
+
+  const handleCoverImageClick = async (e) => {
+    e.preventDefault();
+    document.getElementById("coverFileInput").click();
+  };
+
   return (
     <>
       <div className='sm:w-1/4 h-full sm:sticky sm:top-16 top-auto flex flex-col bg-white rounded border border-slate-200'>
-        <div
-          className='w-full h-32 bg-cover bg-center'
-          style={{ backgroundImage: `url(${coverPhoto})` }}
-        ></div>
+        <div className='w-full h-32 bg-cover bg-center'>
+          <img
+            className='w-full h-full hover:cursor-pointer object-cover'
+            src={coverImagePreview ? coverImagePreview : coverPhoto}
+            alt='Cover Photo'
+            onClick={handleCoverImageClick}
+          />
+          <input
+            type='file'
+            hidden
+            onChange={handleCoverImageChange}
+            id='coverFileInput'
+          />
+        </div>
         <div className='relative'>
           <div
             onClick={handleImageClick}
