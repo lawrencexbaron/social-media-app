@@ -178,7 +178,7 @@ function Feed() {
     <Base>
       {followingModal()}
       {followersModal()}
-      <div className='sm:flex justify-center space-y-2 sm:space-y-0 sm:space-x-2'>
+      <div className='sm:flex justify-center space-y-2 mt-2 sm:space-y-0 sm:space-x-2'>
         <ProfileCard
           handleModal={handleModal}
           openFollowingModal={handleFollowingModal}
@@ -191,8 +191,8 @@ function Feed() {
           following={user.following.length || 0}
         />
         <FeedPost posts={posts} user={user} avatar={user.profilePicture} />
-        <div className='sm:w-1/5 h-full sm:sticky sm:top-16 top-auto hidden md:block'>
-          <div className='bg-white rounded px-5 py-6 border border-slate-200 mt-2'>
+        <div className='sm:w-1/5 h-full sm:sticky sm:top-16 hidden md:block'>
+          <div className='bg-white rounded px-5 py-6 border border-slate-200'>
             {users &&
               users.map((mappedUser) => {
                 if (mappedUser._id === user._id) {
