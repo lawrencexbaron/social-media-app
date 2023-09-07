@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useUserStore } from "../../stores/userStore";
 import { useAuthStore } from "../../stores/authStore";
+import { Toast } from "../common/Alert";
 
 function ProfileCard({
   avatar,
@@ -34,8 +35,13 @@ function ProfileCard({
 
     if (file) {
       reader.readAsDataURL(file);
-      console.log(userId);
+
       await changeProfilePicture(userId, file);
+      Toast({
+        text: "Profile picture changed successfully",
+        icon: "success",
+        position: "bottom-end",
+      });
       await refreshToken();
     }
   };
@@ -58,6 +64,11 @@ function ProfileCard({
 
     if (file) {
       reader.readAsDataURL(file);
+      Toast({
+        text: "Cover photo changed successfully",
+        icon: "success",
+        position: "bottom-end",
+      });
       await changeCoverPhoto(userId, file);
       await refreshToken();
     }
