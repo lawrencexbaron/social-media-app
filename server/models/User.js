@@ -45,6 +45,9 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "https://source.unsplash.com/random/800x600",
     },
+    coverPicturePublicId: {
+      type: String,
+    },
     // followers and following will be an array of user object ids from User model (array of object ids)
     followers: {
       type: Array,

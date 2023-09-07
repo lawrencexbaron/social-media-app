@@ -218,6 +218,7 @@ const changeCoverPicture = async (req, res) => {
 
     // check if user exist
     const user = await User.findById(id);
+    console.log(user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -236,6 +237,11 @@ const changeCoverPicture = async (req, res) => {
 
     // handle upload cover picture
     if (req.file) {
+      // delete previous cover picture from cloudinary
+      if (user.coverPicturePublicId) {
+        await cloudinary.uploader.destroy(user.coverPicturePublicId);
+      }
+
       const filePath = req.file.path;
 
       const uploadResponse = await cloudinary.uploader.upload(filePath, {
@@ -243,8 +249,13 @@ const changeCoverPicture = async (req, res) => {
       });
 
       const coverPicture = uploadResponse.secure_url;
+      const publicId = uploadResponse.public_id;
 
-      await user.updateOne({ $set: { coverPicture } });
+      await user.updateOne({
+        $set: { coverPicture, coverPicturePublicId: publicId },
+      });
+
+      console.log(user);
       await user.save();
 
       return res.status(200).json({ message: "Cover picture updated" });
