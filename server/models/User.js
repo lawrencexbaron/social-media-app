@@ -48,6 +48,9 @@ const UserSchema = new mongoose.Schema(
     coverPicturePublicId: {
       type: String,
     },
+    profilePicturePublicId: {
+      type: String,
+    },
     // followers and following will be an array of user object ids from User model (array of object ids)
     followers: {
       type: Array,

@@ -291,6 +291,11 @@ const changeProfilePicture = async (req, res) => {
     if (req.file) {
       const filePath = req.file.path;
 
+      // delete previous profile picture from cloudinary
+      if (user.profilePicturePublicId) {
+        await cloudinary.uploader.destroy(user.profilePicturePublicId);
+      }
+
       const uploadResponse = await cloudinary.uploader.upload(filePath, {
         folder: "profile-pictures",
       });
