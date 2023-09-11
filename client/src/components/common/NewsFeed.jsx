@@ -260,30 +260,6 @@ const NewsFeed = ({
                 >
                   Delete
                 </a>
-
-                <a
-                  href='#'
-                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                  role='menuitem'
-                >
-                  Edit
-                </a>
-
-                <a
-                  href='#'
-                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                  role='menuitem'
-                >
-                  Report
-                </a>
-
-                <a
-                  href='#'
-                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                  role='menuitem'
-                >
-                  Turn off notifications
-                </a>
               </div>
             ) : null}
           </div>
