@@ -231,7 +231,7 @@ const NewsFeed = ({
           <div className='flex justify-start'>
             <Avatar avatar={avatar} size={10} />
             <div className='ml-2'>
-              <h1 className='text-lg'>{fullName}</h1>
+              <h1 className='text-md'>{fullName}</h1>
               <p className='text-xs text-slate-500 flex my-auto'>
                 <BiGlobe className='my-auto mr-1' />
                 {postAgo(date)}
@@ -265,11 +265,11 @@ const NewsFeed = ({
           </div>
         </div>
 
-        <div className='mt-2 border border-t-gray-100 w-full'></div>
-        <div className='py-8'>
+        {/* <div className='mt-2 border border-t-gray-100 w-full'></div> */}
+        <div className='py-8 border-slate-200 border rounded px-3 bg-gray-100 text-slate-600 my-4'>
           <p className='text-gray-700'>{content}</p>
         </div>
-        <div className='mt-2 border border-t-gray-100 w-full'></div>
+        {/* <div className='mt-2 border border-t-gray-100 w-full'></div> */}
         <div className='flex justify-between py-2'>
           <div className='flex space-x-2 justify-around mx-auto w-full'>
             <Button

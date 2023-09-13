@@ -7,23 +7,16 @@ function Settings() {
   const settings = [
     { id: "editProfile", label: "Edit Profile" },
     { id: "changePassword", label: "Change Password" },
-    { id: "appsWebsites", label: "Apps and Websites" },
+    { id: "activityLogs", label: "Activity Logs" },
     { id: "emailNotifications", label: "Email Notifications" },
-    { id: "pushNotifications", label: "Push Notifications" },
-    { id: "manageContacts", label: "Manage Contacts" },
-    { id: "privacySecurity", label: "Privacy and Security" },
-    { id: "ads", label: "Ads" },
-    { id: "supervision", label: "Supervision" },
-    { id: "loginActivity", label: "Login Activity" },
-    { id: "emailsInstagram", label: "Emails from Instagram" },
     { id: "help", label: "Help" },
   ];
 
   return (
     <>
       <Base>
-        <div className="bg-white w-full max-w-4xl mx-auto mt-10 rounded-xl shadow-md py-8 flex">
-          <div className="w-1/3">
+        <div className='bg-white w-full max-w-4xl mx-auto mt-10 rounded-xl shadow-md py-8 flex'>
+          <div className='w-1/3'>
             <ul>
               {settings.map((setting) => (
                 <li
@@ -40,9 +33,17 @@ function Settings() {
               ))}
             </ul>
           </div>
-          <div className="w-2/3 border-l border-gray-200 pl-8">
+          <div className='w-2/3 border-l border-gray-200 pl-8'>
             {activeSetting === "editProfile" && (
-              <h2 className="font-bold text-xl mb-6">Edit Profile</h2>
+              <div>
+                <h2 className='font-bold text-xl mb-6'>Edit Profile</h2>
+                <p className='w-3/4'>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Assumenda hic dolor ad a, nostrum vel porro, dolores
+                  voluptates esse, exercitationem voluptatum illum quod
+                  architecto! Vitae aperiam mollitia quisquam quos animi?
+                </p>
+              </div>
             )}
             {/* Add content for other settings below */}
           </div>
