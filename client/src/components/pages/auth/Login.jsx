@@ -82,7 +82,7 @@ function Login() {
           </div>
           <Button
             type='submit'
-            className={`bg-slate-800 hover:bg-slate-700 font-semibold text-sm text-white w-full my-2`}
+            className={`bg-slate-800 hover:bg-slate-700 py-2 font-semibold text-sm text-white w-full my-2`}
           >
             {success ? (
               <AiOutlineLoading3Quarters className='animate-spin mx-auto text-xl' />
