@@ -83,10 +83,10 @@ function ProfileCard({
 
   return (
     <>
-      <div className='sm:w-1/4 h-full sm:sticky sm:top-16 top-auto flex flex-col bg-white rounded border border-slate-200'>
+      <div className='sm:w-1/4 h-full sm:sticky sm:top-16 top-auto flex flex-col bg-white rounded-lg border border-slate-200'>
         <div className='w-full h-32 bg-cover bg-center'>
           <img
-            className='w-full h-full hover:cursor-pointer object-cover'
+            className='w-full h-full hover:cursor-pointer object-cover rounded-lg'
             src={coverImagePreview ? coverImagePreview : coverPhoto}
             alt='Cover Photo'
             onClick={handleCoverImageClick}
@@ -116,10 +116,24 @@ function ProfileCard({
             id='fileInput'
           />
         </div>
-        <div className='p-4 text-center'>
+        <div className='text-center my-4 mx-14'>
           <h1 className='text-lg font-semibold mt-10'>{name}</h1>
-          <div className='flex flex-col md:flex-row justify-center mt-2 text-sm'>
-            <div className='inline-flex mx-auto items-center px-2 border border-gray-200 rounded-full'>
+          <div className='flex justify-center mt-2 text-sm'>
+            <div className='flex justify-around w-full mt-3 sm:mt-2'>
+              <div className='flex flex-col'>
+                <p className='font-bold text-base'>0</p>
+                <p className='text-sm text-gray-600 font-semibold'>Posts</p>
+              </div>
+              <div className='flex flex-col'>
+                <p className='font-bold text-base'>0</p>
+                <p className='text-sm text-gray-600 font-semibold'>Followers</p>
+              </div>
+              <div className='flex flex-col'>
+                <p className='font-bold text-base'>0</p>
+                <p className='text-sm text-gray-600 font-semibold'>Following</p>
+              </div>
+            </div>
+            {/* <div className='inline-flex mx-auto items-center px-2 border border-gray-200 rounded-full'>
               <div
                 className='px-2 py-2 text-xs md:text-xs cursor-pointer'
                 onClick={openFollowersModal}
@@ -133,7 +147,7 @@ function ProfileCard({
               >
                 <span className='font-bold'>{following}</span> Following
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

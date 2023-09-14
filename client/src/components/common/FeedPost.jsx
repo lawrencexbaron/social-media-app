@@ -27,7 +27,7 @@ function FeedPost({ avatar, posts, user, profile }) {
     <div className='sm:w-3/5 h-full sm:sticky mt-16 top-16'>
       {!profile && (
         <div className='sm:px-10 px-4'>
-          <div className='my-6 flex flex-col space-y-2'>
+          <div className='my-6 mx-2 flex flex-col space-y-2'>
             <p className='font-semibold text-xl sm:text-3xl'>Hello User</p>
             <p className='text-gray-600 text-md'>
               What's new with you? Would you like to share something with the
