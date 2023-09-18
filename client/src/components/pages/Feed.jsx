@@ -192,14 +192,13 @@ function Feed() {
         />
         <FeedPost posts={posts} user={user} avatar={user.profilePicture} />
         <div className='sm:w-1/5 h-full sm:sticky sm:top-16 hidden md:block'>
-          <div className='bg-white rounded px-5 py-6 border border-slate-200'>
+          <div className='bg-white rounded px-5 py-4 border border-slate-200'>
+            <p className='my-3 font-semibold text-md'>Suggested for you</p>
             {users &&
-              users.map((mappedUser) => {
-                if (mappedUser._id === user._id) {
-                  // Exclude the logged-in user from the list
-                  return null;
-                }
-                return (
+              users
+                .filter((mappedUser) => mappedUser._id !== user._id) // Exclude the logged-in user from the list
+                .slice(0, 5) // Get the first 5 elements of the shuffled array
+                .map((mappedUser) => (
                   <div className='flex mt-2' key={mappedUser._id}>
                     <Avatar
                       avatar={mappedUser.profilePicture}
@@ -231,8 +230,7 @@ function Feed() {
                       )}
                     </div>
                   </div>
-                );
-              })}
+                ))}
           </div>
         </div>
       </div>
