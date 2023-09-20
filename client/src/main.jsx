@@ -12,7 +12,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       href='Mona-Sans.woff2'
       as='font'
       type='font/woff2'
-      crossorigin
+      crossOrigin='anonymous'
     ></link>
     <QueryClientProvider client={new QueryClient()}>
       <App />
