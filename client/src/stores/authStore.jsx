@@ -16,11 +16,25 @@ const authHeader = () => {
 export const useAuthStore = create(
   persist(
     (set) => ({
-      user: { name: "", avatarUrl: "" },
+      user: JSON.parse(localStorage.getItem("user")) || null,
       isLoading: false,
       isAuth: false,
       error: null,
       success: false,
+      setAuth: (isAuth) => {
+        set(
+          produce((state) => {
+            state.isAuth = isAuth;
+          })
+        );
+      },
+      clearAuth: () => {
+        set(
+          produce((state) => {
+            state.isAuth = false;
+          })
+        );
+      },
 
       // setters
       setSuccess: (success) => {
@@ -34,9 +48,10 @@ export const useAuthStore = create(
       // getters
       isAuthenticated() {
         // return false if localstorage user and token is empty
-        if (!localStorage.getItem("user") && !localStorage.getItem("token")) {
-          return false;
+        if (localStorage.getItem("user") && localStorage.getItem("token")) {
+          return true;
         }
+        return false;
       },
       getUser: async (id) => {
         try {
@@ -65,6 +80,9 @@ export const useAuthStore = create(
       // actions
 
       login: async (email, password) => {
+        // destroy all localstorage
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
         try {
           const res = await axios.post(`${base_api}/api/auth/login`, {
             email,
@@ -149,6 +167,7 @@ export const useAuthStore = create(
       },
 
       logout: () => {
+        // delete localstorage user and token
         localStorage.removeItem("user");
         localStorage.removeItem("token");
         set(
@@ -162,7 +181,7 @@ export const useAuthStore = create(
     }),
     {
       name: "auth",
-      getStorage: () => localStorage,
+      storage: localStorage,
     }
   )
 );
