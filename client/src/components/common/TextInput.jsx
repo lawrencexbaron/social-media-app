@@ -16,6 +16,7 @@ function TextInput(props) {
         type={props.type}
         placeholder={props.placeholder}
         value={props.value}
+        onFocus={props.onFocus}
         onChange={props.onChange}
         onKeyDown={props.onKeyDown}
       />
