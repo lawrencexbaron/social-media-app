@@ -6,16 +6,20 @@ import { useProfileStore } from "../../stores/profileStore";
 import { useEffect } from "react";
 import { useAuthStore } from "../../stores/authStore";
 import { usePostStore } from "../../stores/postStore";
+import { useUserStore } from "../../stores/userStore";
 import PostEditor from "../Posts/PostEditor";
 import PostList from "../Posts/PostList";
+import Activity from "../Profile/Activity";
 
 const Feed = ({ userId }) => {
+  const { users, getUsers } = useUserStore();
   const { user, getUser } = useAuthStore();
   const { data: profile, isLoading, isError, error } = useProfile(user._id);
   const { setProfile } = useProfileStore((state) => state);
   const { getPosts, posts } = usePostStore();
 
   useEffect(() => {
+    getUsers();
     if (profile) {
       setProfile(profile);
     }
@@ -33,7 +37,9 @@ const Feed = ({ userId }) => {
             <PostEditor />
             <PostList posts={posts} user={user} />
           </div>
-          <div className='sm:w-1/4 h-32 bg-yellow-300'>Right</div>
+          <div className='sm:w-1/4 h-32 '>
+            <Activity user={profile} users={users} />
+          </div>
         </div>
       </Base>
     </>
