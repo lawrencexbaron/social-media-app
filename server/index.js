@@ -14,6 +14,7 @@ const validateToken = require("./utilities/validateToken");
 const userRoutes = require("./routes/userRoutes");
 const postRoutes = require("./routes/postRoutes");
 const authRoutes = require("./routes/authRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
 
 const PORT = process.env.PORT || 5000;
 
@@ -53,6 +54,7 @@ app.get("/", (req, res) => {
 // Use Routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/notifications", notificationRoutes);
 app.use("/api/posts", postRoutes);
 
 // Add 404 error handler
