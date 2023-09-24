@@ -7,6 +7,8 @@ const {
 } = require("../utilities/Validation");
 const validateToken = require("../utilities/validateToken");
 
+const Notification = require("../models/Notification");
+
 // @route   GET api/posts
 // @desc    Get all posts
 // @access  Public
@@ -151,6 +153,13 @@ const likePost = async (req, res) => {
       return res.status(400).json({ message: "Post already liked" });
     }
 
+    const notification = await Notification.create({
+      user: post.user,
+      relatedUser: id,
+      post: post._id,
+      content: "liked your post",
+    });
+
     post.likes.push(id);
     await post.save();
 
@@ -182,6 +191,13 @@ const likeComment = async (req, res) => {
       return res.status(400).json({ message: "Comment already liked" });
     }
 
+    const notification = await Notification.create({
+      user: post.user,
+      relatedUser: id,
+      post: post._id,
+      content: "liked your comment",
+    });
+
     comment.likes.push(id);
     await post.save();
 
@@ -210,6 +226,14 @@ const unlikeComment = async (req, res) => {
       // The id exists in the comment.likes array
       comment.likes.pull(id);
       await post.save();
+
+      const notification = await Notification.findOneAndDelete({
+        user: post.user,
+        relatedUser: id,
+        post: post._id,
+        content: "liked your comment",
+      });
+
       return res.status(200).json(post);
     } else {
       // The id does not exist in the comment.likes array
@@ -237,6 +261,13 @@ const unlikePost = async (req, res) => {
 
     post.likes.pull(id);
     await post.save();
+
+    const notification = await Notification.findOneAndDelete({
+      user: post.user,
+      relatedUser: id,
+      post: post._id,
+      content: "liked your post",
+    });
 
     return res.status(200).json(post);
   } catch (err) {
@@ -266,6 +297,13 @@ const commentPost = async (req, res) => {
       user: user,
       text: text,
     };
+
+    const notification = await Notification.create({
+      user: post.user,
+      relatedUser: user,
+      post: post._id,
+      content: "commented on your post",
+    });
 
     post.comments.push(comment);
     await post.save();
@@ -300,6 +338,13 @@ const deleteComment = async (req, res) => {
         return res.status(401).json({ message: "Unauthorized" });
       }
     }
+
+    const notification = await Notification.findOneAndDelete({
+      user: post.user,
+      relatedUser: id,
+      post: post._id,
+      content: "commented on your post",
+    });
 
     post.comments.pull(comment.id);
     await post.save();
@@ -422,6 +467,7 @@ const unlikeCommentComment = async (req, res) => {
         .status(400)
         .json({ message: "Comment has not yet been liked" });
     }
+
     commentComment.likes.pull(user);
     await post.save();
     return res.status(200).json(post);
