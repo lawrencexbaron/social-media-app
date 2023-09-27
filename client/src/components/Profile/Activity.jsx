@@ -1,31 +1,47 @@
 import Avatar from "../Profile/Avatar";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
-const Activity = ({ user, users }) => {
-  console.log("users", users);
+const Activity = ({ user, users, notifications }) => {
+  // useEffect(() => {
+  //   console.log(notifications.data);
+  // }, [notifications]);
+
   return (
     <div className='space-y-4'>
-      <div className='bg-white h-auto border-slate-200 flex-col px-6 py-5 rounded-lg w-full'>
+      <div className='bg-white h-auto border-slate-200 flex-col px-4 py-5 rounded-lg w-full'>
         <div className='flex w-full justify-between mb-4 font-semibold'>
           <p>Activity</p>
           <p>See all</p>
         </div>
-        <div className='flex w-full justify-between'>
-          <div className='flex'>
-            <Avatar avatar={user.data.profilePicture} size='8' />
-            <div className='flex my-auto space-x-2'>
-              <p className='text-md my-auto font-semibold'>
-                {user.data.firstname} {user.data.lastname}
-              </p>
-              <p className='my-auto text-gray-600 text-sm'>
-                posted a new photo
+        {notifications.data &&
+          notifications.data.slice(0, 5).map((notification, index) => (
+            <div
+              className='flex items-center justify-between my-1.5'
+              key={index}
+            >
+              <div className='flex items-center'>
+                <Avatar
+                  avatar={notification.relatedUser.profilePicture}
+                  size='8'
+                  className='my-auto'
+                />
+                <div className='flex flex-col'>
+                  <p className='text-sm font-semibold'>
+                    {notification.relatedUser.firstname}{" "}
+                    {notification.relatedUser.lastname}
+                  </p>
+                  <p className='my-auto text-gray-600 text-xs'>
+                    {notification.content}
+                  </p>
+                </div>
+              </div>
+
+              <p className='my-auto cursor-pointer text-sm font-semibold text-blue-600'>
+                View
               </p>
             </div>
-          </div>
-          <p className='my-auto cursor-pointer text-sm font-semibold text-blue-600'>
-            View
-          </p>
-        </div>
+          ))}
       </div>
       <div className='bg-white h-auto border-slate-200 flex-col px-6 py-5 rounded-lg w-full'>
         <div className='flex w-full justify-between mb-4 font-semibold'>

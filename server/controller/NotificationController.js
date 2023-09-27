@@ -53,10 +53,12 @@ const getNotifications = async (req, res) => {
     const notifications = await Notification.find({
       user: req.user.id,
     })
-      .populate("user", ["name", "avatar"])
-      .populate("relatedUser", ["name", "avatar"])
+      .populate("user", ["firstname", "lastname", "profilePicture"])
+      .populate("relatedUser", ["firstname", "lastname", "profilePicture"])
       .populate("post", ["content", "image"])
       .sort({ createdAt: -1 });
+
+    console.log(notifications);
 
     return res.status(200).json({
       message: "Notifications fetched successfully",
