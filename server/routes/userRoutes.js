@@ -19,10 +19,10 @@ const upload = multer({ dest: "uploads/" });
 const router = express.Router();
 const validateToken = require("../utilities/validateToken");
 
-// @route   GET api/users/:id
+// @route   GET api/users/:id/profile
 // @desc    Get user profile
 // @access  Public
-router.get("/:id/profile", getProfile);
+router.get("/:id", getProfile);
 
 // @route   GET api/users
 // @desc    Get all users
@@ -32,7 +32,7 @@ router.get("/", getUsers);
 // @route   GET api/users/:id
 // @desc    Get user by ID
 // @access  Public
-router.get("/:id", getUserById);
+// router.get("/:id", getUserById);
 
 // @route   PUT api/users/:id
 // @desc    Update user

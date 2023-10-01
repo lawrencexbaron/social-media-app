@@ -14,7 +14,7 @@ const {
   unlikeComment,
   getTimelinePosts,
   getProfilePosts,
-} = require("../controller/postController");
+} = require("../controller/PostController");
 const validateToken = require("../utilities/validateToken");
 
 // @route   GET api/posts

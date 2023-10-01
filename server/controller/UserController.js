@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Post = require("../models/Post");
 const mongoose = require("mongoose");
 const cloudinary = require("cloudinary").v2;
 const dotenv = require("dotenv").config();
@@ -37,13 +38,19 @@ const getProfile = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
+    // get user then include posts
     const user = await User.findById(req.params.id);
+    const posts = await Post.find({ user: req.params.id });
+
+    // include posts count to user
+    const userWithPosts = { ...user._doc, posts: posts.length };
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
     return res
       .status(200)
-      .json({ message: "User fetched successfully", data: user });
+      .json({ message: "User fetched successfully", data: userWithPosts });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send({ message: "Server Error" });

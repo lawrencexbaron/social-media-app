@@ -19,7 +19,11 @@ const notificationRoutes = require("./routes/notificationRoutes");
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
-app.use(cors());
+app.use(
+  cors({
+    exposedHeaders: ["Content-Length", "Authorization"],
+  })
+);
 app.use(helmet());
 app.use(bodyParser.json());
 
