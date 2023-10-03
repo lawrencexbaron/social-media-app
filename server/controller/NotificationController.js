@@ -58,8 +58,6 @@ const getNotifications = async (req, res) => {
       .populate("post", ["content", "image"])
       .sort({ createdAt: -1 });
 
-    console.log(notifications);
-
     return res.status(200).json({
       message: "Notifications fetched successfully",
       data: notifications,

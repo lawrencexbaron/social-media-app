@@ -33,8 +33,8 @@ export const register = async (data) => {
 // create getUsers
 export const getUsers = async () => {
   try {
-    const res = await api.get("/api/users");
-    return res.data;
+    const { data } = await api.get("/api/users");
+    return data.users;
   } catch (error) {
     return Promise.reject(error.response.data);
   }
@@ -73,7 +73,10 @@ export const deleteUser = async (id) => {
 // create followUser
 export const followUser = async (id) => {
   try {
-    const res = await api.put(`/api/users/${id}/follow`);
+    const res = await api.put(`/api/users/follow`, {
+      id: id,
+    });
+    console.log(res);
     return res.data;
   } catch (error) {
     return Promise.reject(error.response.data);
@@ -120,7 +123,6 @@ export const createPost = async (data) => {
     });
     return res.data;
   } catch (error) {
-    console.log(error);
     return Promise.reject(error.response.data);
   }
 };

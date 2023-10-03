@@ -23,9 +23,7 @@ const cloud = cloudinary.config({
 const getUsers = async (req, res) => {
   try {
     const users = await User.find();
-    return res
-      .status(200)
-      .json({ message: "Users fetched successfully", data: users });
+    return res.status(200).json({ users });
   } catch (err) {
     console.error(err.message);
     return res.status(500).send({ message: "Server Error" });
@@ -38,8 +36,9 @@ const getProfile = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
-    // get user then include posts
+    // get user then include posts and populate following and followers
     const user = await User.findById(req.params.id);
+
     const posts = await Post.find({ user: req.params.id });
 
     // include posts count to user
@@ -244,7 +243,7 @@ const changeCoverPicture = async (req, res) => {
 
     // check if user exist
     const user = await User.findById(id);
-    console.log(user);
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -281,7 +280,6 @@ const changeCoverPicture = async (req, res) => {
         $set: { coverPicture, coverPicturePublicId: publicId },
       });
 
-      console.log(user);
       await user.save();
 
       return res.status(200).json({ message: "Cover picture updated" });
