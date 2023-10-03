@@ -27,15 +27,17 @@ const PostEditor = () => {
         return;
       }
       await createPost(content);
+      await getPosts();
       setFocus(false);
       Toast({
         text: "Post created successfully",
         icon: "success",
         position: "bottom-end",
       });
-      await queryClient.invalidateQueries(["posts"]);
+
+      await queryClient.invalidateQueries("posts", { exact: true });
+      queryClient.invalidateQueries(["profile"]);
       setContent("");
-      await getPosts();
     } catch (error) {
       console.log(error.message);
       Toast({
@@ -55,13 +57,13 @@ const PostEditor = () => {
         type='text'
         placeholder="What's up dude?"
         className={`${
-          focus ? "border-red-500" : ""
-        } border-slate-200 py-6 bg-gray-100 text-slate-600`}
+          focus ? "border-red-500" : "border-slate-200"
+        } py-6 bg-gray-100 text-slate-600`}
         value={content}
         onChange={(e) => setContent(e.target.value)}
         onFocus={() => setFocus(false)}
       />
-      <div className='my-2 flex justify-between'>
+      <div className='mt-4 flex justify-between'>
         <div className='flex space-x-7 text-sm my-auto justify-between text-gray-700 font-semibold'>
           <div className='flex my-auto space-x-2'>
             <BsCardImage className='my-auto' />

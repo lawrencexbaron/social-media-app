@@ -5,6 +5,7 @@ import TextInput from "../common/TextInput"; // Import the TextInput component
 import Label from "../common/Label"; // Import the Label component
 import { postAgo } from "../utils/api/timeUtils";
 import { useParams } from "react-router-dom";
+import { useQueryClient } from "react-query";
 
 import {
   BiLike,
@@ -33,6 +34,8 @@ const NewsFeed = ({
   );
 
   const [comment, setComment] = useState("");
+
+  const queryClient = useQueryClient();
 
   const {
     deletePost,
@@ -104,6 +107,7 @@ const NewsFeed = ({
         // get the posts again
         await getPosts();
       }
+      queryClient.invalidateQueries("notifications");
       // set the comment to empty
       setComment("");
     } else {
@@ -140,6 +144,7 @@ const NewsFeed = ({
     // like the comment
     await likeComment(postId, commentId);
     console.log("liked");
+    queryClient.invalidateQueries("notifications");
 
     // update the isCommentLiked state and store it in local storage
     setIsCommentLiked((prevIsCommentLiked) => {
@@ -159,6 +164,7 @@ const NewsFeed = ({
     // unlike the comment
     await unlikeComment(postId, commentId);
     console.log("unliked");
+    queryClient.invalidateQueries("notifications");
 
     // update the isCommentLiked state and store it in local storage
     setIsCommentLiked((prevIsCommentLiked) => {
@@ -177,6 +183,7 @@ const NewsFeed = ({
   const handleLike = async () => {
     // like the post
     await likePost(postId);
+    queryClient.invalidateQueries("notifications");
     console.log(postId);
     console.log("liked");
 
@@ -188,6 +195,7 @@ const NewsFeed = ({
   const handleUnlike = async () => {
     // unlike the post
     await unlikePost(postId);
+    queryClient.invalidateQueries("notifications");
     console.log("unliked");
     // set the isLiked to false
     setIsLiked(false);
@@ -197,6 +205,7 @@ const NewsFeed = ({
   const handleDeleteComment = async (commentId) => {
     console.log(commentId);
     console.log(postId);
+    queryClient.invalidateQueries("notifications");
     // are you sure you want to delete this comment?
     // if yes, delete the comment
     if (confirm("Are you sure you want to delete this comment?")) {
