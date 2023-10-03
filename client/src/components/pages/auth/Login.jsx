@@ -13,8 +13,16 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { error, login, success, setSuccess, isLoading, user } =
-    useStore(useAuthStore);
+  const {
+    error,
+    login,
+    success,
+    setSuccess,
+    isLoading,
+    user,
+    isAuth,
+    setAuth,
+  } = useStore(useAuthStore);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,6 +35,8 @@ function Login() {
         if (token) {
           // navigate to feed page
           navigate("/feed");
+          // setAuth to true
+          setAuth(true);
         }
         setSuccess(false);
       }, 1500);

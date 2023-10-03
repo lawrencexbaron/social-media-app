@@ -60,14 +60,14 @@ function Register() {
 
   return (
     <>
-      <div className="mx-auto bg-white shadow-md px-6 py-8 w-3/4 sm:w-1/4 h-3/4 mt-10">
-        <h1 className="text-2xl font-bold text-center">Register</h1>
+      <div className='mx-auto bg-white shadow-md px-6 py-8 w-3/4 sm:w-1/4 h-3/4 mt-10'>
+        <h1 className='text-2xl font-bold text-center'>Register</h1>
         {error && (
           <div
-            className="bg-red-100 border flex flex-col border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
-            role="alert"
+            className='bg-red-100 border flex flex-col border-red-400 text-red-700 px-4 py-3 rounded relative mt-4'
+            role='alert'
           >
-            <p className="font-bold">Error!</p>
+            <p className='font-bold'>Error!</p>
 
             {Array.isArray(error) ? (
               error.map((err) => <p key={err}>{err}</p>)
@@ -79,82 +79,82 @@ function Register() {
 
         {success && (
           <div
-            className="bg-green-100 border flex flex-col border-green-400 text-green-700 px-4 py-3 rounded relative mt-4"
-            role="alert"
+            className='bg-green-100 border flex flex-col border-green-400 text-green-700 px-4 py-3 rounded relative mt-4'
+            role='alert'
           >
-            <p className="font-bold">Success!</p>
+            <p className='font-bold'>Success!</p>
             <p>You are successfully registered!</p>
           </div>
         )}
 
-        <form className="mt-4" onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <Label htmlFor="email">Email</Label>
+        <form className='mt-4' onSubmit={handleSubmit}>
+          <div className='mb-4'>
+            <Label htmlFor='email'>Email</Label>
             <TextInput
-              id="email"
-              type="email"
-              placeholder="Email"
+              id='email'
+              type='email'
+              placeholder='Email'
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mb-2"
+              className='mb-2'
             />
-            <Label htmlFor="firstName">First Name</Label>
+            <Label htmlFor='firstName'>First Name</Label>
             <TextInput
-              id="firstName"
-              type="text"
-              placeholder="First Name"
+              id='firstName'
+              type='text'
+              placeholder='First Name'
               value={firstname}
               onChange={(e) => setFirstName(e.target.value)}
-              className="mb-2"
+              className='mb-2'
             />
-            <Label htmlFor="lastName">Last Name</Label>
+            <Label htmlFor='lastName'>Last Name</Label>
             <TextInput
-              id="lastName"
-              type="text"
-              placeholder="Last Name"
+              id='lastName'
+              type='text'
+              placeholder='Last Name'
               value={lastname}
               onChange={(e) => setLastName(e.target.value)}
-              className="mb-2"
+              className='mb-2'
             />
-            <Label htmlFor="username">Username</Label>
+            <Label htmlFor='username'>Username</Label>
             <TextInput
-              id="username"
-              type="text"
-              placeholder="Username"
+              id='username'
+              type='text'
+              placeholder='Username'
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="mb-2"
+              className='mb-2'
             />
 
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor='password'>Password</Label>
             <TextInput
-              id="password"
+              id='password'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              type="password"
-              placeholder="Password"
-              className="mb-2"
+              type='password'
+              placeholder='Password'
+              className='mb-2'
             />
 
-            <Label htmlFor="password">Confirm Password</Label>
+            <Label htmlFor='password'>Confirm Password</Label>
             <TextInput
-              id="password"
+              id='password'
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              type="password"
-              placeholder="Confirm Password"
-              className="mb-2"
+              type='password'
+              placeholder='Confirm Password'
+              className='mb-2'
             />
           </div>
-          <div className="flex flex-col items-end justify-between space-y-2">
+          <div className='flex flex-col items-end justify-between space-y-2'>
             <Link
-              className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-              to="/login"
+              className='inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800'
+              to='/'
             >
               Already have an account? Login
             </Link>
             <Button
-              type="submit"
+              type='submit'
               className={`bg-blue-500 hover:bg-blue-400 text-white`}
             >
               Submit
