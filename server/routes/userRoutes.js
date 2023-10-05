@@ -19,7 +19,7 @@ const upload = multer({ dest: "uploads/" });
 const router = express.Router();
 const validateToken = require("../utilities/validateToken");
 
-// @route   GET api/users/:id/profile
+// @route   GET api/users/:id
 // @desc    Get user profile
 // @access  Public
 router.get("/:id", getProfile);

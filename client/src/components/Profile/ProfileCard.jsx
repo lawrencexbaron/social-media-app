@@ -271,7 +271,7 @@ function ProfileCard({
               <div className='flex justify-around w-full mt-3 sm:mt-2'>
                 <div className='flex flex-col'>
                   <p className='font-bold text-base'>
-                    {user.data.posts ? user.data.posts : 0}
+                    {user.data.posts ? user.data.posts.length : 0}
                   </p>
                   <p className='text-sm text-gray-600 font-semibold'>Posts</p>
                 </div>

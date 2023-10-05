@@ -39,10 +39,13 @@ const getProfile = async (req, res) => {
     // get user then include posts and populate following and followers
     const user = await User.findById(req.params.id);
 
-    const posts = await Post.find({ user: req.params.id });
+    const posts = await Post.find({ user: req.params.id })
+      .populate("user")
+      .populate("comments.user")
+      .sort({ createdAt: -1 });
 
     // include posts count to user
-    const userWithPosts = { ...user._doc, posts: posts.length };
+    const userWithPosts = { ...user._doc, posts: posts };
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -65,7 +68,9 @@ const getUserById = async (req, res) => {
       return res.status(400).json({ message: "Invalid user ID" });
     }
 
-    const user = await User.findById(req.params.id);
+    // get user then include posts and populate following and followers
+    const user = await User.findById(req.params.id).populate("posts");
+    console.log(user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }

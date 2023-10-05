@@ -20,7 +20,7 @@ export const usePostStore = create((set) => {
     isError: false,
     setPosts: (posts) => set({ posts }),
     setPost: (post) => set({ post }),
-
+    clearPosts: () => set({ posts: [] }),
     getPosts: async () => {
       set({ isLoading: true });
       try {
@@ -40,6 +40,19 @@ export const usePostStore = create((set) => {
             state.isLoading = false;
           })
         );
+      }
+    },
+
+    getProfilePosts: async (username) => {
+      set({ isLoading: true });
+      try {
+        const res = await axios.get(
+          `${base_api}/api/posts/profile/${username}`
+        );
+
+        set({ posts: res.data, isLoading: false });
+      } catch (err) {
+        set({ isError: true });
       }
     },
 
@@ -140,18 +153,6 @@ export const usePostStore = create((set) => {
         set({ posts: res.data.data, isLoading: false });
       } catch (err) {
         set({ isError: true, isLoading: false });
-      }
-    },
-
-    getProfilePosts: async (username) => {
-      set({ isLoading: true });
-      try {
-        const res = await axios.get(
-          `${base_api}/api/posts/profile/${username}`
-        );
-        set({ posts: res.data, isLoading: false });
-      } catch (err) {
-        set({ isError: true });
       }
     },
 
