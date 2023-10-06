@@ -6,6 +6,7 @@ import Label from "../common/Label"; // Import the Label component
 import { postAgo } from "../utils/api/timeUtils";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "react-query";
+import { Link } from "react-router-dom";
 
 import {
   BiLike,
@@ -60,8 +61,8 @@ const NewsFeed = ({
       ? true
       : false
   );
-
   const { username } = useParams();
+  const { id } = useParams();
 
   const dropdownRef = useRef(null);
 
@@ -69,8 +70,8 @@ const NewsFeed = ({
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // handle click outside of dropdown
-  const handleClickOutside = (e) => {
-    if (dropdownOpen && !dropdownRef.current.contains(e.target)) {
+  const handleClickOutside = (event) => {
+    if (dropdownOpen && !dropdownRef.current.contains(event.target)) {
       setDropdownOpen(false);
     }
   };
@@ -102,7 +103,8 @@ const NewsFeed = ({
       await commentPost(postId, comment);
       if (isProfile) {
         // get the profile posts again
-        await getProfilePosts(username);
+        // await getProfilePosts(username);
+        queryClient.invalidateQueries(["profile", id]);
       } else {
         // get the posts again
         await getPosts();
@@ -217,7 +219,8 @@ const NewsFeed = ({
 
       if (isProfile) {
         // get the profile posts again
-        await getProfilePosts(username);
+        // await getProfilePosts(username);
+        queryClient.invalidateQueries(["profile", id]);
       }
     }
   };
@@ -234,13 +237,15 @@ const NewsFeed = ({
   avatar = avatar || "https://via.placeholder.com/150";
 
   return (
-    <div className='mt-2 bg-white rounded-lg border-gray-200 border px-6 pt-6 pb-2 flex'>
+    <div className='mb-2 bg-white rounded-lg border-gray-200 border px-6 pt-6 pb-2 flex'>
       <div className='flex flex-col w-full justify-start'>
         <div className='flex justify-between'>
           <div className='flex justify-start'>
             <Avatar avatar={avatar} size={10} />
             <div className='ml-2'>
-              <h1 className='text-md'>{fullName}</h1>
+              <Link to={`/profile/${post.user._id}`}>
+                <h1 className='text-md'>{fullName}</h1>
+              </Link>
               <p className='text-xs text-slate-500 flex my-auto'>
                 <BiGlobe className='my-auto mr-1' />
                 {postAgo(date)}
@@ -259,7 +264,7 @@ const NewsFeed = ({
             {dropdownOpen ? (
               <div
                 ref={dropdownRef}
-                className='absolute mt-10 py-2 w-48 bg-white border rounded-md shadow-xl z-10'
+                className='absolute mt-10 py-2 w-48 bg-white border rounded-md shadow-xl z-1'
               >
                 <a
                   href='#'
@@ -333,9 +338,13 @@ const NewsFeed = ({
                   <Avatar avatar={comment.user.profilePicture} size={10} />
                   <div className='flex w-full justify-between'>
                     <div className='flex flex-col w-full'>
-                      <Label className={`w-full font-semibold text-slate-800`}>
-                        {comment.user.firstname} {comment.user.lastname}
-                      </Label>
+                      <Link to={`/profile/${comment.user._id}`}>
+                        <Label
+                          className={`w-full font-semibold text-slate-800 hover:cursor-pointer`}
+                        >
+                          {comment.user.firstname} {comment.user.lastname}
+                        </Label>
+                      </Link>
                       <Label className={`w-full`}>{comment.text}</Label>
                       <div className='flex w-full justify-start mt-2 space-x-4'>
                         <Label

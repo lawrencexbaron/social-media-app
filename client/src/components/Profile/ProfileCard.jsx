@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useUserStore } from "../../stores/userStore";
 import { useAuthStore } from "../../stores/authStore";
 import { Toast } from "../common/Alert";
 import Avatar from "../common/Avatar";
 import Modal from "../common/Modal";
 import { useQueryClient } from "react-query";
+import { Link } from "react-router-dom";
+// import useProifle
+import { useProfile } from "./hooks/useProfile";
+import { usePostStore } from "../../stores/postStore";
 
-function ProfileCard({
-  // openFollowingModal,
-  // openFollowersModal,
-  user,
-}) {
+function ProfileCard({ userId }) {
+  const { data: profile, isLoading, isError, error } = useProfile(userId);
   const [image, setImage] = useState(null);
   const [ImagePreview, setImagePreview] = useState("");
 
   const [coverImage, setCoverImage] = useState(null);
   const [coverImagePreview, setCoverImagePreview] = useState("");
+  const { getPosts } = usePostStore();
 
   const {
     changeProfilePicture,
@@ -33,10 +35,6 @@ function ProfileCard({
 
   const queryClient = useQueryClient();
 
-  // useEffect(() => {
-  //   console.log("user", user.data);
-  // }, [user]);
-
   const handleImageChange = async (e) => {
     e.preventDefault();
 
@@ -51,7 +49,7 @@ function ProfileCard({
     if (file) {
       reader.readAsDataURL(file);
 
-      await changeProfilePicture(user.data._id, file);
+      await changeProfilePicture(profile.data._id, file);
       Toast({
         text: "Profile picture changed successfully",
         icon: "success",
@@ -84,7 +82,7 @@ function ProfileCard({
         icon: "success",
         position: "bottom-end",
       });
-      await changeCoverPhoto(user.data._id, file);
+      await changeCoverPhoto(profile.data._id, file);
       await refreshToken();
     }
 
@@ -96,12 +94,12 @@ function ProfileCard({
     document.getElementById("coverFileInput").click();
   };
   const handleFollowersModal = async () => {
-    await getFollowers(user.data._id);
+    await getFollowers(profile.data._id);
     setFollowersModalOpen(!followersModalOpen);
   };
 
   const handleFollowingModal = async () => {
-    await getFollowers(user.data._id);
+    await getFollowers(profile.data._id);
     setFollowingModalOpen(!followingModalOpen);
   };
 
@@ -125,17 +123,19 @@ function ProfileCard({
                   />
                   <div className='flex justify-between w-full'>
                     <div className='flex flex-col sm:pl-2'>
-                      <h3 className='text-sm font-semibold inline-block my-auto overflow-hidden whitespace-nowrap max-w-xs'>
-                        {name.length > 20 ? name.slice(0, 20) + "..." : name}
-                      </h3>
-                      <p className='text-xs text-slate-700 font-semibold'>
-                        {follow.email}
-                      </p>
+                      <Link to={`/profile/${follow._id}`} className='my-auto'>
+                        <h3 className='text-sm font-semibold inline-block my-auto overflow-hidden whitespace-nowrap max-w-xs'>
+                          {name.length > 20 ? name.slice(0, 20) + "..." : name}
+                        </h3>
+                        <p className='text-xs text-slate-700 font-semibold'>
+                          {follow.email}
+                        </p>
+                      </Link>
                     </div>
                     <div className='flex flex-col sm:pl-2 my-auto'>
-                      {follow.followers.includes(user.data._id) ? (
+                      {follow.followers.includes(profile.data._id) ? (
                         <button
-                          className='text-xs text-slate-700 font-semibold'
+                          className='text-xs text-slsate-700 font-semibold'
                           onClick={() => handleUnfollow(follow._id)}
                         >
                           Unfollow
@@ -184,12 +184,14 @@ function ProfileCard({
                   />
                   <div className='flex justify-between w-full'>
                     <div className='flex flex-col sm:pl-2'>
-                      <h3 className='text-sm font-semibold inline-block my-auto overflow-hidden whitespace-nowrap max-w-xs'>
-                        {name.length > 20 ? name.slice(0, 20) + "..." : name}
-                      </h3>
-                      <p className='text-xs text-slate-700 font-semibold'>
-                        {follow.email}
-                      </p>
+                      <Link to={`/profile/${follow._id}`} className='my-auto'>
+                        <h3 className='text-sm font-semibold inline-block my-auto overflow-hidden whitespace-nowrap max-w-xs'>
+                          {name.length > 20 ? name.slice(0, 20) + "..." : name}
+                        </h3>
+                        <p className='text-xs text-slate-700 font-semibold'>
+                          {follow.email}
+                        </p>
+                      </Link>
                     </div>
                     <div className='flex flex-col sm:pl-2 my-auto'>
                       <button
@@ -215,93 +217,128 @@ function ProfileCard({
 
   const handleFollow = async (id) => {
     await followUser(id);
-    await getFollowers(user.data._id);
-    queryClient.invalidateQueries(["profile", user.data._id]);
+    await getPosts();
+    await getFollowers(profile.data._id);
+    queryClient.invalidateQueries(["profile", profile.data._id]);
   };
 
   const handleUnfollow = async (id) => {
     await unfollowUser(id);
-    await getFollowers(user.data._id);
-    queryClient.invalidateQueries(["profile", user.data._id]);
+    await getPosts();
+    await getFollowers(profile.data._id);
+
+    queryClient.invalidateQueries(["profile", profile.data._id]);
   };
+
+  const ProfileCardSkeleton = () => {
+    return (
+      <div className='w-full sm:sticky sm:top-16 top-auto flex flex-col bg-white rounded-lg border border-slate-200'>
+        <div className='w-full h-32 bg-cover bg-center'>
+          <div className='w-full h-full hover:cursor-pointer object-cover rounded-lg bg-gray-300'></div>
+        </div>
+        <div className='relative'>
+          <div className='absolute -top-10 left-1/2 transform -translate-x-1/2 w-24 h-24 rounded-full overflow-hidden border-4 border-white'>
+            <div className='w-full hover:cursor-pointer h-full object-cover bg-gray-300'></div>
+          </div>
+        </div>
+        <div className='text-center my-4 mx-14'>
+          <h1 className='text-lg font-semibold mt-10'>Loading...</h1>
+          <div className='flex justify-center mt-2 text-sm'>
+            <div className='flex justify-around w-full mt-3 sm:mt-2'>
+              <div className='flex flex-col'>
+                <p className='font-bold text-base'>0</p>
+                <p className='text-sm text-gray-600 font-semibold'>Posts</p>
+              </div>
+              <div className='flex flex-col hover:cursor-pointer'>
+                <p className='font-bold text-base'>0</p>
+                <p className='text-sm text-gray-600 font-semibold'>Followers</p>
+              </div>
+              <div className='flex flex-col hover:cursor-pointer'>
+                <p className='font-bold text-base'>0</p>
+                <p className='text-sm text-gray-600 font-semibold'>Following</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  if (isLoading) return <ProfileCardSkeleton />;
+
+  if (isError) return <div>{error.message}</div>;
 
   return (
     <>
       {followersModal()}
       {followingModal()}
-      {user && (
-        <div className='w-full sm:sticky sm:top-16 top-auto flex flex-col bg-white rounded-lg border border-slate-200'>
-          <div className='w-full h-32 bg-cover bg-center'>
+      <div className='w-full sm:sticky sm:top-16 top-auto flex flex-col bg-white rounded-lg border border-slate-200'>
+        <div className='w-full h-32 bg-cover bg-center'>
+          <img
+            className='w-full h-full hover:cursor-pointer object-cover rounded-lg'
+            src={
+              coverImagePreview ? coverImagePreview : profile.data.coverPicture
+            }
+            alt='Cover Photo'
+            onClick={handleCoverImageClick}
+          />
+          <input
+            type='file'
+            hidden
+            onChange={handleCoverImageChange}
+            id='coverFileInput'
+          />
+        </div>
+        <div className='relative'>
+          <div
+            onClick={handleImageClick}
+            className='absolute -top-10 left-1/2 transform -translate-x-1/2 w-24 h-24 rounded-full overflow-hidden border-4 border-white'
+          >
             <img
-              className='w-full h-full hover:cursor-pointer object-cover rounded-lg'
-              src={
-                coverImagePreview ? coverImagePreview : user.data.coverPicture
-              }
-              alt='Cover Photo'
-              onClick={handleCoverImageClick}
-            />
-            <input
-              type='file'
-              hidden
-              onChange={handleCoverImageChange}
-              id='coverFileInput'
+              className='w-full hover:cursor-pointer h-full object-cover'
+              src={ImagePreview ? ImagePreview : profile.data.profilePicture}
+              alt='Avatar'
             />
           </div>
-          <div className='relative'>
-            <div
-              onClick={handleImageClick}
-              className='absolute -top-10 left-1/2 transform -translate-x-1/2 w-24 h-24 rounded-full overflow-hidden border-4 border-white'
-            >
-              <img
-                className='w-full hover:cursor-pointer h-full object-cover'
-                src={ImagePreview ? ImagePreview : user.data.profilePicture}
-                alt='Avatar'
-              />
-            </div>
-            <input
-              type='file'
-              hidden
-              onChange={handleImageChange}
-              id='fileInput'
-            />
-          </div>
-          <div className='text-center my-4 mx-14'>
-            <h1 className='text-lg font-semibold mt-10'>{`${user.data.firstname} ${user.data.lastname}`}</h1>
-            <div className='flex justify-center mt-2 text-sm'>
-              <div className='flex justify-around w-full mt-3 sm:mt-2'>
-                <div className='flex flex-col'>
-                  <p className='font-bold text-base'>
-                    {user.data.posts ? user.data.posts.length : 0}
-                  </p>
-                  <p className='text-sm text-gray-600 font-semibold'>Posts</p>
-                </div>
-                <div
-                  className='flex flex-col hover:cursor-pointer'
-                  onClick={handleFollowersModal}
-                >
-                  <p className='font-bold text-base'>
-                    {user.data.followers.length || 0}
-                  </p>
-                  <p className='text-sm text-gray-600 font-semibold'>
-                    Followers
-                  </p>
-                </div>
-                <div
-                  className='flex flex-col hover:cursor-pointer'
-                  onClick={handleFollowingModal}
-                >
-                  <p className='font-bold text-base'>
-                    {user.data.following.length || 0}
-                  </p>
-                  <p className='text-sm text-gray-600 font-semibold'>
-                    Following
-                  </p>
-                </div>
+          <input
+            type='file'
+            hidden
+            onChange={handleImageChange}
+            id='fileInput'
+          />
+        </div>
+        <div className='text-center my-4 mx-14'>
+          <h1 className='text-lg font-semibold mt-10'>{`${profile.data.firstname} ${profile.data.lastname}`}</h1>
+          <div className='flex justify-center mt-2 text-sm'>
+            <div className='flex justify-around w-full mt-3 sm:mt-2'>
+              <div className='flex flex-col'>
+                <p className='font-bold text-base'>
+                  {profile.data.posts ? profile.data.posts.length : 0}
+                </p>
+                <p className='text-sm text-gray-600 font-semibold'>Posts</p>
+              </div>
+              <div
+                className='flex flex-col hover:cursor-pointer'
+                onClick={handleFollowersModal}
+              >
+                <p className='font-bold text-base'>
+                  {profile.data.followers.length || 0}
+                </p>
+                <p className='text-sm text-gray-600 font-semibold'>Followers</p>
+              </div>
+              <div
+                className='flex flex-col hover:cursor-pointer'
+                onClick={handleFollowingModal}
+              >
+                <p className='font-bold text-base'>
+                  {profile.data.following.length || 0}
+                </p>
+                <p className='text-sm text-gray-600 font-semibold'>Following</p>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }

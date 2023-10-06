@@ -1,5 +1,6 @@
+import { Suspense } from "react";
 // Import base layout
-import Base from "../layout/Base";
+import Base from "../Layout/Base";
 import ProfileCard from "../Profile/ProfileCard";
 import { useProfile } from "../Profile/hooks/useProfile";
 import { useProfileStore } from "../../stores/profileStore";
@@ -13,31 +14,32 @@ import PostList from "../Posts/PostList";
 import Activity from "../Profile/Activity";
 
 const Feed = () => {
-  const { user, getUser } = useAuthStore();
-  const { data: profile, isLoading, isError, error } = useProfile(user._id);
-  const { setProfile } = useProfileStore((state) => state);
-  const { getPosts, posts } = usePostStore();
+  const { user } = useAuthStore();
+  const { posts, getPosts } = usePostStore();
 
   useEffect(() => {
-    if (profile) {
-      setProfile(profile.data);
-    }
     getPosts();
-  }, [profile, setProfile]);
+  }, [getPosts]);
 
   return (
     <>
       <Base>
         <div className='flex flex-col sm:flex-row sm:space-x-5 space-y-1 sm:space-y-0 mt-8'>
           <div className='sm:w-1/4'>
-            {profile && <ProfileCard className='w-full' user={profile} />}
+            <Suspense fallback={<div>Loadingss...</div>}>
+              <ProfileCard className='w-full' userId={user._id} />
+            </Suspense>
           </div>
           <div className='sm:w-1/2 '>
-            <PostEditor />
-            {profile && <PostList posts={posts} user={user} />}
+            <Suspense fallback={<div>Loadingssss..</div>}>
+              <PostEditor />
+              <PostList posts={posts} user={user} />
+            </Suspense>
           </div>
           <div className='sm:w-1/4 h-32 '>
-            {profile && <Activity user={profile.data} />}
+            <Suspense fallback={<div>Loadingss...</div>}>
+              <Activity userId={user._id} />
+            </Suspense>
           </div>
         </div>
       </Base>

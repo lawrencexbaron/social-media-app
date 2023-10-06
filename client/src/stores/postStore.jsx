@@ -15,7 +15,7 @@ export const usePostStore = create((set) => {
 
   return {
     posts: [],
-    post: null,
+    post: [],
     isLoading: false,
     isError: false,
     setPosts: (posts) => set({ posts }),
@@ -60,14 +60,14 @@ export const usePostStore = create((set) => {
       set({ isLoading: true });
       try {
         const res = await axios.get(`${base_api}/api/posts/${id}`);
-        set({ post: res.data.data, isLoading: false });
+
+        set({ post: res.data, isLoading: false });
       } catch (err) {
         set({ isError: true, isLoading: false });
       }
     },
 
     createPost: async (content) => {
-      set({ isLoading: true });
       try {
         // include token in header
         const res = await axios.post(
@@ -81,11 +81,10 @@ export const usePostStore = create((set) => {
         );
         set({
           posts: [res.data.data, ...posts],
-          isLoading: false,
           isError: false,
         });
       } catch (err) {
-        set({ isError: true, isLoading: false });
+        set({ isError: true });
       }
     },
     updatePost: async (id, content) => {
@@ -157,7 +156,6 @@ export const usePostStore = create((set) => {
     },
 
     deleteComment: async (id, commentId) => {
-      console.log(id, commentId);
       set({ isLoading: true });
       try {
         const res = await axios.delete(

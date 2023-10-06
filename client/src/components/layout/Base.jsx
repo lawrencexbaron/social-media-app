@@ -30,7 +30,7 @@ function Base(props) {
     <>
       <div className='bg-gray-100 h-full w-full'>
         {/* Mobile Navbar  */}
-        <div className='sm:hidden sticky top-0 w-full z-99 h-16 flex align-middle my-auto bg-white border-b border-gray-200 px-5'>
+        <div className='sm:hidden sticky top-0 w-full z-99 h-16 flex align-middle my-auto bg-white border-b border-gray-200 px-10'>
           <button
             onClick={() => setIsOpen(!isOpen)}
             className='w-10 flex my-auto h-10 items-center justify-center'
@@ -109,7 +109,8 @@ function Base(props) {
           </div>
         </div>
         {/* Hamburger menu  */}
-        <div className='hidden sm:flex w-full h-14 content-center justify-between my-auto bg-white border-b border-gray-200 px-8 py-1 sticky top-0 z-50'>
+
+        <div className='hidden sm:flex max-w-full h-14 content-center justify-between my-auto bg-white border-b border-gray-200 sm:px-6 lg:px-16 px-8 py-1 sticky top-0 z-50'>
           <div className='my-auto flex justify-between w-1/2'>
             <div className='content-center my-auto font-semibold text-slate-500 mr-10'>
               <Link to='/feed'>Home</Link>
