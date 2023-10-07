@@ -22,29 +22,6 @@ const createNotification = async (user, relatedUser, post, content) => {
   }
 };
 
-// const createNotification = async (req, res) => {
-//   try {
-//     const { relatedUser, post, content } = req.body;
-
-//     const notification = new Notification({
-//       user: req.user.id,
-//       relatedUser,
-//       post,
-//       content,
-//     });
-
-//     await notification.save();
-
-//     return res.status(200).json({
-//       message: "Notification created successfully",
-//       data: notification,
-//     });
-//   } catch (err) {
-//     console.log(err);
-//     return res.status(500).send({ error: err });
-//   }
-// };
-
 // @route   GET api/notifications
 // @desc    Get all notifications
 // @access  Private

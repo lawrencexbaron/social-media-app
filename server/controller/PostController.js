@@ -43,7 +43,9 @@ const getPostById = async (req, res) => {
       return res.status(400).json({ message: "Invalid post ID" });
     }
 
-    const post = await Post.findById(req.params.id);
+    const post = await Post.findById(req.params.id)
+      .populate("user", ["profilePicture", "firstname", "lastname"])
+      .populate("comments.user", ["profilePicture", "firstname", "lastname"]);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -130,6 +132,8 @@ const deletePost = async (req, res) => {
     if (post.user._id.toString() !== id) {
       return res.status(401).json({ message: "Unauthorized" });
     }
+
+    await Notification.deleteMany({ post: post._id });
 
     // finally remove post
     await Post.findByIdAndRemove(req.params.id);

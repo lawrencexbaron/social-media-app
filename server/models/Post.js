@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Notification = require("../models/Notification");
 
 // Create Post schema that belongs to User
 const PostSchema = new mongoose.Schema(
@@ -72,5 +73,10 @@ const PostSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+PostSchema.post("remove", async function (doc) {
+  // delete relation Notifications
+  await Notification.deleteMany({ post: doc._id });
+});
 
 module.exports = mongoose.model("Post", PostSchema);
