@@ -90,7 +90,7 @@ const Activity = ({ userId }) => {
           <p>Activity</p>
           <p>See all</p>
         </div>
-        {notifications &&
+        {notifications && notifications.data.length > 0 ? (
           notifications.data.slice(0, 5).map((notification, index) => (
             <div
               className='flex items-center justify-between my-1.5'
@@ -114,12 +114,22 @@ const Activity = ({ userId }) => {
                   </p>
                 </div>
               </div>
-
-              <p className='my-auto cursor-pointer text-sm font-semibold text-blue-600'>
-                View
-              </p>
+              {notification.post ? (
+                <Link to={`/posts/${notification.post._id}`}>
+                  <p className='my-auto cursor-pointer text-sm font-semibold text-blue-600'>
+                    View
+                  </p>
+                </Link>
+              ) : (
+                <p className='my-auto cursor-pointer text-sm font-semibold text-blue-600'>
+                  View
+                </p>
+              )}
             </div>
-          ))}
+          ))
+        ) : (
+          <p className='my-auto text-gray-600 text-xs'>No notifications</p>
+        )}
       </div>
       <div className='bg-white h-auto border-slate-200 flex-col px-6 py-5 rounded-lg w-full'>
         <div className='flex w-full justify-between mb-4 font-semibold'>

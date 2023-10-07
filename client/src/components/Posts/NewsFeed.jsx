@@ -26,6 +26,7 @@ const NewsFeed = ({
   date,
   content,
   post,
+  name,
   likes,
   comments,
   commentsLikes,
@@ -244,7 +245,7 @@ const NewsFeed = ({
             <Avatar avatar={avatar} size={10} />
             <div className='ml-2'>
               <Link to={`/profile/${post.user._id}`}>
-                <h1 className='text-md'>{fullName}</h1>
+                <h1 className='text-md'>{name}</h1>
               </Link>
               <p className='text-xs text-slate-500 flex my-auto'>
                 <BiGlobe className='my-auto mr-1' />
