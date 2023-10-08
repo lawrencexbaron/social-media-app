@@ -4,6 +4,8 @@ import ProfileCard from "../Profile/ProfileCard";
 import PostList from "../Posts/PostList";
 import { useProfile, useProfilePosts } from "../Profile/hooks/useProfile";
 
+import { BiSolidLockAlt } from "react-icons/bi";
+
 import { useAuthStore } from "../../stores/authStore";
 
 const Profile = () => {
@@ -53,6 +55,19 @@ const Profile = () => {
     return <div>{error.message}</div>;
   }
 
+  const Content = () => {
+    {
+      return profile.data.followers.includes(user._id) ? (
+        <PostList posts={profile.data.posts} user={user} />
+      ) : (
+        <div className='items-center flex h-full justify-center flex-col my-20  space-y-4'>
+          <BiSolidLockAlt className='text-5xl text-slate-500' />
+          <p className=''>You are not following this user</p>
+        </div>
+      );
+    }
+  };
+
   return (
     <>
       <Base>
@@ -61,7 +76,7 @@ const Profile = () => {
             <ProfileCard className='w-full' userId={id} />
           </div>
           <div className='sm:w-1/2 '>
-            {profile && <PostList posts={profile.data.posts} user={user} />}
+            <Content />
           </div>
         </div>
       </Base>

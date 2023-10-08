@@ -4,6 +4,8 @@ import Login from "./components/pages/auth/Login";
 import Register from "./components/pages/auth/Register";
 import Feed from "./components/Feed/Feed";
 import Profile from "./components/Profile/Profile";
+import SinglePost from "./components/Posts/SinglePost";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
 function App() {
   return (
@@ -12,8 +14,11 @@ function App() {
         <Routes>
           <Route path='/' element={<Login />} />
           <Route path='/register' element={<Register />} />
-          <Route path='/feed' element={<Feed />} />
-          <Route path='/profile/:id' element={<Profile />} />
+          <Route element={<ProtectedRoutes />}>
+            <Route path='/feed' element={<Feed />} />
+            <Route path='/profile/:id' element={<Profile />} />
+            <Route path='/posts/:id' element={<SinglePost />} />
+          </Route>
         </Routes>
       </Router>
     </div>

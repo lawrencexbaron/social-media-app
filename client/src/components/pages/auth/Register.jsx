@@ -148,14 +148,14 @@ function Register() {
           </div>
           <div className='flex flex-col items-end justify-between space-y-2'>
             <Link
-              className='inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800'
+              className='inline-block align-baseline font-semibold text-sm text-slate-800 hover:text-slate-600'
               to='/'
             >
               Already have an account? Login
             </Link>
             <Button
               type='submit'
-              className={`bg-blue-500 hover:bg-blue-400 text-white`}
+              className={`bg-slate-800 hover:bg-slate-700 py-2 font-semibold text-sm text-white w-full my-2`}
             >
               Submit
             </Button>

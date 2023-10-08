@@ -101,12 +101,6 @@ function Login() {
             )}
           </Button>
           <div className='flex  items-center justify-between space-x-2'>
-            {/* <a
-              className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-              href="#"
-            >
-              Register now
-            </a> */}
             <Link
               className='inline-block align-baseline font-semibold text-sm text-slate-800 hover:text-slate-600'
               to='/register'
