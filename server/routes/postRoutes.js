@@ -13,6 +13,7 @@ const {
   likeComment,
   unlikeComment,
   getTimelinePosts,
+  sharePost,
   getProfilePosts,
 } = require("../controller/PostController");
 const validateToken = require("../utilities/validateToken");
@@ -81,5 +82,10 @@ router.get("/timeline/all", getTimelinePosts);
 // @desc    Get all posts from a user
 // @access  Public
 router.get("/profile/:username", getProfilePosts);
+
+// @route   POST api/posts/:id/share
+// @desc    Share a post
+// @access  Private
+router.post("/:id/share", validateToken, sharePost);
 
 module.exports = router;

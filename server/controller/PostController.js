@@ -86,6 +86,30 @@ const createPost = async (req, res) => {
   }
 };
 
+const sharePost = async (req, res) => {
+  try {
+    const { user } = req.body;
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+
+    const sharedPost = {
+      user: post.user,
+      content: post.content,
+      sharedBy: user,
+      image: post.image,
+    };
+
+    post.sharedPosts.push(sharedPost);
+    await post.save();
+    return res.status(200).json(post);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send("Server Error");
+  }
+};
+
 // @route   PUT api/posts/:id
 // @desc    Update a post
 // @access  Private
@@ -544,6 +568,7 @@ module.exports = {
   likeCommentComment,
   unlikeCommentComment,
   getPostById,
+  sharePost,
   getTimelinePosts,
   getProfilePosts,
   getPosts,
