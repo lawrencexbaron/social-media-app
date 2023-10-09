@@ -15,6 +15,7 @@ const userRoutes = require("./routes/userRoutes");
 const postRoutes = require("./routes/postRoutes");
 const authRoutes = require("./routes/authRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const followRoutes = require("./routes/followRoutes");
 
 const PORT = process.env.PORT || 5000;
 
@@ -60,6 +61,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/followRequests", followRoutes);
 
 // Add 404 error handler
 app.use((req, res, next) => {
