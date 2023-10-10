@@ -66,7 +66,24 @@ export const usePostStore = create((set) => {
         set({ isError: true, isLoading: false });
       }
     },
-
+    sharePost: async (id) => {
+      set({ isLoading: true });
+      try {
+        const res = await axios.post(
+          `${base_api}/api/posts/${id}/share`,
+          {},
+          {
+            headers: authHeader(),
+          }
+        );
+        set({
+          posts: [res.data.data, ...posts],
+          isError: false,
+        });
+      } catch (err) {
+        set({ isError: true });
+      }
+    },
     createPost: async (content) => {
       try {
         // include token in header

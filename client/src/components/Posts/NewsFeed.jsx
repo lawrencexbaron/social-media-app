@@ -36,6 +36,7 @@ const NewsFeed = ({
   );
 
   const [comment, setComment] = useState("");
+  const [shareDropdown, setShareDropdown] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -49,6 +50,7 @@ const NewsFeed = ({
     deleteComment,
     unlikeComment,
     likeComment,
+    sharePost,
   } = usePostStore();
 
   // add isLiked if author is on likes props
@@ -117,6 +119,19 @@ const NewsFeed = ({
       // alert the user to enter a comment
       alert("Please enter a comment");
     }
+  };
+
+  const handleShare = async (postId) => {
+    // share the post
+    await sharePost(postId);
+    queryClient.invalidateQueries("notifications");
+
+    // get the posts again
+    await getPosts();
+    queryClient.invalidateQueries(["profile", user._id]);
+    // set the comment to empty
+    setComment("");
+    console.log("shared");
   };
 
   // handleKeyDown
@@ -251,6 +266,9 @@ const NewsFeed = ({
                 <BiGlobe className='my-auto mr-1' />
                 {postAgo(date)}
               </p>
+              {post && post.sharedBy ? (
+                <p className='text-xs my-2'>Shared Post</p>
+              ) : null}
             </div>
           </div>
           <div onClick={handleClickOutside} className='flex justify-end'>
@@ -318,10 +336,28 @@ const NewsFeed = ({
             </Button>
             <Button
               type='button'
+              onClick={() => setShareDropdown(!shareDropdown)}
               className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
             >
-              <BiShare className='mr-1 mt-1' />
+              {
+                <BiShare
+                  className={`mr-1 mt-1 ${
+                    shareDropdown ? "text-blue-500" : ""
+                  }`}
+                />
+              }
               Share
+              {shareDropdown ? (
+                <div className='absolute right-6 md:right-48 lg:right-auto mt-28 py-2 w-48 bg-white border rounded-md shadow-xl z-50'>
+                  <p
+                    onClick={() => handleShare(postId)}
+                    className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                    role='menuitem'
+                  >
+                    Share now
+                  </p>
+                </div>
+              ) : null}
             </Button>
           </div>
         </div>

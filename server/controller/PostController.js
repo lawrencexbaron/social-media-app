@@ -97,13 +97,21 @@ const sharePost = async (req, res) => {
     const sharedPost = {
       user: post.user,
       content: post.content,
-      sharedBy: user,
+      sharedBy: req.user.id,
       image: post.image,
     };
 
-    post.sharedPosts.push(sharedPost);
-    await post.save();
-    return res.status(200).json(post);
+    // update post add sharedBy
+    const newPost = await Post.create(sharedPost);
+
+    const notification = await Notification.create({
+      user: post.user,
+      relatedUser: req.user.id,
+      post: post._id,
+      content: "shared your post",
+    });
+
+    return res.status(200).json(newPost);
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server Error");
