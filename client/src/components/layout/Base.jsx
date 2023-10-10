@@ -28,7 +28,7 @@ function Base(props) {
 
   return (
     <>
-      <div className='bg-gray-100 h-full w-full'>
+      <div className='bg-gray-100 w-full'>
         {/* Mobile Navbar  */}
         <div className='sm:hidden sticky top-0 w-full z-99 h-16 flex align-middle my-auto bg-white border-b border-gray-200 px-10'>
           <button
