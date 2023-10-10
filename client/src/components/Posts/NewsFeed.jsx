@@ -361,11 +361,7 @@ const NewsFeed = ({
                             {isCommentLiked[comment._id] ? "Unlike" : "Like"}
                           </p>
                         </Label>
-                        <Label
-                          className={` text-slate-500 text-xs font-semibold cursor-pointer`}
-                        >
-                          Reply
-                        </Label>
+
                         {comment.user._id === author._id ? (
                           <Label
                             className={` text-slate-500 text-xs font-semibold cursor-pointer`}

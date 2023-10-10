@@ -6,6 +6,7 @@ import Avatar from "../common/Avatar";
 import Modal from "../common/Modal";
 import { useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
+import Button from "../common/Button";
 // import useProifle
 import { useProfile } from "./hooks/useProfile";
 import { usePostStore } from "../../stores/postStore";
@@ -18,6 +19,7 @@ function ProfileCard({ userId }) {
   const [coverImage, setCoverImage] = useState(null);
   const [coverImagePreview, setCoverImagePreview] = useState("");
   const { getPosts } = usePostStore();
+  const { user } = useAuthStore();
 
   const {
     changeProfilePicture,
@@ -160,6 +162,28 @@ function ProfileCard({ userId }) {
           </div>
         )}
       </Modal>
+    );
+  };
+
+  const showFollowButton = () => {
+    if (user._id === profile.data._id) return null;
+    if (profile.data.followers.includes(user._id)) {
+      return (
+        <Button
+          className='text-sm text-slate-700 border-slate-700 border my-2 px-4 py-2 font-semibold'
+          onClick={() => handleUnfollow(profile.data._id)}
+        >
+          Unfollow
+        </Button>
+      );
+    }
+    return (
+      <Button
+        className='text-sm text-slate-700 border-slate-700 border my-2 px-4 py-2 font-semibold'
+        onClick={() => handleFollow(profile.data._id)}
+      >
+        Follow
+      </Button>
     );
   };
 
@@ -309,6 +333,7 @@ function ProfileCard({ userId }) {
         </div>
         <div className='text-center my-4 mx-14'>
           <h1 className='text-lg font-semibold mt-10'>{`${profile.data.firstname} ${profile.data.lastname}`}</h1>
+          {showFollowButton()}
           <div className='flex justify-center mt-2 text-sm'>
             <div className='flex justify-around w-full mt-3 sm:mt-2'>
               <div className='flex flex-col'>
