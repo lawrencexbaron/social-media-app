@@ -257,19 +257,44 @@ const NewsFeed = ({
       <div className='flex flex-col w-full justify-start'>
         <div className='flex justify-between'>
           <div className='flex justify-start'>
-            <Avatar avatar={avatar} size={10} />
-            <div className='ml-2 flex flex-col'>
-              <div className='flex items-center justify-center'>
-                <Link to={`/profile/${post.user._id}`}>
-                  <h1 className='text-md'>{name}</h1>
-                </Link>
-                <p className='text-xs my-auto ml-1'>Shared a post</p>
-              </div>
-              <p className='text-xs text-slate-500 flex'>
-                <BiGlobe className='my-auto mr-1' />
-                {postAgo(date)}
-              </p>
-            </div>
+            {post.sharedBy ? (
+              <>
+                <Avatar avatar={post.sharedBy.profilePicture} size={10} />
+                <div className='ml-2 flex flex-col'>
+                  <div className='flex items-center justify-center'>
+                    <Link to={`/profile/${post.sharedBy._id}`}>
+                      <h1 className='text-md'>
+                        {post.sharedBy.firstname} {post.sharedBy.lastname}
+                      </h1>
+                    </Link>
+                    {post.sharedBy ? (
+                      <p className='text-xs my-auto ml-1'>Shared a post</p>
+                    ) : null}
+                  </div>
+                  <p className='text-xs text-slate-500 flex'>
+                    <BiGlobe className='my-auto mr-1' />
+                    {postAgo(date)}
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <Avatar avatar={avatar} size={10} />
+                <div className='ml-2 flex flex-col'>
+                  <div className='flex items-center justify-center'>
+                    <Link to={`/profile/${post.user._id}`}>
+                      <h1 className='text-md'>
+                        {post.user.firstname} {post.user.lastname}
+                      </h1>
+                    </Link>
+                  </div>
+                  <p className='text-xs text-slate-500 flex'>
+                    <BiGlobe className='my-auto mr-1' />
+                    {postAgo(date)}
+                  </p>
+                </div>
+              </>
+            )}
           </div>
           <div onClick={handleClickOutside} className='flex justify-end'>
             {author && author._id === user._id ? (
@@ -297,10 +322,32 @@ const NewsFeed = ({
             ) : null}
           </div>
         </div>
+        {post.sharedBy ? (
+          <div className='py-4 border-slate-200 border rounded-md text-slate-600 my-4'>
+            <div className='flex'>
+              <Avatar avatar={avatar} size={10} />
+              <div className='flex'>
+                <div className='ml-2 flex flex-col'>
+                  <div className='flex items-center justify-center'>
+                    <Link to={`/profile/${post.user._id}`}>
+                      <h1 className='text-md'>{name}</h1>
+                    </Link>
+                  </div>
+                  <p className='text-xs text-slate-500 flex'>
+                    <BiGlobe className='my-auto mr-1' />
+                    {postAgo(date)}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <p className='text-gray-700 px-4 pb-1 mt-1'>{content}</p>
+          </div>
+        ) : (
+          <div className='py-4 border-slate-200 border rounded px-3 bg-gray-100 text-slate-600 my-4'>
+            <p className='text-gray-700'>{content}</p>
+          </div>
+        )}
 
-        <div className='py-4 border-slate-200 border rounded px-3 bg-gray-100 text-slate-600 my-4'>
-          <p className='text-gray-700'>{content}</p>
-        </div>
         <div className='flex justify-between py-2'>
           <div className='flex space-x-2 justify-around mx-auto w-full'>
             <Button

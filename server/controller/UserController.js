@@ -42,6 +42,7 @@ const getProfile = async (req, res) => {
     const posts = await Post.find({ user: req.params.id })
       .populate("user")
       .populate("comments.user")
+      .populate("sharedBy", ["profilePicture", "firstname", "lastname"])
       .sort({ createdAt: -1 });
 
     // include posts count to user

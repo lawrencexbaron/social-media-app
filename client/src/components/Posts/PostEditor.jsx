@@ -59,7 +59,7 @@ const PostEditor = () => {
           placeholder="What's up dude?"
           className={`${
             focus ? "border-red-500" : "border-slate-200"
-          } py-6 bg-gray-100 text-slate-600`}
+          } py-5 bg-gray-100 text-slate-600`}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onFocus={() => setFocus(false)}
