@@ -23,6 +23,7 @@ const getPosts = async (req, res) => {
     const posts = await Post.find({ user: { $in: following.following } })
       .populate("user", ["profilePicture", "firstname", "lastname"])
       .populate("comments.user", ["profilePicture", "firstname", "lastname"])
+      .populate("sharedBy", ["profilePicture", "firstname", "lastname"])
       .sort({
         createdAt: -1,
       });

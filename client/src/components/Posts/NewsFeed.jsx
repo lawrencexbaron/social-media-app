@@ -13,7 +13,7 @@ import {
   BiComment,
   BiShare,
   BiGlobe,
-  BiDotsVerticalRounded,
+  BiDotsHorizontalRounded,
 } from "react-icons/bi"; // Import the necessary icons from react-icons
 
 import { usePostStore } from "../../stores/postStore";
@@ -258,23 +258,23 @@ const NewsFeed = ({
         <div className='flex justify-between'>
           <div className='flex justify-start'>
             <Avatar avatar={avatar} size={10} />
-            <div className='ml-2'>
-              <Link to={`/profile/${post.user._id}`}>
-                <h1 className='text-md'>{name}</h1>
-              </Link>
-              <p className='text-xs text-slate-500 flex my-auto'>
+            <div className='ml-2 flex flex-col'>
+              <div className='flex items-center justify-center'>
+                <Link to={`/profile/${post.user._id}`}>
+                  <h1 className='text-md'>{name}</h1>
+                </Link>
+                <p className='text-xs my-auto ml-1'>Shared a post</p>
+              </div>
+              <p className='text-xs text-slate-500 flex'>
                 <BiGlobe className='my-auto mr-1' />
                 {postAgo(date)}
               </p>
-              {post && post.sharedBy ? (
-                <p className='text-xs my-2'>Shared Post</p>
-              ) : null}
             </div>
           </div>
           <div onClick={handleClickOutside} className='flex justify-end'>
             {author && author._id === user._id ? (
-              <BiDotsVerticalRounded
-                className='my-auto cursor-pointer relative'
+              <BiDotsHorizontalRounded
+                className=' cursor-pointer relative'
                 onClick={() => setDropdownOpen(!dropdownOpen)}
               />
             ) : null}
@@ -298,11 +298,9 @@ const NewsFeed = ({
           </div>
         </div>
 
-        {/* <div className='mt-2 border border-t-gray-100 w-full'></div> */}
-        <div className='py-8 border-slate-200 border rounded px-3 bg-gray-100 text-slate-600 my-4'>
+        <div className='py-4 border-slate-200 border rounded px-3 bg-gray-100 text-slate-600 my-4'>
           <p className='text-gray-700'>{content}</p>
         </div>
-        {/* <div className='mt-2 border border-t-gray-100 w-full'></div> */}
         <div className='flex justify-between py-2'>
           <div className='flex space-x-2 justify-around mx-auto w-full'>
             <Button
