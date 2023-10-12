@@ -84,18 +84,22 @@ export const usePostStore = create((set) => {
         set({ isError: true });
       }
     },
-    createPost: async (content) => {
+    createPost: async (data) => {
+      const { content, images } = data;
+
+      const formData = new FormData();
+      formData.append("content", content);
+
+      images.forEach((image) => {
+        formData.append("images", image);
+      });
+
       try {
         // include token in header
-        const res = await axios.post(
-          `${base_api}/api/posts`,
-          {
-            content: content,
-          },
-          {
-            headers: authHeader(),
-          }
-        );
+
+        const res = await axios.post(`${base_api}/api/posts`, formData, {
+          headers: authHeader(),
+        });
         set({
           posts: [res.data.data, ...posts],
           isError: false,

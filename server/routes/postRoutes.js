@@ -18,6 +18,9 @@ const {
 } = require("../controller/PostController");
 const validateToken = require("../utilities/validateToken");
 
+const multer = require("multer");
+const upload = multer({ dest: "uploads/posts" });
+
 // @route   GET api/posts
 // @desc    Get all posts
 // @access  Public
@@ -31,7 +34,7 @@ router.get("/:id", getPostById);
 // @route   POST api/posts
 // @desc    Create post
 // @access  Private
-router.post("/", validateToken, createPost);
+router.post("/", upload.array("images", 10), validateToken, createPost);
 
 // @route   PUT api/posts/:id
 // @desc    Update post

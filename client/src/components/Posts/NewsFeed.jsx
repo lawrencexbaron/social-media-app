@@ -371,9 +371,23 @@ const NewsFeed = ({
             <p className='text-gray-700 px-4 pb-1 mt-1'>{content}</p>
           </div>
         ) : (
-          <div className='py-4 border-slate-200 border rounded px-3 bg-gray-100 text-slate-600 my-4'>
-            <p className='text-gray-700'>{content}</p>
-          </div>
+          <>
+            {post.images.length > 0 ? (
+              <div className='flex gap-1'>
+                {post.images.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image.url}
+                    alt='post'
+                    className='object-cover w-full h-52  rounded-md'
+                  />
+                ))}
+              </div>
+            ) : null}
+            <div className='py-4 border-slate-200 border rounded px-3 bg-gray-100 text-slate-600 my-4'>
+              <p className='text-gray-700'>{content}</p>
+            </div>
+          </>
         )}
 
         <div className='flex justify-between py-2'>

@@ -6,6 +6,7 @@ import { useAuthStore } from "../../stores/authStore";
 import { useQueryClient } from "react-query";
 import { Toast } from "../common/Alert";
 import { useState, Suspense } from "react";
+import { IoIosClose } from "react-icons/io";
 
 const PostEditor = () => {
   const [content, setContent] = useState("");
@@ -13,6 +14,8 @@ const PostEditor = () => {
   const { createPost, getPosts } = usePostStore();
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
+
+  const [images, setImages] = useState([]);
 
   const handlePostCreate = async (e) => {
     e.preventDefault();
@@ -26,7 +29,13 @@ const PostEditor = () => {
         });
         return;
       }
-      await createPost(content);
+
+      const data = {
+        content,
+        images,
+      };
+
+      await createPost(data);
       await getPosts();
       setFocus(false);
       Toast({
@@ -38,6 +47,7 @@ const PostEditor = () => {
       queryClient.invalidateQueries("posts", { exact: true });
       queryClient.invalidateQueries(["profile"]);
       setContent("");
+      setImages([]);
     } catch (error) {
       console.log(error.message);
       Toast({
@@ -46,6 +56,26 @@ const PostEditor = () => {
         position: "bottom-end",
       });
     }
+  };
+
+  // handleImagePreview push images to images state array if the image is not already in the array
+  const handleImagePreview = (e) => {
+    const files = Array.from(e.target.files);
+    console.log(files);
+    if (files.length > 4) {
+      Toast({
+        text: "You can upload maximum 4 images",
+        icon: "error",
+        position: "bottom-end",
+      });
+      return;
+    }
+    files.forEach((file) => {
+      if (!images.some((image) => image.name === file.name)) {
+        setImages((prev) => [...prev, file]);
+      }
+    });
+    console.log(images);
   };
 
   return (
@@ -64,9 +94,49 @@ const PostEditor = () => {
           onChange={(e) => setContent(e.target.value)}
           onFocus={() => setFocus(false)}
         />
+        {images.length > 0 ? (
+          <div className='flex px-2 py-2 gap-4 mt-4'>
+            <input
+              type='file'
+              id='file'
+              multiple
+              className='hidden'
+              onChange={handleImagePreview}
+            />
+            {images.length > 0 &&
+              images.map((image, index) => (
+                <div key={index} className='relative'>
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt='preview'
+                    key={image.name}
+                    className='h-32 w-32 object-cover'
+                  />
+                  <IoIosClose
+                    className=' bg-white text-slate-700 border border-slate-700 hover:cursor-pointer rounded-full absolute top-1 right-1'
+                    onClick={() =>
+                      setImages(images.filter((img) => img.name !== image.name))
+                    }
+                  />
+                </div>
+              ))}
+          </div>
+        ) : (
+          <input
+            type='file'
+            id='file'
+            name='images'
+            multiple
+            className='hidden'
+            onChange={handleImagePreview}
+          />
+        )}
         <div className='mt-4 flex justify-between'>
           <div className='flex space-x-7 text-sm my-auto justify-between text-gray-700 font-semibold'>
-            <div className='flex my-auto space-x-2'>
+            <div
+              className='flex my-auto space-x-2 hover:cursor-pointer'
+              onClick={() => document.getElementById("file").click()}
+            >
               <BsCardImage className='my-auto' />
               <p>Image</p>
             </div>

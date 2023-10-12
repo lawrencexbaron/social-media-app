@@ -6,8 +6,18 @@ const {
   commentValidation,
 } = require("../utilities/Validation");
 const validateToken = require("../utilities/validateToken");
+const dotenv = require("dotenv").config();
 
 const Notification = require("../models/Notification");
+
+const cloudinary = require("cloudinary").v2;
+
+// cloudinary config
+const cloud = cloudinary.config({
+  cloud_name: dotenv.parsed.CLOUDINARY_CLOUD_NAME,
+  api_key: dotenv.parsed.CLOUDINARY_API_KEY,
+  api_secret: dotenv.parsed.CLOUDINARY_API_SECRET,
+});
 
 // @route   GET api/posts
 // @desc    Get all posts
@@ -62,7 +72,9 @@ const getPostById = async (req, res) => {
 // @access  Private
 const createPost = async (req, res) => {
   try {
-    const { content, image } = req.body;
+    // get form data
+    const { content, images } = req.body;
+
     // get user from req.user
     const user = req.user.id;
 
@@ -74,10 +86,42 @@ const createPost = async (req, res) => {
       return res.status(400).json({ message: messages });
     }
 
+    if (req.files.length > 0) {
+      // foreach image in images array, upload to cloudinary
+      const image = await Promise.all(
+        req.files.map(async (file) => {
+          const result = await cloudinary.uploader.upload(file.path, {
+            folder: "posts",
+          });
+
+          return {
+            public_id: result.public_id,
+            url: result.secure_url,
+          };
+        })
+      );
+
+      // foreach image in images array create image object
+      const imageArray = image.map((img) => {
+        return {
+          public_id: img.public_id,
+          url: img.url,
+        };
+      });
+
+      const post = await Post.create({
+        user,
+        content,
+        images: imageArray,
+      });
+
+      return res.status(201).json(post);
+    }
+
     const post = await Post.create({
       user,
       content,
-      image,
+      images,
     });
 
     return res.status(201).json(post);
@@ -174,6 +218,15 @@ const deletePost = async (req, res) => {
       if (post.user._id.toString() !== id) {
         return res.status(401).json({ message: "Unauthorized" });
       }
+    }
+
+    if (post.images.length > 0) {
+      // delete images from cloudinary
+      await Promise.all(
+        post.images.map(async (image) => {
+          await cloudinary.uploader.destroy(image.public_id);
+        })
+      );
     }
 
     await Notification.deleteMany({ post: post._id });

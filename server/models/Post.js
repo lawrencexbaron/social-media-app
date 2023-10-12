@@ -19,10 +19,7 @@ const PostSchema = new mongoose.Schema(
       min: 1,
       max: 500,
     },
-    image: {
-      type: String,
-      default: "",
-    },
+    images: [],
     // add likes for array of users id without reference to User model
     likes: [],
     sharedDate: {
