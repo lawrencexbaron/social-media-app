@@ -100,6 +100,7 @@ const sharePost = async (req, res) => {
       content: post.content,
       sharedBy: req.user.id,
       image: post.image,
+      sharedDate: post.createdAt,
     };
 
     // update post add sharedBy
@@ -155,15 +156,24 @@ const deletePost = async (req, res) => {
     const { id } = req.user;
 
     // include user data in post from populate
-    const post = await Post.findById(req.params.id).populate("user");
+    const post = await Post.findById(req.params.id).populate("sharedBy");
 
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
     // check if user is authorized to delete post
-    if (post.user._id.toString() !== id) {
-      return res.status(401).json({ message: "Unauthorized" });
+    if (post.sharedBy) {
+      if (
+        post.user._id.toString() !== id &&
+        post.sharedBy._id.toString() !== id
+      ) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+    } else {
+      if (post.user._id.toString() !== id) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
     }
 
     await Notification.deleteMany({ post: post._id });

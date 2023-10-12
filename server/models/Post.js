@@ -25,6 +25,9 @@ const PostSchema = new mongoose.Schema(
     },
     // add likes for array of users id without reference to User model
     likes: [],
+    sharedDate: {
+      type: Date,
+    },
 
     comments: [
       {

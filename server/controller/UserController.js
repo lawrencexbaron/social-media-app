@@ -36,17 +36,23 @@ const getProfile = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
-    // get user then include posts and populate following and followers
-    const user = await User.findById(req.params.id);
 
-    const posts = await Post.find({ user: req.params.id })
+    const userId = req.params.id;
+
+    // get user then include posts and populate following and followers
+    const user = await User.findById(userId);
+
+    const posts = await Post.find({
+      $or: [{ user: userId }, { sharedBy: userId }],
+    })
       .populate("user")
       .populate("comments.user")
-      .populate("sharedBy", ["profilePicture", "firstname", "lastname"])
-      .sort({ createdAt: -1 });
-
+      .populate("sharedBy")
+      .sort({ updatedAt: -1 });
     // include posts count to user
     const userWithPosts = { ...user._doc, posts: posts };
+
+    // now get posts with the condition of post.sharedBy._id === req.user.id
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });

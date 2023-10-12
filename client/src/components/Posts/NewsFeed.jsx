@@ -124,14 +124,14 @@ const NewsFeed = ({
   const handleShare = async (postId) => {
     // share the post
     await sharePost(postId);
-    queryClient.invalidateQueries("notifications");
 
     // get the posts again
-    await getPosts();
-    queryClient.invalidateQueries(["profile", user._id]);
+
+    queryClient.invalidateQueries(["profile"]);
+    queryClient.invalidateQueries("notifications");
     // set the comment to empty
     setComment("");
-    console.log("shared");
+    await getPosts();
   };
 
   // handleKeyDown
@@ -296,31 +296,59 @@ const NewsFeed = ({
               </>
             )}
           </div>
-          <div onClick={handleClickOutside} className='flex justify-end'>
-            {author && author._id === user._id ? (
-              <BiDotsHorizontalRounded
-                className=' cursor-pointer relative'
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-              />
-            ) : null}
+          {post.sharedBy ? (
+            <div onClick={handleClickOutside} className='flex justify-end'>
+              {author && author._id === post.sharedBy._id ? (
+                <BiDotsHorizontalRounded
+                  className=' cursor-pointer relative'
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                />
+              ) : null}
 
-            {/* Dropdown */}
-            {dropdownOpen ? (
-              <div
-                ref={dropdownRef}
-                className='absolute mt-10 py-2 w-48 bg-white border rounded-md shadow-xl z-1'
-              >
-                <a
-                  href='#'
-                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                  role='menuitem'
-                  onClick={() => handleDelete()}
+              {/* Dropdown */}
+              {dropdownOpen ? (
+                <div
+                  ref={dropdownRef}
+                  className='absolute mt-10 py-2 w-48 bg-white border rounded-md shadow-xl z-1'
                 >
-                  Delete
-                </a>
-              </div>
-            ) : null}
-          </div>
+                  <a
+                    href='#'
+                    className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                    role='menuitem'
+                    onClick={() => handleDelete()}
+                  >
+                    Delete
+                  </a>
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <div onClick={handleClickOutside} className='flex justify-end'>
+              {author && author._id === user._id ? (
+                <BiDotsHorizontalRounded
+                  className=' cursor-pointer relative'
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                />
+              ) : null}
+
+              {/* Dropdown */}
+              {dropdownOpen ? (
+                <div
+                  ref={dropdownRef}
+                  className='absolute mt-10 py-2 w-48 bg-white border rounded-md shadow-xl z-1'
+                >
+                  <a
+                    href='#'
+                    className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                    role='menuitem'
+                    onClick={() => handleDelete()}
+                  >
+                    Delete
+                  </a>
+                </div>
+              ) : null}
+            </div>
+          )}
         </div>
         {post.sharedBy ? (
           <div className='py-4 border-slate-200 border rounded-md text-slate-600 my-4'>
@@ -335,7 +363,7 @@ const NewsFeed = ({
                   </div>
                   <p className='text-xs text-slate-500 flex'>
                     <BiGlobe className='my-auto mr-1' />
-                    {postAgo(date)}
+                    {postAgo(post.sharedDate)}
                   </p>
                 </div>
               </div>
