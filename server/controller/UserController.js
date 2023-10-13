@@ -3,6 +3,7 @@ const Post = require("../models/Post");
 const mongoose = require("mongoose");
 const cloudinary = require("cloudinary").v2;
 const dotenv = require("dotenv").config();
+const fs = require("fs");
 
 const multer = require("multer");
 
@@ -287,6 +288,9 @@ const changeCoverPicture = async (req, res) => {
       const coverPicture = uploadResponse.secure_url;
       const publicId = uploadResponse.public_id;
 
+      // delete file from server
+      fs.unlinkSync(filePath);
+
       await user.updateOne({
         $set: { coverPicture, coverPicturePublicId: publicId },
       });
@@ -334,6 +338,9 @@ const changeProfilePicture = async (req, res) => {
       const uploadResponse = await cloudinary.uploader.upload(filePath, {
         folder: "profile-pictures",
       });
+
+      // delete file from server
+      fs.unlinkSync(filePath);
 
       const profilePicture = uploadResponse.secure_url;
 

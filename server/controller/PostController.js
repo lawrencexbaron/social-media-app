@@ -1,6 +1,7 @@
 const Post = require("../models/Post");
 const mongoose = require("mongoose");
 const User = require("../models/User");
+const fs = require("fs");
 const {
   postValidation,
   commentValidation,
@@ -93,6 +94,9 @@ const createPost = async (req, res) => {
           const result = await cloudinary.uploader.upload(file.path, {
             folder: "posts",
           });
+
+          // delete image from server
+          fs.unlinkSync(file.path);
 
           return {
             public_id: result.public_id,
