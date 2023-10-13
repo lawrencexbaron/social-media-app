@@ -7,6 +7,8 @@ import { postAgo } from "../utils/api/timeUtils";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
+import GalleryModal from "../common/GalleryModal";
+import { Toast } from "../common/Alert";
 
 import {
   BiLike,
@@ -57,6 +59,9 @@ const NewsFeed = ({
   const [isLiked, setIsLiked] = useState(
     author && likes && likes.includes(author._id) ? true : false
   );
+
+  // gallery modal state
+  const [galleryModal, setGalleryModal] = useState(false);
 
   // isLiked but for comment
   const [isCommentLiked, setIsCommentLiked] = useState(
@@ -151,10 +156,22 @@ const NewsFeed = ({
     // are you sure you want to delete this post?
     // if yes, delete the post
     if (confirm("Are you sure you want to delete this post?")) {
+      Toast({
+        text: "Deleting post...",
+        icon: "info",
+        position: "bottom-end",
+      });
+
       // delete the post
       await deletePost(postId);
       // get the posts again
       await getPosts();
+
+      Toast({
+        text: "Post deleted successfully",
+        icon: "success",
+        position: "bottom-end",
+      });
     }
   };
 
@@ -241,6 +258,21 @@ const NewsFeed = ({
     }
   };
 
+  const handleGalleryModal = () => {
+    setGalleryModal(!galleryModal);
+  };
+
+  const galleryModalmodal = (post) => {
+    return (
+      <GalleryModal
+        isOpen={galleryModal}
+        onClose={handleGalleryModal}
+        images={post.images}
+        title='Gallery'
+      />
+    );
+  };
+
   // check if user is object
   if (typeof user === "object" && user !== null) {
     // if it is, destructure the user object
@@ -253,273 +285,280 @@ const NewsFeed = ({
   avatar = avatar || "https://via.placeholder.com/150";
 
   return (
-    <div className='mb-2 bg-white rounded-lg border-gray-200 border px-6 pt-6 pb-2 flex'>
-      <div className='flex flex-col w-full justify-start'>
-        <div className='flex justify-between'>
-          <div className='flex justify-start'>
+    <>
+      <div className='mb-2 bg-white rounded-lg border-gray-200 border px-6 pt-6 pb-2 flex'>
+        <div className='flex flex-col w-full justify-start'>
+          <div className='flex justify-between'>
+            <div className='flex justify-start'>
+              {post.sharedBy ? (
+                <>
+                  <Avatar avatar={post.sharedBy.profilePicture} size={10} />
+                  <div className='ml-2 flex flex-col'>
+                    <div className='flex items-center justify-center'>
+                      <Link to={`/profile/${post.sharedBy._id}`}>
+                        <h1 className='text-md font-semibold'>
+                          {post.sharedBy.firstname} {post.sharedBy.lastname}
+                        </h1>
+                      </Link>
+                      {post.sharedBy ? (
+                        <p className='text-xs my-auto ml-1'>Shared a post</p>
+                      ) : null}
+                    </div>
+                    <p className='text-xs text-slate-500 flex'>
+                      <BiGlobe className='my-auto mr-1' />
+                      {postAgo(date)}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Avatar avatar={avatar} size={10} />
+                  <div className='ml-2 flex flex-col'>
+                    <div className='flex items-center justify-center'>
+                      <Link to={`/profile/${post.user._id}`}>
+                        <h1 className='text-md font-semibold'>
+                          {post.user.firstname} {post.user.lastname}
+                        </h1>
+                      </Link>
+                    </div>
+                    <p className='text-xs text-slate-500 flex'>
+                      <BiGlobe className='my-auto mr-1' />
+                      {postAgo(date)}
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
             {post.sharedBy ? (
-              <>
-                <Avatar avatar={post.sharedBy.profilePicture} size={10} />
-                <div className='ml-2 flex flex-col'>
-                  <div className='flex items-center justify-center'>
-                    <Link to={`/profile/${post.sharedBy._id}`}>
-                      <h1 className='text-md'>
-                        {post.sharedBy.firstname} {post.sharedBy.lastname}
-                      </h1>
-                    </Link>
-                    {post.sharedBy ? (
-                      <p className='text-xs my-auto ml-1'>Shared a post</p>
-                    ) : null}
+              <div onClick={handleClickOutside} className='flex justify-end'>
+                {author && author._id === post.sharedBy._id ? (
+                  <BiDotsHorizontalRounded
+                    className=' cursor-pointer relative'
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                  />
+                ) : null}
+
+                {/* Dropdown */}
+                {dropdownOpen ? (
+                  <div
+                    ref={dropdownRef}
+                    className='absolute mt-10 py-2 w-48 bg-white border rounded-md shadow-xl z-1'
+                  >
+                    <a
+                      href='#'
+                      className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                      role='menuitem'
+                      onClick={() => handleDelete()}
+                    >
+                      Delete
+                    </a>
                   </div>
-                  <p className='text-xs text-slate-500 flex'>
-                    <BiGlobe className='my-auto mr-1' />
-                    {postAgo(date)}
-                  </p>
-                </div>
-              </>
+                ) : null}
+              </div>
             ) : (
-              <>
-                <Avatar avatar={avatar} size={10} />
-                <div className='ml-2 flex flex-col'>
-                  <div className='flex items-center justify-center'>
-                    <Link to={`/profile/${post.user._id}`}>
-                      <h1 className='text-md'>
-                        {post.user.firstname} {post.user.lastname}
-                      </h1>
-                    </Link>
+              <div onClick={handleClickOutside} className='flex justify-end'>
+                {author && author._id === user._id ? (
+                  <BiDotsHorizontalRounded
+                    className=' cursor-pointer relative'
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                  />
+                ) : null}
+
+                {/* Dropdown */}
+                {dropdownOpen ? (
+                  <div
+                    ref={dropdownRef}
+                    className='absolute mt-10 py-2 w-48 bg-white border rounded-md shadow-xl z-1'
+                  >
+                    <a
+                      href='#'
+                      className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                      role='menuitem'
+                      onClick={() => handleDelete()}
+                    >
+                      Delete
+                    </a>
                   </div>
-                  <p className='text-xs text-slate-500 flex'>
-                    <BiGlobe className='my-auto mr-1' />
-                    {postAgo(date)}
-                  </p>
-                </div>
-              </>
+                ) : null}
+              </div>
             )}
           </div>
-          {post.sharedBy ? (
-            <div onClick={handleClickOutside} className='flex justify-end'>
-              {author && author._id === post.sharedBy._id ? (
-                <BiDotsHorizontalRounded
-                  className=' cursor-pointer relative'
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                />
-              ) : null}
 
-              {/* Dropdown */}
-              {dropdownOpen ? (
-                <div
-                  ref={dropdownRef}
-                  className='absolute mt-10 py-2 w-48 bg-white border rounded-md shadow-xl z-1'
-                >
-                  <a
-                    href='#'
-                    className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                    role='menuitem'
-                    onClick={() => handleDelete()}
-                  >
-                    Delete
-                  </a>
+          {post.sharedBy ? (
+            <div className='  rounded-md text-slate-600 my-2'>
+              <div className='flex'>
+                <Avatar avatar={avatar} size={10} />
+                <div className='flex'>
+                  <div className='ml-2 flex flex-col'>
+                    <div className='flex items-center justify-center'>
+                      <Link to={`/profile/${post.user._id}`}>
+                        <h1 className='text-md'>{name}</h1>
+                      </Link>
+                    </div>
+                    <p className='text-xs text-slate-500 flex'>
+                      <BiGlobe className='my-auto mr-1' />
+                      {postAgo(post.sharedDate)}
+                    </p>
+                  </div>
                 </div>
-              ) : null}
+              </div>
+              <p className=' px-4 pb-1 mt-1'>{content}</p>
             </div>
           ) : (
-            <div onClick={handleClickOutside} className='flex justify-end'>
-              {author && author._id === user._id ? (
-                <BiDotsHorizontalRounded
-                  className=' cursor-pointer relative'
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                />
-              ) : null}
-
-              {/* Dropdown */}
-              {dropdownOpen ? (
-                <div
-                  ref={dropdownRef}
-                  className='absolute mt-10 py-2 w-48 bg-white border rounded-md shadow-xl z-1'
-                >
-                  <a
-                    href='#'
-                    className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                    role='menuitem'
-                    onClick={() => handleDelete()}
-                  >
-                    Delete
-                  </a>
+            <>
+              <div className='rounded px-3 my-2'>
+                <p className=''>{content}</p>
+              </div>
+              {post.images.length > 0 ? (
+                <div className='flex gap-1'>
+                  {galleryModalmodal(post)}
+                  {post.images.map((image, index) => (
+                    <img
+                      onClick={handleGalleryModal}
+                      key={index}
+                      src={image.url}
+                      alt='post'
+                      className='object-cover hover:cursor-pointer w-full h-52  rounded-md'
+                    />
+                  ))}
                 </div>
               ) : null}
-            </div>
+            </>
           )}
-        </div>
-        {post.sharedBy ? (
-          <div className='py-4 border-slate-200 border rounded-md text-slate-600 my-4'>
-            <div className='flex'>
-              <Avatar avatar={avatar} size={10} />
-              <div className='flex'>
-                <div className='ml-2 flex flex-col'>
-                  <div className='flex items-center justify-center'>
-                    <Link to={`/profile/${post.user._id}`}>
-                      <h1 className='text-md'>{name}</h1>
-                    </Link>
-                  </div>
-                  <p className='text-xs text-slate-500 flex'>
-                    <BiGlobe className='my-auto mr-1' />
-                    {postAgo(post.sharedDate)}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <p className='text-gray-700 px-4 pb-1 mt-1'>{content}</p>
-          </div>
-        ) : (
-          <>
-            {post.images.length > 0 ? (
-              <div className='flex gap-1'>
-                {post.images.map((image, index) => (
-                  <img
-                    key={index}
-                    src={image.url}
-                    alt='post'
-                    className='object-cover w-full h-52  rounded-md'
-                  />
-                ))}
-              </div>
-            ) : null}
-            <div className='py-4 border-slate-200 border rounded px-3 bg-gray-100 text-slate-600 my-4'>
-              <p className='text-gray-700'>{content}</p>
-            </div>
-          </>
-        )}
 
-        <div className='flex justify-between py-2'>
-          <div className='flex space-x-2 justify-around mx-auto w-full'>
-            <Button
-              type='button'
-              className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
-            >
-              {isLiked ? (
-                <p
-                  className='flex my-auto justify-between'
-                  onClick={() => handleUnlike(postId)}
-                >
-                  <BiLike className='mr-1 mt-1 text-blue-500' />
-                  Liked
-                </p>
-              ) : (
-                <p
-                  className='flex my-auto justify-between'
-                  onClick={() => handleLike(postId)}
-                >
-                  <BiLike className='mr-1 mt-1' />
-                  Like
-                </p>
-              )}
-            </Button>
-            <Button
-              type='button'
-              className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
-            >
-              <BiComment className='mr-1 mt-1' />
-              Comment
-            </Button>
-            <Button
-              type='button'
-              onClick={() => setShareDropdown(!shareDropdown)}
-              className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
-            >
-              {
-                <BiShare
-                  className={`mr-1 mt-1 ${
-                    shareDropdown ? "text-blue-500" : ""
-                  }`}
-                />
-              }
-              Share
-              {shareDropdown ? (
-                <div className='absolute right-6 md:right-48 lg:right-auto mt-28 py-2 w-48 bg-white border rounded-md shadow-xl z-50'>
+          <div className='flex justify-between py-2'>
+            <div className='flex space-x-2 justify-around mx-auto w-full text-sm'>
+              <Button
+                type='button'
+                className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
+              >
+                {isLiked ? (
                   <p
-                    onClick={() => handleShare(postId)}
-                    className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
-                    role='menuitem'
+                    className='flex my-auto justify-between'
+                    onClick={() => handleUnlike(postId)}
                   >
-                    Share now
+                    <BiLike className='mr-1 mt-1 my-auto text-blue-500' />
+                    Liked
                   </p>
-                </div>
-              ) : null}
-            </Button>
+                ) : (
+                  <p
+                    className='flex my-auto justify-between'
+                    onClick={() => handleLike(postId)}
+                  >
+                    <BiLike className='mr-1 mt-1 my-auto' />
+                    Like
+                  </p>
+                )}
+              </Button>
+              <Button
+                type='button'
+                className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
+              >
+                <BiComment className='mr-1 mt-1 my-auto' />
+                Comment
+              </Button>
+              <Button
+                type='button'
+                onClick={() => setShareDropdown(!shareDropdown)}
+                className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
+              >
+                {
+                  <BiShare
+                    className={`mr-1 mt-1 my-auto ${
+                      shareDropdown ? "text-blue-500" : ""
+                    }`}
+                  />
+                }
+                Share
+                {shareDropdown ? (
+                  <div className='absolute right-6 md:right-48 lg:right-auto mt-28 py-2 w-48 bg-white border rounded-md shadow-xl z-50'>
+                    <p
+                      onClick={() => handleShare(postId)}
+                      className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                      role='menuitem'
+                    >
+                      Share now
+                    </p>
+                  </div>
+                ) : null}
+              </Button>
+            </div>
           </div>
-        </div>
-        <div className='flex flex-col border-t items-center my-auto py-2 justify-between border-t-gray-200 w-full'>
-          {post && post.comments.length > 0 ? (
-            <div className='w-full'>
-              {post.comments.length > 5 ? (
-                <p className='float-right text-xs cursor-pointer text-gray-600 font-semibold'>
-                  View more comments{" "}
-                </p>
-              ) : null}
+          <div className='flex flex-col border-t items-center my-auto py-2 justify-between border-t-gray-200 w-full'>
+            {post && post.comments.length > 0 ? (
+              <div className='w-full'>
+                {post.comments.length > 5 ? (
+                  <p className='float-right text-xs cursor-pointer text-gray-600 font-semibold'>
+                    View more comments{" "}
+                  </p>
+                ) : null}
 
-              {post.comments.slice(0, 5).map((comment, index) => (
-                <div key={index} className='flex w-full py-1 my-1'>
-                  <Avatar avatar={comment.user.profilePicture} size={10} />
-                  <div className='flex w-full justify-between'>
-                    <div className='flex flex-col w-full'>
-                      <Link to={`/profile/${comment.user._id}`}>
-                        <Label
-                          className={`w-full font-semibold text-slate-800 hover:cursor-pointer`}
-                        >
-                          {comment.user.firstname} {comment.user.lastname}
-                        </Label>
-                      </Link>
-                      <Label className={`w-full`}>{comment.text}</Label>
-                      <div className='flex w-full justify-start mt-2 space-x-4'>
-                        <Label
-                          className={`text-slate-500 text-xs font-semibold cursor-pointer`}
-                        >
-                          <p
-                            onClick={() =>
-                              isCommentLiked[comment._id]
-                                ? handleUnlikeComment(comment._id)
-                                : handleLikeComment(comment._id)
-                            }
+                {post.comments.slice(0, 5).map((comment, index) => (
+                  <div key={index} className='flex w-full py-1 my-1'>
+                    <Avatar avatar={comment.user.profilePicture} size={10} />
+                    <div className='flex w-full justify-between'>
+                      <div className='flex flex-col w-full'>
+                        <Link to={`/profile/${comment.user._id}`}>
+                          <Label
+                            className={`w-full font-semibold text-slate-800 hover:cursor-pointer`}
                           >
-                            {isCommentLiked[comment._id] ? "Unlike" : "Like"}
-                          </p>
-                        </Label>
+                            {comment.user.firstname} {comment.user.lastname}
+                          </Label>
+                        </Link>
+                        <Label className={`w-full`}>{comment.text}</Label>
+                        <div className='flex w-full justify-start mt-2 space-x-4'>
+                          <Label
+                            className={`text-slate-500 text-xs font-semibold cursor-pointer`}
+                          >
+                            <p
+                              onClick={() =>
+                                isCommentLiked[comment._id]
+                                  ? handleUnlikeComment(comment._id)
+                                  : handleLikeComment(comment._id)
+                              }
+                            >
+                              {isCommentLiked[comment._id] ? "Unlike" : "Like"}
+                            </p>
+                          </Label>
 
-                        {comment.user._id === author._id ? (
+                          {comment.user._id === author._id ? (
+                            <Label
+                              className={` text-slate-500 text-xs font-semibold cursor-pointer`}
+                            >
+                              <p
+                                onClick={() => handleDeleteComment(comment._id)}
+                              >
+                                Delete
+                              </p>
+                            </Label>
+                          ) : null}
                           <Label
                             className={` text-slate-500 text-xs font-semibold cursor-pointer`}
                           >
-                            <p onClick={() => handleDeleteComment(comment._id)}>
-                              Delete
-                            </p>
+                            {postAgo(comment.date)}
                           </Label>
-                        ) : null}
-                        <Label
-                          className={` text-slate-500 text-xs font-semibold cursor-pointer`}
-                        >
-                          {postAgo(comment.date)}
-                        </Label>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            ) : null}
+            <div className='flex w-full'>
+              <Avatar avatar={author && author.profilePicture} size={10} />
+              <TextInput
+                type='text'
+                onKeyDown={handleKeyDown}
+                onChange={(e) => setComment(e.target.value)}
+                value={comment}
+                placeholder='Write a comment...'
+                className='px-3 py-2 w-full border my-auto border-gray-200 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent'
+              />
             </div>
-          ) : null}
-          <div className='flex w-full'>
-            <Avatar avatar={author && author.profilePicture} size={10} />
-            <TextInput
-              type='text'
-              onKeyDown={handleKeyDown}
-              onChange={(e) => setComment(e.target.value)}
-              value={comment}
-              placeholder='Write a comment...'
-              className='px-3 py-2 w-full border my-auto border-gray-200 rounded-md placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-400 focus:border-transparent'
-            />
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

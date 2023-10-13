@@ -35,6 +35,12 @@ const PostEditor = () => {
         images,
       };
 
+      Toast({
+        text: "Creating post...",
+        icon: "info",
+        position: "bottom-end",
+      });
+
       await createPost(data);
       await getPosts();
       setFocus(false);
@@ -62,7 +68,11 @@ const PostEditor = () => {
   const handleImagePreview = (e) => {
     const files = Array.from(e.target.files);
     console.log(files);
-    if (files.length > 4) {
+    if (
+      files.length > 4 ||
+      images.length + files.length > 4 ||
+      images.length === 4
+    ) {
       Toast({
         text: "You can upload maximum 4 images",
         icon: "error",
@@ -70,6 +80,7 @@ const PostEditor = () => {
       });
       return;
     }
+
     files.forEach((file) => {
       if (!images.some((image) => image.name === file.name)) {
         setImages((prev) => [...prev, file]);

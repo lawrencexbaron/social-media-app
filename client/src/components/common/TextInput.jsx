@@ -2,7 +2,7 @@ import React from "react";
 
 function TextInput(props) {
   return (
-    <div className='relative w-full'>
+    <div className='relative w-full my-auto'>
       {props.icon && (
         <span className='absolute inset-y-0 left-0 flex items-center pl-3'>
           {props.icon}

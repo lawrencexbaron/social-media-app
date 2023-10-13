@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef } from "react";
 
 function Modal({ isOpen, onClose, title, children }) {
-  const modalRef = useRef();
+  const modalContentRef = useRef();
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -11,7 +11,10 @@ function Modal({ isOpen, onClose, title, children }) {
     };
 
     const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
+      if (
+        modalContentRef.current &&
+        !modalContentRef.current.contains(event.target)
+      ) {
         onClose();
       }
     };
@@ -32,7 +35,7 @@ function Modal({ isOpen, onClose, title, children }) {
 
   useEffect(() => {
     if (isOpen) {
-      modalRef.current.focus();
+      modalContentRef.current.focus();
     }
   }, [isOpen]);
 
@@ -40,12 +43,14 @@ function Modal({ isOpen, onClose, title, children }) {
     <Fragment>
       {isOpen ? (
         <div
-          className='fixed inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto'
+          className='fixed w-full inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto'
           tabIndex='-1'
-          ref={modalRef}
         >
           <div className='fixed inset-0 bg-gray-900 opacity-50'></div>
-          <div className='relative z-50 w-full max-w-lg mx-auto my-6'>
+          <div
+            className='relative z-50 w-full max-w-lg mx-auto my-6'
+            ref={modalContentRef}
+          >
             {/*content*/}
             <div className='relative flex flex-col w-full bg-white border-0 rounded-lg shadow-lg outline-none focus:outline-none'>
               {/*header*/}
