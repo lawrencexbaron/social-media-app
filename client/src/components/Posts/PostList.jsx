@@ -24,7 +24,7 @@ const PostList = ({ posts, user }) => {
         })
       ) : (
         <div className='flex justify-center'>
-          <p className='text-sm text-slate-700 font-semibold mt-20'>No posts</p>
+          <p className='text-sm text-slate-700 font-semibold my-20'>No posts</p>
         </div>
       )}
     </>

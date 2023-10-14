@@ -147,7 +147,7 @@ const sharePost = async (req, res) => {
       user: post.user,
       content: post.content,
       sharedBy: req.user.id,
-      image: post.image,
+      images: post.images,
       sharedDate: post.createdAt,
     };
 

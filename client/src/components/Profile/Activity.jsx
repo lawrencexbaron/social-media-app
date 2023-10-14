@@ -85,7 +85,7 @@ const Activity = ({ userId }) => {
 
   return (
     <div className='space-y-4'>
-      <div className='bg-white h-auto border-slate-200 flex-col px-4 py-5 rounded-lg w-full'>
+      <div className='bg-white h-auto border border-slate-300 flex-col px-4 py-5 rounded-lg w-full'>
         <div className='flex w-full justify-between mb-4 font-semibold'>
           <p>Activity</p>
           <p>See all</p>
@@ -131,7 +131,7 @@ const Activity = ({ userId }) => {
           <p className='my-auto text-gray-600 text-xs'>No notifications</p>
         )}
       </div>
-      <div className='bg-white h-auto border-slate-200 flex-col px-6 py-5 rounded-lg w-full'>
+      <div className='bg-white border h-auto border-slate-300 flex-col px-6 py-5 rounded-lg w-full'>
         <div className='flex w-full justify-between mb-4 font-semibold'>
           <p>Suggested for you</p>
           <p className='hover:cursor-pointer'>

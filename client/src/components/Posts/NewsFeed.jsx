@@ -385,7 +385,7 @@ const NewsFeed = ({
           </div>
 
           {post.sharedBy ? (
-            <div className='  rounded-md text-slate-600 my-2'>
+            <div className='border border-gray-300 pt-4 rounded-md text-slate-600 my-2'>
               <div className='flex'>
                 <Avatar avatar={avatar} size={10} />
                 <div className='flex'>
@@ -403,6 +403,20 @@ const NewsFeed = ({
                 </div>
               </div>
               <p className=' px-4 pb-1 mt-1'>{content}</p>
+              {post.images.length > 0 ? (
+                <div className='flex gap-1 mt-2'>
+                  {galleryModalmodal(post)}
+                  {post.images.map((image, index) => (
+                    <img
+                      onClick={handleGalleryModal}
+                      key={index}
+                      src={image.url}
+                      alt='post'
+                      className='object-cover hover:cursor-pointer w-full h-52  rounded-md'
+                    />
+                  ))}
+                </div>
+              ) : null}
             </div>
           ) : (
             <>

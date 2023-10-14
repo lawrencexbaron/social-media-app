@@ -91,7 +91,7 @@ const PostEditor = () => {
 
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <div className='bg-white rounded-lg px-6 py-5 mb-2 border border-slate-200 flex flex-col space-x-2'>
+      <div className='bg-white rounded-lg px-6 py-5 mb-2 border border-slate-300 flex flex-col space-x-2'>
         <div className='mx-1 mb-4'>
           <p className='font-semibold'>Create Post</p>
         </div>
@@ -137,6 +137,7 @@ const PostEditor = () => {
             type='file'
             id='file'
             name='images'
+            accept='image/*'
             multiple
             className='hidden'
             onChange={handleImagePreview}
