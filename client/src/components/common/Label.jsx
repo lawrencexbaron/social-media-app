@@ -1,12 +1,12 @@
 import React from "react";
 
-function Label(props) {
+function Label({ htmlFor, className, children }) {
   return (
     <label
-      htmlFor={props.htmlFor}
-      className={`block text-sm font-medium text-gray-700 ${props.className}`}
+      htmlFor={htmlFor}
+      className={`block text-sm font-medium text-gray-700 ${className}`}
     >
-      {props.children}
+      {children}
     </label>
   );
 }
