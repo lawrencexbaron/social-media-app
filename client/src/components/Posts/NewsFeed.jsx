@@ -286,7 +286,7 @@ const NewsFeed = ({
 
   return (
     <>
-      <div className='mb-2 bg-white rounded-lg border-gray-200 border px-6 pt-6 pb-2 flex'>
+      <div className='mb-2 bg-white rounded-lg border-gray-300 border px-6 pt-6 pb-2 flex'>
         <div className='flex flex-col w-full justify-start'>
           <div className='flex justify-between'>
             <div className='flex justify-start'>
@@ -469,11 +469,11 @@ const NewsFeed = ({
             <div className='flex space-x-2 justify-around mx-auto w-full text-sm'>
               <Button
                 type='button'
-                className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
+                className='inline-flex items-center text-black font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
               >
                 {isLiked ? (
                   <p
-                    className='flex my-auto justify-between'
+                    className='flex my-auto justify-between hover:text-slate-500 '
                     onClick={() => handleUnlike(postId)}
                   >
                     <BiLike className='mr-1 mt-1 my-auto text-blue-500' />
@@ -481,7 +481,7 @@ const NewsFeed = ({
                   </p>
                 ) : (
                   <p
-                    className='flex my-auto justify-between'
+                    className='flex my-auto justify-between hover:text-slate-500 '
                     onClick={() => handleLike(postId)}
                   >
                     <BiLike className='mr-1 mt-1 my-auto' />
@@ -491,22 +491,26 @@ const NewsFeed = ({
               </Button>
               <Button
                 type='button'
-                className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
+                className='inline-flex items-center text-black  font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
               >
-                <BiComment className='mr-1 mt-1 my-auto' />
-                Comment
+                <p className='flex my-auto justify-between hover:text-slate-500'>
+                  <BiComment className='mr-1 mt-1 my-auto' />
+                  Comment
+                </p>
               </Button>
               <Button
                 type='button'
                 onClick={() => setShareDropdown(!shareDropdown)}
-                className='inline-flex items-center text-black hover:text-slate-500 font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
+                className='inline-flex items-center text-black  font-semibold py-2 px-4 focus:outline-none focus:shadow-outline'
               >
                 {
-                  <BiShare
-                    className={`mr-1 mt-1 my-auto ${
-                      shareDropdown ? "text-blue-500" : ""
-                    }`}
-                  />
+                  <p className='flex my-auto justify-between hover text-slate-500'>
+                    <BiShare
+                      className={`mr-1 mt-1 my-auto ${
+                        shareDropdown ? "text-blue-500" : ""
+                      }`}
+                    />
+                  </p>
                 }
                 Share
                 {shareDropdown ? (

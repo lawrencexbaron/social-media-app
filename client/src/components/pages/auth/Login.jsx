@@ -22,6 +22,7 @@ function Login() {
     user,
     isAuth,
     setAuth,
+    isAuthenticated,
   } = useStore(useAuthStore);
 
   const handleSubmit = async (e) => {

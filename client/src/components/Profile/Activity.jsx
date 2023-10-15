@@ -134,9 +134,6 @@ const Activity = ({ userId }) => {
       <div className='bg-white border h-auto border-slate-300 flex-col px-6 py-5 rounded-lg w-full'>
         <div className='flex w-full justify-between mb-4 font-semibold'>
           <p>Suggested for you</p>
-          <p className='hover:cursor-pointer'>
-            <BiRefresh className='inline-block mr-1' />
-          </p>
         </div>
         {users &&
           users

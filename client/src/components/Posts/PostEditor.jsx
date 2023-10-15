@@ -77,7 +77,7 @@ const PostEditor = () => {
       images.length === 2
     ) {
       Toast({
-        text: "You can upload maximum 4 videos",
+        text: "You can upload maximum 2 videos",
         icon: "error",
         position: "bottom-end",
       });
