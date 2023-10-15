@@ -51,9 +51,13 @@ export const getUser = async (id) => {
 };
 
 // create updateUser
-export const updateUser = async (id, data) => {
+export const updateUser = async (data) => {
   try {
-    const res = await api.put(`/api/users/${id}`, data);
+    const res = await api.put(`/api/users/`, data, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
     return res.data;
   } catch (error) {
     return Promise.reject(error.response.data);

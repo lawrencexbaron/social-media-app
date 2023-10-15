@@ -137,8 +137,6 @@ const createPost = async (req, res) => {
         })
       );
 
-      console.log(req.files["videos"]);
-
       // foreach image in images array create image object
       const videoArray = video.map((vid) => {
         return {

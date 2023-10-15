@@ -5,7 +5,11 @@ const cloudinary = require("cloudinary").v2;
 const dotenv = require("dotenv").config();
 const fs = require("fs");
 
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+
 const multer = require("multer");
+const { updateUserValidation } = require("../utilities/Validation");
 
 // import dotenv from "dotenv";
 
@@ -106,7 +110,7 @@ const getUserByUsername = async (req, res) => {
   }
 };
 
-// @route   PUT api/users/:id
+// @route   PUT api/users/
 // @desc    Update user
 // @access  Private
 const updateUser = async (req, res) => {
@@ -124,8 +128,15 @@ const updateUser = async (req, res) => {
       relationship,
     } = req.body;
 
+    const { error } = updateUserValidation(req.body);
+
+    if (error) {
+      const messages = error.details.map((detail) => detail.message);
+      return res.status(400).send({ messages });
+    }
+
     // check if user exist
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -135,16 +146,18 @@ const updateUser = async (req, res) => {
       return res.status(401).json({ message: "Not authorized" });
     }
 
+    let hashedPassword = await bcrypt.hash(password, 10);
+
     // update user
     const updated = await User.findByIdAndUpdate(
-      req.params.id,
+      req.user.id,
       {
         $set: {
           firstname,
           lastname,
           username,
-          email,
-          password,
+          email: email.toLowerCase(),
+          password: hashedPassword,
           profilePicture,
           coverPicture,
           city,

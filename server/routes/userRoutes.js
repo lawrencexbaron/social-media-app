@@ -34,10 +34,10 @@ router.get("/", getUsers);
 // @access  Public
 // router.get("/:id", getUserById);
 
-// @route   PUT api/users/:id
+// @route   PUT api/users/
 // @desc    Update user
 // @access  Private
-router.put("/:id", updateUser);
+router.put("/", validateToken, updateUser);
 
 // @route   DELETE api/users/:id
 // @desc    Delete user

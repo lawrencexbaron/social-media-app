@@ -12,6 +12,48 @@ const baseOptions = {
   },
 };
 
+const updateUserValidation = (data) => {
+  const schema = Joi.object({
+    firstname: Joi.string().min(3).max(20).messages({
+      "string.empty": `First name is required`,
+      "string.min": `First name should have a minimum length of {#limit}`,
+    }),
+
+    lastname: Joi.string().min(3).max(20).messages({
+      "string.empty": `Last name is required`,
+      "string.min": `Last name should have a minimum length of {#limit}`,
+    }),
+
+    username: Joi.string().min(3).max(20).messages({
+      "string.empty": `Username is required`,
+      "string.min": `Username should have a minimum length of {#limit}`,
+    }),
+
+    email: Joi.string().min(6).max(255).email().messages({
+      "string.empty": `Email is required`,
+      "string.min": `Email should have a minimum length of {#limit}`,
+      "string.email": `Email is invalid`,
+    }),
+
+    password: Joi.string().min(6).max(1024).messages({
+      "string.empty": `Password is required`,
+      "string.min": `Password should have a minimum length of {#limit}`,
+    }),
+
+    confirmPassword: Joi.string()
+      .min(6)
+      .max(1024)
+      .valid(Joi.ref("password"))
+      .messages({
+        "string.empty": `Confirm password is required`,
+        "string.min": `Confirm password should have a minimum length of {#limit}`,
+        "any.only": `Password and confirm password do not match`,
+      }),
+  });
+
+  return schema.validate(data, baseOptions);
+};
+
 // User validation schema
 const registerValidation = (data) => {
   const schema = Joi.object({
@@ -121,6 +163,7 @@ const replyValidation = (data) => {
 
 module.exports = {
   registerValidation,
+  updateUserValidation,
   loginValidation,
   postValidation,
   commentValidation,

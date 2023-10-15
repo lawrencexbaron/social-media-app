@@ -4,14 +4,16 @@ import { BiSearch } from "react-icons/bi";
 import TextInput from "../common/TextInput";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
+import { useProfile } from "../Profile/hooks/useProfile";
 
 function Base(props) {
   const { user, logout, isAuth, isAuthenticated, setAuth } = useAuthStore();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { data: profile, isLoading } = useProfile(user._id);
 
-  const name = user?.firstname + " " + user?.lastname;
+  // const name = user?.firstname + " " + user?.lastname;
 
   const handleLogout = () => {
     logout();
@@ -25,6 +27,14 @@ function Base(props) {
       navigate("/");
     }
   }, [isAuthenticated]);
+
+  if (isLoading) {
+    return (
+      <div className='flex justify-center items-center h-screen'>
+        <div className='animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900'></div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -131,10 +141,12 @@ function Base(props) {
               >
                 <img
                   className='w-8 h-8 rounded-full'
-                  src={user.profilePicture}
+                  src={profile.data.profilePicture}
                   alt='Avatar'
                 />
-                <span className='font-semibold text-gray-700'>{name}</span>
+                <span className='font-semibold text-gray-700'>
+                  {profile.data.firstname} {profile.data.lastname}
+                </span>
               </button>
               {dropdownOpen && (
                 <div className='origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5'>
