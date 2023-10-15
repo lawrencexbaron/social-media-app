@@ -17,6 +17,8 @@ const PostEditor = () => {
 
   const [images, setImages] = useState([]);
 
+  const [videos, setVideos] = useState([]);
+
   const handlePostCreate = async (e) => {
     e.preventDefault();
     try {
@@ -33,6 +35,7 @@ const PostEditor = () => {
       const data = {
         content,
         images,
+        videos,
       };
 
       Toast({
@@ -54,6 +57,7 @@ const PostEditor = () => {
       queryClient.invalidateQueries(["profile"]);
       setContent("");
       setImages([]);
+      setVideos([]);
     } catch (error) {
       console.log(error.message);
       Toast({
@@ -62,6 +66,31 @@ const PostEditor = () => {
         position: "bottom-end",
       });
     }
+  };
+
+  const handleVideoPreview = (e) => {
+    const files = Array.from(e.target.files);
+    console.log(files);
+    if (
+      files.length > 2 ||
+      images.length + files.length > 2 ||
+      images.length === 2
+    ) {
+      Toast({
+        text: "You can upload maximum 4 videos",
+        icon: "error",
+        position: "bottom-end",
+      });
+      return;
+    }
+
+    files.forEach((file) => {
+      if (!videos.some((video) => video.name === file.name)) {
+        setVideos((prev) => [...prev, file]);
+      }
+    });
+
+    console.log(videos);
   };
 
   // handleImagePreview push images to images state array if the image is not already in the array
@@ -143,6 +172,45 @@ const PostEditor = () => {
             onChange={handleImagePreview}
           />
         )}
+        {videos.length > 0 ? (
+          <div className='flex px-2 py-2 gap-4 mt-4'>
+            <input
+              type='file'
+              id='video'
+              multiple
+              className='hidden'
+              onChange={handleVideoPreview}
+            />
+            {videos.length > 0 &&
+              videos.map((video, index) => (
+                <div key={index} className='relative'>
+                  <video
+                    src={URL.createObjectURL(video)}
+                    alt='preview'
+                    key={video.name}
+                    className='h-32 w-32 object-cover'
+                  />
+                  <IoIosClose
+                    className=' bg-white text-slate-700 border border-slate-700 hover:cursor-pointer rounded-full absolute top-1 right-1'
+                    onClick={() =>
+                      setVideos(videos.filter((vid) => vid.name !== video.name))
+                    }
+                  />
+                </div>
+              ))}
+          </div>
+        ) : (
+          <input
+            type='file'
+            id='video'
+            name='videos'
+            accept='video/*'
+            multiple
+            className='hidden'
+            onChange={handleVideoPreview}
+          />
+        )}
+
         <div className='mt-4 flex justify-between'>
           <div className='flex space-x-7 text-sm my-auto justify-between text-gray-700 font-semibold'>
             <div
@@ -152,7 +220,10 @@ const PostEditor = () => {
               <BsCardImage className='my-auto' />
               <p>Image</p>
             </div>
-            <div className='flex my-auto space-x-2'>
+            <div
+              className='flex my-auto space-x-2 hover:cursor-pointer'
+              onClick={() => document.getElementById("video").click()}
+            >
               <BsCameraVideo className='my-auto' />
               <p>Video</p>
             </div>

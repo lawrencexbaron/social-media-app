@@ -34,7 +34,11 @@ router.get("/:id", getPostById);
 // @route   POST api/posts
 // @desc    Create post
 // @access  Private
-router.post("/", upload.array("images", 10), validateToken, createPost);
+const files = upload.fields([
+  { name: "images", maxCount: 4 },
+  { name: "videos", maxCount: 2 },
+]);
+router.post("/", files, validateToken, createPost);
 
 // @route   PUT api/posts/:id
 // @desc    Update post

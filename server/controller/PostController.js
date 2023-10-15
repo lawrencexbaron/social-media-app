@@ -74,7 +74,7 @@ const getPostById = async (req, res) => {
 const createPost = async (req, res) => {
   try {
     // get form data
-    const { content, images } = req.body;
+    const { content, images, videos } = req.body;
 
     // get user from req.user
     const user = req.user.id;
@@ -87,10 +87,10 @@ const createPost = async (req, res) => {
       return res.status(400).json({ message: messages });
     }
 
-    if (req.files.length > 0) {
+    if (req.files["images"]) {
       // foreach image in images array, upload to cloudinary
       const image = await Promise.all(
-        req.files.map(async (file) => {
+        req.files["images"].map(async (file) => {
           const result = await cloudinary.uploader.upload(file.path, {
             folder: "posts",
           });
@@ -118,17 +118,48 @@ const createPost = async (req, res) => {
         content,
         images: imageArray,
       });
+      return res.status(201).json(post);
+    } else if (req.files["videos"]) {
+      const video = await Promise.all(
+        req.files["videos"].map(async (file) => {
+          const result = await cloudinary.uploader.upload(file.path, {
+            folder: "posts",
+            resource_type: "video",
+          });
 
+          // delete image from server
+          fs.unlinkSync(file.path);
+
+          return {
+            public_id: result.public_id,
+            url: result.secure_url,
+          };
+        })
+      );
+
+      console.log(req.files["videos"]);
+
+      // foreach image in images array create image object
+      const videoArray = video.map((vid) => {
+        return {
+          public_id: vid.public_id,
+          url: vid.url,
+        };
+      });
+
+      const post = await Post.create({
+        user,
+        content,
+        videos: videoArray,
+      });
+      return res.status(201).json(post);
+    } else {
+      const post = await Post.create({
+        user,
+        content,
+      });
       return res.status(201).json(post);
     }
-
-    const post = await Post.create({
-      user,
-      content,
-      images,
-    });
-
-    return res.status(201).json(post);
   } catch (err) {
     console.error(err.message);
     return res.status(500).send("Server Error");
@@ -148,6 +179,7 @@ const sharePost = async (req, res) => {
       content: post.content,
       sharedBy: req.user.id,
       images: post.images,
+      videos: post.videos,
       sharedDate: post.createdAt,
     };
 

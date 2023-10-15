@@ -267,7 +267,7 @@ const NewsFeed = ({
       <GalleryModal
         isOpen={galleryModal}
         onClose={handleGalleryModal}
-        images={post.images}
+        images={post.images ? post.images : post.videos}
         title='Gallery'
       />
     );
@@ -385,7 +385,7 @@ const NewsFeed = ({
           </div>
 
           {post.sharedBy ? (
-            <div className='border border-gray-300 pt-4 rounded-md text-slate-600 my-2'>
+            <div className='border border-gray-300 py-3 rounded-md text-slate-600 my-2'>
               <div className='flex'>
                 <Avatar avatar={avatar} size={10} />
                 <div className='flex'>
@@ -417,6 +417,18 @@ const NewsFeed = ({
                   ))}
                 </div>
               ) : null}
+              {post.videos.length > 0 ? (
+                <div className='flex gap-1 mt-2'>
+                  {post.videos.map((video, index) => (
+                    <video
+                      key={index}
+                      src={video.url}
+                      alt='post'
+                      className='object-cover hover:cursor-pointer w-full h-52  rounded-md'
+                    />
+                  ))}
+                </div>
+              ) : null}
             </div>
           ) : (
             <>
@@ -431,6 +443,19 @@ const NewsFeed = ({
                       onClick={handleGalleryModal}
                       key={index}
                       src={image.url}
+                      alt='post'
+                      className='object-cover hover:cursor-pointer w-full h-52  rounded-md'
+                    />
+                  ))}
+                </div>
+              ) : null}
+              {post.videos.length > 0 ? (
+                <div className='flex gap-1'>
+                  {galleryModalmodal(post)}
+                  {post.videos.map((video, index) => (
+                    <video
+                      key={index}
+                      src={video.url}
                       alt='post'
                       className='object-cover hover:cursor-pointer w-full h-52  rounded-md'
                     />

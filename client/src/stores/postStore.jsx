@@ -85,13 +85,17 @@ export const usePostStore = create((set) => {
       }
     },
     createPost: async (data) => {
-      const { content, images } = data;
+      const { content, images, videos } = data;
 
       const formData = new FormData();
       formData.append("content", content);
 
       images.forEach((image) => {
         formData.append("images", image);
+      });
+
+      videos.forEach((video) => {
+        formData.append("videos", video);
       });
 
       try {
