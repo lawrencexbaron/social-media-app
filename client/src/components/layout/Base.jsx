@@ -1,7 +1,5 @@
 import React, { useState, useEffect, Suspense, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { BiSearch } from "react-icons/bi";
-import TextInput from "../common/TextInput";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { useProfile } from "../../hooks/useProfile";
