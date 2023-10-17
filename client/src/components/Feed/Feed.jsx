@@ -2,8 +2,7 @@ import { Suspense } from "react";
 // Import base layout
 import Base from "../Layout/Base";
 import ProfileCard from "../Profile/ProfileCard";
-import { useProfile } from "../Profile/hooks/useProfile";
-import { useProfileStore } from "../../stores/profileStore";
+
 import { useEffect } from "react";
 import { useAuthStore } from "../../stores/authStore";
 import { usePostStore } from "../../stores/postStore";
@@ -12,6 +11,7 @@ import { usePostStore } from "../../stores/postStore";
 import PostEditor from "../Posts/PostEditor";
 import PostList from "../Posts/PostList";
 import Activity from "../Profile/Activity";
+import ProfileCardSkeleton from "../common/Skeletons/ProfileCardSkeleton";
 
 const Feed = () => {
   const { user } = useAuthStore();
@@ -26,7 +26,7 @@ const Feed = () => {
       <Base>
         <div className='flex flex-col sm:flex-row sm:space-x-5 space-y-1 sm:space-y-0 mt-8'>
           <div className='sm:w-1/4'>
-            <Suspense fallback={<div>Loadingss...</div>}>
+            <Suspense fallback={<ProfileCardSkeleton />}>
               <ProfileCard className='w-full' userId={user._id} />
             </Suspense>
           </div>

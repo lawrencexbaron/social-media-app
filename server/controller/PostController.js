@@ -57,7 +57,8 @@ const getPostById = async (req, res) => {
 
     const post = await Post.findById(req.params.id)
       .populate("user", ["profilePicture", "firstname", "lastname"])
-      .populate("comments.user", ["profilePicture", "firstname", "lastname"]);
+      .populate("comments.user", ["profilePicture", "firstname", "lastname"])
+      .populate("sharedBy", ["profilePicture", "firstname", "lastname"]);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
@@ -326,7 +327,7 @@ const likeComment = async (req, res) => {
     }
 
     const notification = await Notification.create({
-      user: post.user,
+      user: comment.user,
       relatedUser: id,
       post: post._id,
       content: "liked your comment",
@@ -362,7 +363,7 @@ const unlikeComment = async (req, res) => {
       await post.save();
 
       const notification = await Notification.findOneAndDelete({
-        user: post.user,
+        user: comment.user,
         relatedUser: id,
         post: post._id,
         content: "liked your comment",
@@ -452,8 +453,6 @@ const commentPost = async (req, res) => {
 
 const deleteComment = async (req, res) => {
   try {
-    console.log(req.user);
-    console.log(req.body);
     const { id } = req.user;
 
     const post = await Post.findById(req.params.id);

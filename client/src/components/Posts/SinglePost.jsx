@@ -12,9 +12,6 @@ const SinglePost = () => {
   const { user } = useAuthStore();
   const { data: post, isLoading, error } = usePost(id);
 
-  // const { getPost, isLoading, post } = usePostStore();
-
-  // if (isLoading) return <div>Loading...</div>;
   if (isLoading)
     return (
       <>
@@ -25,7 +22,6 @@ const SinglePost = () => {
   return (
     <Base>
       <div className='sm:w-1/2 mx-auto mt-8'>
-        {/* <PostList posts={post ? [post] : []} postId={id} user={user} /> */}
         <NewsFeed
           avatar={post.user.profilePicture}
           name={`${post.user.firstname} ${post.user.lastname}`}

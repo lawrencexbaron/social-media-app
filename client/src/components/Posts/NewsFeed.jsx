@@ -33,10 +33,6 @@ const NewsFeed = ({
   comments,
   commentsLikes,
 }) => {
-  const [fullName, setFullName] = useState(
-    `${user.firstname} ${user.lastname}`
-  );
-
   const [comment, setComment] = useState("");
   const [shareDropdown, setShareDropdown] = useState(false);
 
@@ -69,7 +65,7 @@ const NewsFeed = ({
       ? true
       : false
   );
-  const { username } = useParams();
+
   const { id } = useParams();
 
   const dropdownRef = useRef(null);
@@ -273,17 +269,6 @@ const NewsFeed = ({
     );
   };
 
-  // check if user is object
-  if (typeof user === "object" && user !== null) {
-    // if it is, destructure the user object
-    const { profilePicture, firstname, lastname } = user;
-    // set the avatar to the profilePicture
-    const avatar = profilePicture;
-    // set the author to the firstname and lastname
-  }
-  // add default if avatar is undefined
-  avatar = avatar || "https://via.placeholder.com/150";
-
   return (
     <>
       <div className='mb-2 bg-white rounded-lg border-gray-300 border px-6 pt-6 pb-2 flex'>
@@ -312,7 +297,12 @@ const NewsFeed = ({
                 </>
               ) : (
                 <>
-                  <Avatar avatar={avatar} size={10} />
+                  <Link
+                    className='hover:cursor-pointer'
+                    to={`/profile/${post.user._id}`}
+                  >
+                    <Avatar avatar={avatar} size={10} />
+                  </Link>
                   <div className='ml-2 flex flex-col'>
                     <div className='flex items-center justify-center'>
                       <Link to={`/profile/${post.user._id}`}>
@@ -352,6 +342,12 @@ const NewsFeed = ({
                     >
                       Delete
                     </a>
+                    <Link
+                      className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                      to={`/posts/${post._id}`}
+                    >
+                      View original post
+                    </Link>
                   </div>
                 ) : null}
               </div>
@@ -378,6 +374,12 @@ const NewsFeed = ({
                     >
                       Delete
                     </a>
+                    <Link
+                      to={`/posts/${post._id}`}
+                      className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
+                    >
+                      View Post
+                    </Link>
                   </div>
                 ) : null}
               </div>
@@ -385,7 +387,7 @@ const NewsFeed = ({
           </div>
 
           {post.sharedBy ? (
-            <div className='border border-gray-300 py-3 rounded-md text-slate-600 my-2'>
+            <div className='border border-gray-300 pt-3 rounded-md text-slate-600 my-2'>
               <div className='flex'>
                 <Avatar avatar={avatar} size={10} />
                 <div className='flex'>

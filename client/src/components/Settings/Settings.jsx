@@ -2,25 +2,37 @@ import Base from "../Layout/Base";
 import TextInput from "../common/TextInput";
 import Button from "../common/Button";
 import Label from "../common/Label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthStore } from "../../stores/authStore";
 import { useUpdateUser } from "../../hooks/useUpdateUser";
-import { useProfile } from "../Profile/hooks/useProfile";
+import { useProfile } from "../../hooks/useProfile";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 const Settings = () => {
-  const { mutate, isLoading, error, isSuccess } = useUpdateUser();
+  const { mutate, error, isSuccess } = useUpdateUser();
   const { user } = useAuthStore();
-  const { data: profile } = useProfile(user._id);
+  const { data: profile, isLoading } = useProfile(user._id);
 
   const [formData, setFormData] = useState({
-    firstname: profile.data.firstname ? profile.data.firstname : "",
-    lastname: profile.data.lastname ? profile.data.lastname : "",
-    username: profile.data.username ? profile.data.username : "",
-    email: profile.data.email ? profile.data.email : "",
+    firstname: "",
+    lastname: "",
+    username: "",
+    email: "",
     password: "",
     confirmPassword: "",
   });
+
+  useEffect(() => {
+    if (profile) {
+      setFormData({
+        ...formData,
+        firstname: profile.data.firstname,
+        lastname: profile.data.lastname,
+        username: profile.data.username,
+        email: profile.data.email,
+      });
+    }
+  }, [profile]);
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -69,9 +81,9 @@ const Settings = () => {
               <p>Profile updated successfully</p>
             </div>
           )}
-          <form action='' className='my-4'>
+          <form className='my-4'>
             <div className='flex justify-around gap-2'>
-              <div className='w-full'>
+              <div className='w-full '>
                 <Label htmlFor='firstname'>First Name</Label>
                 <TextInput
                   id='firstname'

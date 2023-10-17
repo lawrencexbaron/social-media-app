@@ -1,12 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, Suspense, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { BiSearch } from "react-icons/bi";
 import TextInput from "../common/TextInput";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
-import { useProfile } from "../Profile/hooks/useProfile";
+import { useProfile } from "../../hooks/useProfile";
+import SearchBar from "../common/SearchBar";
+import { BiHomeAlt } from "react-icons/bi";
 
 function Base(props) {
+  const dropdownRef = useRef(null);
   const { user, logout, isAuth, isAuthenticated, setAuth } = useAuthStore();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -21,6 +24,17 @@ function Base(props) {
     navigate("/");
   };
 
+  const handleClickOutside = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  });
+
   useEffect(() => {
     //if user is null, navigate to login page
     if (!isAuthenticated) {
@@ -30,7 +44,7 @@ function Base(props) {
 
   if (isLoading) {
     return (
-      <div className='flex justify-center items-center h-screen'>
+      <div className='flex justify-center w-full items-center h-screen'>
         <div className='animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900'></div>
       </div>
     );
@@ -40,7 +54,7 @@ function Base(props) {
     <>
       <div className='bg-gray-100 w-full'>
         {/* Mobile Navbar  */}
-        <div className='sm:hidden sticky top-0 w-full z-99 h-16 flex align-middle my-auto bg-white border-b border-gray-200 px-10'>
+        <div className='sm:hidden sticky top-0 w-full z-99 h-16 flex align-middle my-auto bg-white border-b border-gray-200 px-10 z-50'>
           <button
             onClick={() => setIsOpen(!isOpen)}
             className='w-10 flex my-auto h-10 items-center justify-center'
@@ -64,11 +78,14 @@ function Base(props) {
             className='my-auto px-5 justify-start w-full'
             onClick={() => setIsOpen(false)}
           >
-            <TextInput
+            {/* <TextInput
               placeholder='Search'
               icon={<BiSearch className='text-gray-500' />}
               className='w-full'
-            />
+            /> */}
+            <Suspense fallback={<div>Loading...</div>}>
+              <SearchBar />
+            </Suspense>
           </div>
         </div>
         {/* Mobile Navbar  */}
@@ -120,20 +137,29 @@ function Base(props) {
         </div>
         {/* Hamburger menu  */}
 
-        <div className='hidden sm:flex max-w-full h-14 content-center justify-between my-auto bg-white border-b border-gray-200 sm:px-6 lg:px-16 px-8 py-1 sticky top-0 z-50'>
-          <div className='my-auto flex justify-between w-1/2'>
-            <div className='content-center my-auto font-semibold text-slate-500 mr-10'>
-              <Link to='/feed'>Home</Link>
+        <div className='hidden sm:flex max-w-full h-14 content-center my-auto bg-white border-b border-gray-200 sm:px-6 lg:px-16 px-8 py-1 sticky top-0 z-50'>
+          <div className='my-auto flex justify-start w-full '>
+            <div className='content-center my-auto font-semibold mr-10'>
+              <Link to='/feed'>Social</Link>
             </div>
-            <div className='my-auto px-5 justify-start w-full'>
-              <TextInput
-                placeholder='Search'
-                icon={<BiSearch className='text-gray-500' />}
-                className='w-full'
-              />
+            <div className='my-auto px-5 justify-start w-3/4'>
+              <Suspense fallback={<div>Loading...</div>}>
+                <SearchBar />
+              </Suspense>
             </div>
           </div>
-          <div className='my-auto flex justify-end w-1/2'>
+          <div className=' w-full flex items-center justify-center'>
+            <Link to='/feed'>
+              <div
+                className='hover:bg-gray-200 rounded-md px-2 py-2 hover:cursor-pointer
+            transition-all ease-in-out duration-300
+            '
+              >
+                <BiHomeAlt className='text-2xl text-black' />
+              </div>
+            </Link>
+          </div>
+          <div className='my-auto flex justify-end w-full '>
             <div className='relative inline-block text-left my-auto'>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -149,7 +175,10 @@ function Base(props) {
                 </span>
               </button>
               {dropdownOpen && (
-                <div className='origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5'>
+                <div
+                  ref={dropdownRef}
+                  className='origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5'
+                >
                   <div
                     className='py-1'
                     role='menu'
@@ -157,12 +186,13 @@ function Base(props) {
                     aria-labelledby='options-menu'
                   >
                     {/* Add dropdown items here */}
-                    <button
+                    <Link
+                      to='/feed'
                       className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'
                       role='menuitem'
                     >
                       Profile
-                    </button>
+                    </Link>
                     <Link
                       to='/profile/settings'
                       className='block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100'

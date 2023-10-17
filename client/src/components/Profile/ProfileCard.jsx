@@ -7,14 +7,16 @@ import Modal from "../common/Modal";
 import { useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import Button from "../common/Button";
+import ProfileCardSkeleton from "../common/Skeletons/ProfileCardSkeleton";
 // import useProifle
-import { useProfile } from "./hooks/useProfile";
+import { useProfile } from "../../hooks/useProfile";
 import { usePostStore } from "../../stores/postStore";
 
 function ProfileCard({ userId }) {
   const { data: profile, isLoading, isError, error } = useProfile(userId);
   const [image, setImage] = useState(null);
   const [ImagePreview, setImagePreview] = useState("");
+  const [imageLoading, setImageLoading] = useState(true);
 
   const [coverImage, setCoverImage] = useState(null);
   const [coverImagePreview, setCoverImagePreview] = useState("");
@@ -57,6 +59,8 @@ function ProfileCard({ userId }) {
         icon: "success",
         position: "bottom-end",
       });
+      queryClient.invalidateQueries(["profile", profile.data._id]);
+      await getPosts();
       await refreshToken();
     }
   };
@@ -85,6 +89,7 @@ function ProfileCard({ userId }) {
         position: "bottom-end",
       });
       await changeCoverPhoto(profile.data._id, file);
+      queryClient.invalidateQueries(["profile", profile.data._id]);
       await refreshToken();
     }
 
@@ -254,40 +259,6 @@ function ProfileCard({ userId }) {
     queryClient.invalidateQueries(["profile", profile.data._id]);
   };
 
-  const ProfileCardSkeleton = () => {
-    return (
-      <div className='w-full sm:sticky sm:top-16 top-auto flex flex-col bg-white rounded-lg border border-slate-300'>
-        <div className='w-full h-32 bg-cover bg-center'>
-          <div className='w-full h-full hover:cursor-pointer object-cover rounded-lg bg-gray-300'></div>
-        </div>
-        <div className='relative'>
-          <div className='absolute -top-10 left-1/2 transform -translate-x-1/2 w-24 h-24 rounded-full overflow-hidden border-4 border-white'>
-            <div className='w-full hover:cursor-pointer h-full object-cover bg-gray-300'></div>
-          </div>
-        </div>
-        <div className='text-center my-4 mx-14'>
-          <h1 className='text-lg font-semibold mt-10'>Loading...</h1>
-          <div className='flex justify-center mt-2 text-sm'>
-            <div className='flex justify-around w-full mt-3 sm:mt-2'>
-              <div className='flex flex-col'>
-                <p className='font-bold text-base'>0</p>
-                <p className='text-sm text-gray-600 font-semibold'>Posts</p>
-              </div>
-              <div className='flex flex-col hover:cursor-pointer'>
-                <p className='font-bold text-base'>0</p>
-                <p className='text-sm text-gray-600 font-semibold'>Followers</p>
-              </div>
-              <div className='flex flex-col hover:cursor-pointer'>
-                <p className='font-bold text-base'>0</p>
-                <p className='text-sm text-gray-600 font-semibold'>Following</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   if (isLoading) return <ProfileCardSkeleton />;
 
   if (isError) return <div>{error.message}</div>;
@@ -297,40 +268,94 @@ function ProfileCard({ userId }) {
       {followersModal()}
       {followingModal()}
       <div className='w-full sm:sticky sm:top-16 top-auto flex flex-col bg-white rounded-lg border border-slate-300'>
-        <div className='w-full h-32 bg-cover bg-center'>
-          <img
-            className='w-full h-full hover:cursor-pointer object-cover rounded-lg'
-            src={
-              coverImagePreview ? coverImagePreview : profile.data.coverPicture
-            }
-            alt='Cover Photo'
-            onClick={handleCoverImageClick}
-          />
-          <input
-            type='file'
-            hidden
-            onChange={handleCoverImageChange}
-            id='coverFileInput'
-          />
-        </div>
-        <div className='relative'>
-          <div
-            onClick={handleImageClick}
-            className='absolute -top-10 left-1/2 transform -translate-x-1/2 w-24 h-24 rounded-full overflow-hidden border-4 border-white'
-          >
-            <img
-              className='w-full hover:cursor-pointer h-full object-cover'
-              src={ImagePreview ? ImagePreview : profile.data.profilePicture}
-              alt='Avatar'
-            />
-          </div>
-          <input
-            type='file'
-            hidden
-            onChange={handleImageChange}
-            id='fileInput'
-          />
-        </div>
+        {user._id === profile.data._id ? (
+          <>
+            <div className='w-full h-32 bg-cover bg-center'>
+              <img
+                onLoad={() => setImageLoading(false)}
+                className={
+                  imageLoading
+                    ? "w-full h-full object-cover rounded-lg hidden"
+                    : "w-full h-full object-cover rounded-lg block hover:cursor-pointer"
+                }
+                src={
+                  coverImagePreview
+                    ? coverImagePreview
+                    : profile.data.coverPicture
+                }
+                alt={imageLoading ? "Cover Photo" : ""}
+                onClick={handleCoverImageClick}
+              />
+              <input
+                type='file'
+                hidden
+                onChange={handleCoverImageChange}
+                id='coverFileInput'
+              />
+            </div>
+            <div className='relative'>
+              <div
+                onClick={handleImageClick}
+                className='absolute -top-10 left-1/2 transform -translate-x-1/2 w-24 h-24 rounded-full overflow-hidden border-4 border-white'
+              >
+                <img
+                  onLoad={() => setImageLoading(false)}
+                  className={
+                    imageLoading
+                      ? "w-full h-full object-cover rounded-lg hidden"
+                      : "w-full h-full object-cover rounded-lg block hover:cursor-pointer"
+                  }
+                  src={
+                    ImagePreview ? ImagePreview : profile.data.profilePicture
+                  }
+                  alt={imageLoading ? "Avatar" : ""}
+                />
+              </div>
+              <input
+                type='file'
+                hidden
+                onChange={handleImageChange}
+                id='fileInput'
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <div className='w-full h-32 bg-cover bg-center'>
+              <img
+                className={
+                  imageLoading
+                    ? "w-full h-full object-cover rounded-lg hidden"
+                    : "w-full h-full object-cover rounded-lg block"
+                }
+                onLoad={() => setImageLoading(false)}
+                src={
+                  coverImagePreview
+                    ? coverImagePreview
+                    : profile.data.coverPicture
+                }
+                alt={imageLoading ? "Cover Photo" : ""}
+              />
+            </div>
+            <div className='relative'>
+              <div className='absolute -top-10 left-1/2 transform -translate-x-1/2 w-24 h-24 rounded-full overflow-hidden border-4 border-white'>
+                <img
+                  onLoad={() => setImageLoading(false)}
+                  className={
+                    imageLoading
+                      ? "w-full h-full object-cover rounded-lg hidden"
+                      : "w-full h-full object-cover rounded-lg block"
+                  }
+                  src={
+                    ImagePreview ? ImagePreview : profile.data.profilePicture
+                  }
+                  alt={imageLoading ? "Avatar" : ""}
+                />
+              </div>
+            </div>
+          </>
+        )}
+
         <div className='text-center my-4 mx-14'>
           <h1 className='text-lg font-semibold mt-10'>{`${profile.data.firstname} ${profile.data.lastname}`}</h1>
           {showFollowButton()}

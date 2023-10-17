@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./components/pages/auth/Login";
-import Register from "./components/pages/auth/Register";
+import Login from "./components/Auth/Login";
+import Register from "./components/Auth/Register";
 import Feed from "./components/Feed/Feed";
 import Profile from "./components/Profile/Profile";
 import SinglePost from "./components/Posts/SinglePost";

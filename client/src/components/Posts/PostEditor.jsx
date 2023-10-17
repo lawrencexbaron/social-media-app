@@ -7,6 +7,9 @@ import { useQueryClient } from "react-query";
 import { Toast } from "../common/Alert";
 import { useState, Suspense } from "react";
 import { IoIosClose } from "react-icons/io";
+import { BiImage } from "react-icons/bi";
+import { LuVideo } from "react-icons/lu";
+import { FaRegFileVideo } from "react-icons/fa";
 
 const PostEditor = () => {
   const [content, setContent] = useState("");
@@ -212,26 +215,26 @@ const PostEditor = () => {
         )}
 
         <div className='mt-4 flex justify-between'>
-          <div className='flex space-x-7 text-sm my-auto justify-between text-gray-700 font-semibold'>
+          <div className='flex space-x-7 my-auto justify-between text-gray-700 font-semibold'>
             <div
-              className='flex my-auto space-x-2 hover:cursor-pointer'
+              className='flex my-auto space-x-2 hover:cursor-pointer hover:text-slate-500'
               onClick={() => document.getElementById("file").click()}
             >
-              <BsCardImage className='my-auto' />
-              <p>Image</p>
+              <BiImage className='my-auto text-lg' />
+              <p className='text-sm'>Image</p>
             </div>
             <div
-              className='flex my-auto space-x-2 hover:cursor-pointer'
+              className='flex my-auto space-x-2 hover:cursor-pointer hover:text-slate-500'
               onClick={() => document.getElementById("video").click()}
             >
-              <BsCameraVideo className='my-auto' />
-              <p>Video</p>
+              <LuVideo className='my-auto text-lg' />
+              <p className='text-sm'>Video</p>
             </div>
           </div>
           <div>
             <Button
               type='button'
-              className='bg-blue-800 py-2 px-4 hover:bg-blue-600 text-white font-semibold text-sm focus:outline-none focus:shadow-outline rounded-full'
+              className='bg-blue-800 py-1.5 px-4 hover:bg-blue-600 text-white font-semibold text-sm focus:outline-none focus:shadow-outline rounded-full'
               onClick={handlePostCreate}
             >
               Publish

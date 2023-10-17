@@ -1,13 +1,11 @@
 import Avatar from "../Profile/Avatar";
 import { Link } from "react-router-dom";
-import { useEffect, Suspense } from "react";
 import { useUsers } from "../../hooks/useUser";
 import { useUserStore } from "../../stores/userStore";
-import { BiRefresh } from "react-icons/bi";
 
-import { useNotification } from "../Notifications/hooks/useNotification";
+import { useNotification } from "../../hooks/useNotification";
 import { useQueryClient } from "react-query";
-import { useProfile } from "./hooks/useProfile";
+import { useProfile } from "../../hooks/useProfile";
 import { usePostStore } from "../../stores/postStore";
 
 const Activity = ({ userId }) => {
@@ -128,7 +126,7 @@ const Activity = ({ userId }) => {
             </div>
           ))
         ) : (
-          <p className='my-auto text-gray-600 text-xs'>No notifications</p>
+          <p className='my-auto  text-sm text-center'>No notifications</p>
         )}
       </div>
       <div className='bg-white border h-auto border-slate-300 flex-col px-6 py-5 rounded-lg w-full'>
