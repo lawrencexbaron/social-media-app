@@ -1,4 +1,4 @@
-import Base from "../Layout/Base";
+import Base from "../Layouts/Base";
 import TextInput from "../common/TextInput";
 import Button from "../common/Button";
 import Label from "../common/Label";

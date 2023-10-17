@@ -1,8 +1,5 @@
-import Base from "../Layout/Base";
+import Base from "../Layouts/Base";
 import { useParams } from "react-router-dom";
-import { useState, useEffect, Suspense } from "react";
-import { usePostStore } from "../../stores/postStore";
-import PostList from "./PostList";
 import { useAuthStore } from "../../stores/authStore";
 import NewsFeed from "./NewsFeed";
 import { usePost } from "../../hooks/usePost";
