@@ -10,7 +10,7 @@ import Settings from "./components/Settings/Settings";
 
 function App() {
   return (
-    <div className='h-full w-full bg-gray-100 sm:min-h-screen flex content-center'>
+    <div className='h-full w-full bg-gray-100 min-h-screen flex content-center'>
       <Router>
         <Routes>
           <Route path='/' element={<Login />} />

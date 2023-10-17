@@ -123,9 +123,6 @@ const updateUser = async (req, res) => {
       password,
       profilePicture,
       coverPicture,
-      city,
-      from,
-      relationship,
     } = req.body;
 
     const { error } = updateUserValidation(req.body);
@@ -160,9 +157,6 @@ const updateUser = async (req, res) => {
           password: hashedPassword,
           profilePicture,
           coverPicture,
-          city,
-          from,
-          relationship,
         },
       },
       { new: true }

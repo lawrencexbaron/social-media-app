@@ -2,9 +2,10 @@ import React, { useState } from "react";
 import TextInput from "../common/TextInput";
 import Button from "../common/Button";
 import Label from "../common/Label";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
 import axios from "axios";
+import { Toast } from "../common/Alert";
 
 function Register() {
   const BASE_URL = "http://localhost:4000";
@@ -16,6 +17,7 @@ function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
   const clearForm = () => {
     setEmail("");
@@ -26,13 +28,13 @@ function Register() {
     setConfirmPassword("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setError("Passwords do not match");
     }
 
-    register({
+    await register({
       email,
       firstname,
       lastname,
@@ -40,6 +42,18 @@ function Register() {
       password,
       confirmPassword,
     });
+
+    // Redirect to login page using Toast countdown
+    Toast({
+      text: "You are successfully registered! Redirecting...",
+      icon: "success",
+      timer: 3000,
+      position: "top-end",
+    });
+
+    setTimeout(() => {
+      setShouldRedirect(true);
+    }, 3200);
   };
 
   const register = async (data) => {
@@ -48,6 +62,7 @@ function Register() {
 
       console.log(res.data);
       setSuccess(true);
+
       setError(null);
       clearForm();
     } catch (err) {
@@ -56,6 +71,10 @@ function Register() {
       setSuccess(false);
     }
   };
+
+  if (shouldRedirect) {
+    return <Navigate to='/' />;
+  }
 
   return (
     <>

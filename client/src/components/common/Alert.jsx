@@ -18,6 +18,36 @@ export const Alert = (options) => {
   });
 };
 
+export const ConfirmToast = (options) => {
+  const {
+    toast = true,
+    text = "Toast text",
+    icon = "info",
+    timer = 3000,
+    timerProgressBar = true,
+    position = "top-end",
+    confirmButtonText = "Yes",
+    showConfirmButton = true,
+    ...rest
+  } = options;
+
+  const Toast = Swal.mixin({
+    toast,
+    text,
+    icon,
+    timer,
+    timerProgressBar,
+    position,
+    confirmButtonText,
+    showConfirmButton,
+    ...rest,
+  });
+
+  return Toast.fire({
+    ...rest,
+  });
+};
+
 export const Toast = (options) => {
   const {
     toast = true,

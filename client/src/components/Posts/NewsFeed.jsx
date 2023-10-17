@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import GalleryModal from "../common/GalleryModal";
-import { Toast } from "../common/Alert";
+import { Toast, ConfirmToast } from "../common/Alert";
 
 import {
   BiLike,
@@ -149,26 +149,37 @@ const NewsFeed = ({
 
   // handleDelete
   const handleDelete = async () => {
-    // are you sure you want to delete this post?
-    // if yes, delete the post
-    if (confirm("Are you sure you want to delete this post?")) {
-      Toast({
-        text: "Deleting post...",
-        icon: "info",
-        position: "bottom-end",
-      });
+    // use the confirm toast
+    ConfirmToast({
+      text: "Are you sure you want to delete this post?",
+      icon: "warning",
+      position: "bottom-end",
+      showCancelButton: true,
+      cancelButtonText: "No",
+      confirmButtonText: "Yes",
+      confirmButtonColor: "#3085d6",
 
-      // delete the post
-      await deletePost(postId);
-      // get the posts again
-      await getPosts();
+      cancelButtonColor: "#d33",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        Toast({
+          text: "Deleting post...",
+          icon: "info",
+          position: "bottom-end",
+        });
 
-      Toast({
-        text: "Post deleted successfully",
-        icon: "success",
-        position: "bottom-end",
-      });
-    }
+        // delete the post
+        await deletePost(postId);
+        // get the posts again
+        await getPosts();
+
+        Toast({
+          text: "Post deleted successfully",
+          icon: "success",
+          position: "bottom-end",
+        });
+      }
+    });
   };
 
   const handleLikeComment = async (commentId) => {
@@ -404,7 +415,7 @@ const NewsFeed = ({
                   </div>
                 </div>
               </div>
-              <p className=' px-4 pb-1 mt-1'>{content}</p>
+              <p className=' px-4 pb-1 mt-2'>{content}</p>
               {post.images.length > 0 ? (
                 <div className='flex gap-1 mt-2'>
                   {galleryModalmodal(post)}
