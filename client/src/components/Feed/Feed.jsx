@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 // Import base layout
-import Base from "../Layout/Base";
+import Base from "../Layouts/Base";
 import ProfileCard from "../Profile/ProfileCard";
 
 import { useEffect } from "react";
