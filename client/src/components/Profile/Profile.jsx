@@ -1,4 +1,4 @@
-import Base from "../Layout/Base";
+import Base from "../Layouts/Base";
 import { useParams, Navigate } from "react-router-dom";
 import ProfileCard from "../Profile/ProfileCard";
 import PostList from "../Posts/PostList";
