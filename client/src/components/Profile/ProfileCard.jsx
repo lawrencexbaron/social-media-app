@@ -39,6 +39,8 @@ function ProfileCard({ userId }) {
 
   const queryClient = useQueryClient();
 
+  if (isLoading) return <ProfileCardSkeleton />;
+
   const handleImageChange = async (e) => {
     e.preventDefault();
 
@@ -258,8 +260,6 @@ function ProfileCard({ userId }) {
 
     queryClient.invalidateQueries(["profile", profile.data._id]);
   };
-
-  if (isLoading) return <ProfileCardSkeleton />;
 
   if (isError) return <div>{error.message}</div>;
 
