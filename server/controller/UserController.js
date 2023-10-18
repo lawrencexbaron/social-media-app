@@ -17,9 +17,9 @@ const { updateUserValidation } = require("../utilities/Validation");
 
 // cloudinary config
 const cloud = cloudinary.config({
-  cloud_name: dotenv.parsed.CLOUDINARY_CLOUD_NAME,
-  api_key: dotenv.parsed.CLOUDINARY_API_KEY,
-  api_secret: dotenv.parsed.CLOUDINARY_API_SECRET,
+  cloud_name: dotenv.CLOUDINARY_CLOUD_NAME,
+  api_key: dotenv.CLOUDINARY_API_KEY,
+  api_secret: dotenv.CLOUDINARY_API_SECRET,
 });
 
 // @route   GET api/users
