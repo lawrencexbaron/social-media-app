@@ -29,31 +29,41 @@ function Register() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+    try {
+      e.preventDefault();
+      if (password !== confirmPassword) {
+        setError("Passwords do not match");
+      }
+
+      const res = await register({
+        email,
+        firstname,
+        lastname,
+        username,
+        password,
+        confirmPassword,
+      });
+
+      console.log(res);
+
+      if (!res) {
+        return;
+      }
+
+      // Redirect to login page using Toast countdown
+      Toast({
+        text: "You are successfully registered! Redirecting...",
+        icon: "success",
+        timer: 3000,
+        position: "top-end",
+      });
+
+      setTimeout(() => {
+        setShouldRedirect(true);
+      }, 3200);
+    } catch (err) {
+      console.log(err);
     }
-
-    await register({
-      email,
-      firstname,
-      lastname,
-      username,
-      password,
-      confirmPassword,
-    });
-
-    // Redirect to login page using Toast countdown
-    Toast({
-      text: "You are successfully registered! Redirecting...",
-      icon: "success",
-      timer: 3000,
-      position: "top-end",
-    });
-
-    setTimeout(() => {
-      setShouldRedirect(true);
-    }, 3200);
   };
 
   const register = async (data) => {
@@ -65,6 +75,7 @@ function Register() {
 
       setError(null);
       clearForm();
+      return res.data;
     } catch (err) {
       console.log(err.response.data.messages);
       setError(err.response.data.messages);
