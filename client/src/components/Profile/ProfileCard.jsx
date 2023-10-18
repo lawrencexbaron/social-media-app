@@ -275,8 +275,8 @@ function ProfileCard({ userId }) {
                 onLoad={() => setImageLoading(false)}
                 className={
                   imageLoading
-                    ? "w-full h-full object-cover rounded-lg hidden"
-                    : "w-full h-full object-cover rounded-lg block hover:cursor-pointer"
+                    ? "w-full h-full object-cover sm:rounded-lg hidden"
+                    : "w-full h-full object-cover sm:rounded-lg block hover:cursor-pointer"
                 }
                 src={
                   coverImagePreview

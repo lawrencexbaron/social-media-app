@@ -14,8 +14,6 @@ function Base(props) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { data: profile, isLoading } = useProfile(user._id);
 
-  // const name = user?.firstname + " " + user?.lastname;
-
   const handleLogout = () => {
     logout();
     setAuth(false);

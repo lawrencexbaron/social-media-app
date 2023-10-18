@@ -24,7 +24,7 @@ const Feed = () => {
   return (
     <>
       <Base>
-        <div className='flex flex-col sm:flex-row sm:space-x-5 space-y-1 sm:space-y-0 mt-8'>
+        <div className='flex flex-col sm:flex-row sm:space-x-5 space-y-1 sm:space-y-0 sm:mt-8'>
           <div className='sm:w-1/4'>
             <Suspense fallback={<ProfileCardSkeleton />}>
               <ProfileCard className='w-full' userId={user._id} />
