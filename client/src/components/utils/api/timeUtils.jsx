@@ -1,5 +1,6 @@
 export const postAgo = (date) => {
-  const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+  let seconds = Math.floor((new Date() - new Date(date)) / 1000);
+  seconds = Math.max(0, seconds);
   let interval = Math.floor(seconds / 31536000);
   if (interval > 1) {
     return `${interval} years ago`;
