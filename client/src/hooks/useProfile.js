@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import axios from "axios";
 
-const base_api = "http://localhost:4000";
+const base_api = import.meta.env.VITE_BACKEND_API;
 
 export const useProfile = (userId) => {
   const { data, isLoading, isError, error } = useQuery(

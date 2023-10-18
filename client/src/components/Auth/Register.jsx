@@ -8,7 +8,7 @@ import axios from "axios";
 import { Toast } from "../common/Alert";
 
 function Register() {
-  const BASE_URL = "http://localhost:4000";
+  const BASE_URL = import.meta.env.VITE_BACKEND_API;
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);

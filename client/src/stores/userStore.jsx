@@ -2,7 +2,7 @@ import { create } from "zustand";
 import axios from "axios";
 import produce from "immer";
 
-const base_api = "http://localhost:4000";
+const base_api = import.meta.env.VITE_BACKEND_API;
 
 export const useUserStore = create((set) => {
   const authHeader = () => {
