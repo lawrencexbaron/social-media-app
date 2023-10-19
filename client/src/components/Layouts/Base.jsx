@@ -5,6 +5,9 @@ import { useAuthStore } from "../../stores/authStore";
 import { useProfile } from "../../hooks/useProfile";
 import SearchBar from "../common/SearchBar";
 import { BiHomeAlt } from "react-icons/bi";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+import { ImSpinner8 } from "react-icons/im";
 
 function Base(props) {
   const dropdownRef = useRef(null);
@@ -41,7 +44,7 @@ function Base(props) {
   if (isLoading) {
     return (
       <div className='flex justify-center w-full items-center h-screen'>
-        <div className='animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900'></div>
+        <ImSpinner8 className='animate-spin text-6xl text-gray-900' />
       </div>
     );
   }
@@ -74,12 +77,7 @@ function Base(props) {
             className='my-auto px-5 justify-start w-full'
             onClick={() => setIsOpen(false)}
           >
-            {/* <TextInput
-              placeholder='Search'
-              icon={<BiSearch className='text-gray-500' />}
-              className='w-full'
-            /> */}
-            <Suspense fallback={<div>Loading...</div>}>
+            <Suspense fallback={<Skeleton height={30} />}>
               <SearchBar />
             </Suspense>
           </div>
@@ -139,7 +137,7 @@ function Base(props) {
               <Link to='/feed'>Social</Link>
             </div>
             <div className='my-auto px-5 justify-start w-3/4'>
-              <Suspense fallback={<div>Loading...</div>}>
+              <Suspense fallback={<Skeleton height={30} />}>
                 <SearchBar />
               </Suspense>
             </div>

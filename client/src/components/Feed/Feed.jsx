@@ -12,6 +12,7 @@ import PostEditor from "../Posts/PostEditor";
 import PostList from "../Posts/PostList";
 import Activity from "../Profile/Activity";
 import ProfileCardSkeleton from "../common/Skeletons/ProfileCardSkeleton";
+import Skeleton from "react-loading-skeleton";
 
 const Feed = () => {
   const { user } = useAuthStore();
@@ -26,18 +27,20 @@ const Feed = () => {
       <Base>
         <div className='flex flex-col sm:flex-row sm:space-x-5 space-y-1 sm:space-y-0 sm:mt-8'>
           <div className='sm:w-1/4'>
-            <Suspense fallback={<ProfileCardSkeleton />}>
+            <Suspense fallback={<Skeleton width={342} height={290} />}>
               <ProfileCard className='w-full' userId={user._id} />
             </Suspense>
           </div>
           <div className='sm:w-1/2 '>
-            <Suspense fallback={<div>Loadingssss..</div>}>
+            <Suspense fallback={<Skeleton height={190} width={684} />}>
               <PostEditor />
+            </Suspense>
+            <Suspense fallback={<Skeleton height={200} width={684} />}>
               <PostList posts={posts} user={user} />
             </Suspense>
           </div>
           <div className='sm:w-1/4 h-32 '>
-            <Suspense fallback={<div>Loadingss...</div>}>
+            <Suspense fallback={<Skeleton height={430} width={342} />}>
               <Activity userId={user._id} />
             </Suspense>
           </div>
