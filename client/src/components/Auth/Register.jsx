@@ -89,7 +89,7 @@ function Register() {
 
   return (
     <>
-      <div className='mx-auto bg-white shadow-md px-6 py-8 w-3/4 sm:w-1/4 h-3/4 mt-10'>
+      <div className='mx-auto bg-white shadow-md px-6 py-20 sm:py-8 w-full sm:h-full md:w-1/2 lg:w-1/4 my-0 sm:my-10'>
         <h1 className='text-2xl font-bold text-center'>Register</h1>
         {error && (
           <div

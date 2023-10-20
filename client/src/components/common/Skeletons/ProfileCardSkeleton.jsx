@@ -1,3 +1,5 @@
+import Skeleton from "../SkeletonComponent";
+
 const ProfileCardSkeleton = () => {
   return (
     <div className='w-full sm:sticky sm:top-16 top-auto flex flex-col bg-white rounded-lg border border-slate-300'>
@@ -10,7 +12,9 @@ const ProfileCardSkeleton = () => {
         </div>
       </div>
       <div className='text-center my-4 mx-14'>
-        <h1 className='text-lg font-semibold mt-10'>Loading...</h1>
+        <h1 className='text-lg font-semibold mt-10'>
+          <Skeleton />
+        </h1>
         <div className='flex justify-center mt-2 text-sm'>
           <div className='flex justify-around w-full mt-3 sm:mt-2'>
             <div className='flex flex-col'>

@@ -153,7 +153,7 @@ const Settings = () => {
                 className='bg-slate-800 hover:bg-slate-700 py-2 font-semibold text-sm text-white w-full my-2'
                 disabled
               >
-                <AiOutlineLoading3Quarters className='animate-spin mx-auto text-xl' />
+                <ImSpinner8 className='animate-spin text-xl text-gray-900' />
               </Button>
             ) : (
               <Button

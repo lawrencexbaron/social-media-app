@@ -4,6 +4,7 @@ import TextInput from "./TextInput";
 import { BiSearch } from "react-icons/bi";
 import Avatar from "../Profile/Avatar";
 import { Link } from "react-router-dom";
+import Skeleton from "./SkeletonComponent";
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
@@ -24,7 +25,7 @@ const SearchBar = () => {
   });
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <Skeleton height={37.6} width={315} />;
   }
 
   if (!users || users.length === 0) {

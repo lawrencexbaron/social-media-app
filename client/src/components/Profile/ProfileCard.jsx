@@ -12,6 +12,8 @@ import ProfileCardSkeleton from "../common/Skeletons/ProfileCardSkeleton";
 import { useProfile } from "../../hooks/useProfile";
 import { usePostStore } from "../../stores/postStore";
 
+import Skeleton from "../common/SkeletonComponent";
+
 function ProfileCard({ userId }) {
   const { data: profile, isLoading, isError, error } = useProfile(userId);
   const [image, setImage] = useState(null);
@@ -39,7 +41,7 @@ function ProfileCard({ userId }) {
 
   const queryClient = useQueryClient();
 
-  if (isLoading) return <ProfileCardSkeleton />;
+  if (isLoading) return <Skeleton width={342} height={290} />;
 
   const handleImageChange = async (e) => {
     e.preventDefault();

@@ -44,12 +44,13 @@ function Login() {
       }, 1500);
     } catch (error) {
       console.log(error);
+      return;
     }
   };
 
   return (
     <>
-      <div className='mx-auto bg-white shadow-md px-6 py-8 w-3/4 md:w-1/2 lg:w-1/4 h-3/4 my-10'>
+      <div className='mx-auto bg-white shadow-md px-6 py-32 sm:py-8 w-full sm:h-full md:w-1/2 lg:w-1/4 my-0 sm:my-10'>
         <h1 className='text-2xl font-bold text-center'>Login</h1>
         <p className='text-gray-600 text-sm text-center'>
           Login to your account to continue

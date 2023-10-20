@@ -7,6 +7,7 @@ import { useProfile, useProfilePosts } from "../../hooks/useProfile";
 import { BiSolidLockAlt } from "react-icons/bi";
 
 import { useAuthStore } from "../../stores/authStore";
+import Skeleton from "../common/SkeletonComponent";
 
 const Profile = () => {
   const { id } = useParams();
@@ -16,8 +17,13 @@ const Profile = () => {
   if (isLoading) {
     return (
       <Base>
-        <div className='flex justify-center w-full items-center h-screen'>
-          <div className='animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900'></div>
+        <div className='flex flex-col sm:flex-row sm:space-x-5 space-y-1 sm:space-y-0 mt-8'>
+          <div className='sm:w-1/4'>
+            <Skeleton width={350} height={290} />
+          </div>
+          <div className='sm:w-1/2 '>
+            <Skeleton width={704} height={319} />
+          </div>
         </div>
       </Base>
     );

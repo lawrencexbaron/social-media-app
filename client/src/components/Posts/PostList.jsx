@@ -1,6 +1,10 @@
 import NewsFeed from "./NewsFeed";
+import Skeleton from "../common/SkeletonComponent";
 
 const PostList = ({ posts, user }) => {
+  if (!posts) {
+    return <Skeleton height={300} width={684} />;
+  }
   return (
     <>
       {posts && posts.length > 0 ? (

@@ -8,6 +8,8 @@ import { useQueryClient } from "react-query";
 import { useProfile } from "../../hooks/useProfile";
 import { usePostStore } from "../../stores/postStore";
 
+import Skeleton from "./../common/SkeletonComponent";
+
 const Activity = ({ userId }) => {
   const queryClient = useQueryClient();
   const { data: users, error } = useUsers();
@@ -19,52 +21,7 @@ const Activity = ({ userId }) => {
 
   const { data: profile, isLoading } = useProfile(userId);
 
-  const ActivitySkeleton = () => {
-    return (
-      <div className='space-y-4'>
-        <div className='bg-white h-auto border-slate-200 flex-col px-4 py-5 rounded-lg w-full'>
-          <div className='flex w-full justify-between mb-4 font-semibold'>
-            <p>Loading...</p>
-            <p>Loading...</p>
-          </div>
-          {[1, 2, 3, 4, 5].map((index) => (
-            <div
-              className='flex items-center justify-between my-1.5'
-              key={index}
-            >
-              <div className='flex items-center'>
-                <div className='w-8 h-8 rounded-full bg-gray-300'></div>
-                <div className='flex flex-col ml-2'>
-                  <div className='w-24 h-4 bg-gray-300'></div>
-                  <div className='w-16 h-3 mt-1 bg-gray-300'></div>
-                </div>
-              </div>
-              <div className='w-12 h-4 bg-gray-300'></div>
-            </div>
-          ))}
-        </div>
-        <div className='bg-white h-auto border-slate-200 flex-col px-6 py-5 rounded-lg w-full'>
-          <div className='flex w-full justify-between mb-4 font-semibold'>
-            <p>Loading...</p>
-            <p>Loading...</p>
-          </div>
-          {[1, 2, 3, 4, 5].map((index) => (
-            <div className='flex mt-2 justify-between' key={index}>
-              <div className='w-10 h-10 rounded-full bg-gray-300'></div>
-              <div className='flex w-full justify-between my-auto ml-2'>
-                <div className='w-24 h-4 bg-gray-300'></div>
-                <div className='w-20 h-8 ml-2'>
-                  <div className='w-16 h-6 bg-gray-300'></div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  if (isLoading) return <ActivitySkeleton />;
+  if (isLoading) return <Skeleton height={430} width={342} />;
 
   if (error) return <p>{error.message}</p>;
 

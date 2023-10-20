@@ -12,7 +12,7 @@ import PostEditor from "../Posts/PostEditor";
 import PostList from "../Posts/PostList";
 import Activity from "../Profile/Activity";
 import ProfileCardSkeleton from "../common/Skeletons/ProfileCardSkeleton";
-import Skeleton from "react-loading-skeleton";
+import Skeleton from "../common/SkeletonComponent";
 
 const Feed = () => {
   const { user } = useAuthStore();
