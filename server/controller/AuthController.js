@@ -2,11 +2,20 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const { uploadImage } = require("../utilities/cloudinary");
+const cloudinary = require("cloudinary").v2;
+const fs = require("fs");
+const dotenv = require("dotenv").config();
 const {
   registerValidation,
   loginValidation,
 } = require("../utilities/Validation");
+
+// cloudinary config
+const cloud = cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // refresh token
 const refreshToken = async (req, res) => {
@@ -57,21 +66,13 @@ const refreshToken = async (req, res) => {
 const registerUser = async (req, res) => {
   try {
     // validate user input
-    const {
-      firstname,
-      lastname,
-      username,
-      email,
-      password,
-      profilepic,
-      coverphoto,
-    } = req.body;
-
-    console.log(req.body);
-    console.log(profilepic);
+    const { firstname, lastname, username, email, password } = req.body;
 
     // validate user input
     const { error } = registerValidation(req.body);
+
+    let profilePictureUrl = "https://i.pravatar.cc/150";
+    let publicId = "";
 
     if (error) {
       const messages = error.details.map((detail) => detail.message);
@@ -84,15 +85,22 @@ const registerUser = async (req, res) => {
       return res.status(400).send({ messages: "User already exists" });
     }
 
-    // if profilepic and coverphoto exists
-    if (profilepic) {
-      const profilepicUrl = await uploadImage(profilepic);
-      req.body.profilepic = profilepicUrl;
-    }
+    if (req.file) {
+      const filePath = req.file.path;
 
-    if (coverphoto) {
-      const coverphotoUrl = await uploadImage(coverphoto);
-      req.body.coverphoto = coverphotoUrl;
+      try {
+        const uploadedFile = await cloudinary.uploader.upload(filePath, {
+          folder: "profile-pictures",
+        });
+
+        profilePictureUrl = uploadedFile.secure_url;
+        publicId = uploadedFile.public_id;
+      } catch (uploadErr) {
+        console.error("Error uploading file:", uploadErr);
+        return res.status(500).send({ messages: "Could not upload the file" });
+      } finally {
+        fs.unlinkSync(filePath);
+      }
     }
 
     let hashedPassword = await bcrypt.hash(password, 10);
@@ -100,7 +108,8 @@ const registerUser = async (req, res) => {
     const user = await User.create({
       firstname,
       lastname,
-      profilepic,
+      profilePicture: profilePictureUrl,
+      profilePicturePublicId: publicId,
       username,
       email: email.toLowerCase(), // sanitize: convert email to lowercase
       password: hashedPassword,
@@ -117,7 +126,7 @@ const registerUser = async (req, res) => {
     res.status(201).json(user);
   } catch (err) {
     console.log(err);
-    return res.status(500).send({ error: err });
+    return res.status(500).send({ err });
   }
 };
 

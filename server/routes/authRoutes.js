@@ -5,6 +5,9 @@ const {
   refreshToken,
 } = require("../controller/AuthController");
 
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+
 const router = express.Router();
 
 // @route   GET api/auth/login
@@ -15,7 +18,7 @@ router.post("/login", loginUser);
 // @route   POST api/auth/register
 // @desc    Register user
 // @access  Public
-router.post("/register", registerUser);
+router.post("/register", upload.single("profilePicture"), registerUser);
 
 // refresh token
 router.post("/refresh", refreshToken);

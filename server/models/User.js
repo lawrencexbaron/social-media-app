@@ -39,7 +39,7 @@ const UserSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: "https://i.pravatar.cc/150?img=1",
+      default: "https://i.pravatar.cc/150",
     },
     coverPicture: {
       type: String,

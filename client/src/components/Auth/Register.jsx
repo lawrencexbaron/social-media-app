@@ -6,6 +6,8 @@ import { Link, Navigate } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
 import axios from "axios";
 import { Toast } from "../common/Alert";
+import { HiOutlineUserCircle } from "react-icons/hi";
+import AvatarUpload from "../common/AvatarUpload";
 
 function Register() {
   const BASE_URL = import.meta.env.VITE_BACKEND_API;
@@ -19,9 +21,12 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [shouldRedirect, setShouldRedirect] = useState(false);
 
+  const [profilePicture, setProfilePicture] = useState(null);
+
   const clearForm = () => {
     setEmail("");
     setFirstName("");
+    setProfilePicture(null);
     setLastName("");
     setUsername("");
     setPassword("");
@@ -41,10 +46,9 @@ function Register() {
         lastname,
         username,
         password,
+        profilePicture,
         confirmPassword,
       });
-
-      console.log(res);
 
       if (!res) {
         return;
@@ -66,18 +70,23 @@ function Register() {
     }
   };
 
+  const handleAvatarUpload = (data) => {
+    setProfilePicture(data);
+  };
+
   const register = async (data) => {
     try {
-      const res = await axios.post(`${BASE_URL}/api/auth/register`, data);
-
-      console.log(res.data);
+      const res = await axios.post(`${BASE_URL}/api/auth/register`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       setSuccess(true);
 
       setError(null);
       clearForm();
       return res.data;
     } catch (err) {
-      console.log(err.response.data.messages);
       setError(err.response.data.messages);
       setSuccess(false);
     }
@@ -89,7 +98,7 @@ function Register() {
 
   return (
     <>
-      <div className='mx-auto bg-white shadow-md px-6 py-20 sm:py-8 w-full sm:h-full md:w-1/2 lg:w-1/4 my-0 sm:my-10'>
+      <div className='mx-auto bg-white shadow-md px-6 py-16 sm:py-8 w-full sm:h-full md:w-1/2 lg:w-1/4 my-0 sm:my-10'>
         <h1 className='text-2xl font-bold text-center'>Register</h1>
         {error && (
           <div
@@ -118,6 +127,9 @@ function Register() {
 
         <form className='mt-4' onSubmit={handleSubmit}>
           <div className='mb-4'>
+            <div className='mx-auto my-1'>
+              <AvatarUpload onUpload={handleAvatarUpload} />
+            </div>
             <Label htmlFor='email'>Email</Label>
             <TextInput
               id='email'

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextInput from "../common/TextInput";
 import Button from "../common/Button";
 import Label from "../common/Label";
@@ -11,20 +11,15 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("demo@account.com");
+  const [password, setPassword] = useState("password");
 
-  const {
-    error,
-    login,
-    success,
-    setSuccess,
-    isLoading,
-    user,
-    isAuth,
-    setAuth,
-    isAuthenticated,
-  } = useStore(useAuthStore);
+  const { error, login, success, setSuccess, clearError, setAuth } =
+    useStore(useAuthStore);
+
+  useEffect(() => {
+    clearError();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,6 +50,7 @@ function Login() {
         <p className='text-gray-600 text-sm text-center'>
           Login to your account to continue
         </p>
+
         {error && (
           <div
             className='flex flex-col text-red-700 relative mt-2'
@@ -110,12 +106,6 @@ function Login() {
             >
               Register now
             </Link>
-            <a
-              className='inline-block align-baseline font-semibold text-sm text-slate-800 hover:text-slate-600'
-              href='#'
-            >
-              Forgot Password?
-            </a>
           </div>
           <div className='flex items-center justify-end mt-2'></div>
         </form>

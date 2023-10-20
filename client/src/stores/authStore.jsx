@@ -20,6 +20,13 @@ export const useAuthStore = create(
       isLoading: false,
       isAuth: false,
       error: null,
+      clearError: () => {
+        set(
+          produce((state) => {
+            state.error = null;
+          })
+        );
+      },
       success: false,
       setAuth: (isAuth) => {
         set(

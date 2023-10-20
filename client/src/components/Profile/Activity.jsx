@@ -21,7 +21,7 @@ const Activity = ({ userId }) => {
 
   const { data: profile, isLoading } = useProfile(userId);
 
-  if (isLoading) return <Skeleton height={430} width={342} />;
+  if (isLoading) return <Skeleton height={438} width={438} />;
 
   if (error) return <p>{error.message}</p>;
 
