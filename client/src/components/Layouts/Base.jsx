@@ -78,9 +78,9 @@ function Base(props) {
         {/* Hamburger menu  */}
 
         <div
-          className={`fixed h-full top-0 left-0 w-1/2 bg-white z-50 ${
-            isOpen ? "transform translate-x-0" : "transform -translate-x-full"
-          } transition-all duration-300 ease-in-out border-r border-gray-300`}
+          className={`fixed w-full top-0 left-0 h-1/4 bg-white z-50 ${
+            isOpen ? "transform translate-y-0" : "transform -translate-y-full"
+          } transition-all duration-300 ease-in-out border-b border-gray-300`}
         >
           <div className='relative flex flex-col h-full w-full bg-gray-100'>
             <div className='absolute top-0 right-0 p-4'>
@@ -95,32 +95,33 @@ function Base(props) {
               <ul className='text-center'>
                 <li className='py-4'>
                   <Link
-                    className='font-bold text-xl text-gray-700 hover:text-gray-900'
+                    className='font-bold text-md text-gray-700 hover:text-gray-900'
                     to='/feed'
                   >
-                    Home
+                    Profile
                   </Link>
                 </li>
                 <li className='py-4'>
-                  <a
-                    href='/'
-                    className='font-bold text-xl text-gray-700 hover:text-gray-900'
+                  <Link
+                    to='/profile/settings'
+                    className='font-bold text-md text-gray-700 hover:text-gray-900'
                   >
-                    About
-                  </a>
+                    Settings
+                  </Link>
                 </li>
                 <li className='py-4'>
-                  <a
-                    href='/'
-                    className='font-bold text-xl text-gray-700 hover:text-gray-900'
+                  <button
+                    onClick={() => handleLogout()}
+                    className='font-bold text-md text-gray-700 hover:text-gray-900'
                   >
-                    Contact
-                  </a>
+                    Logout
+                  </button>
                 </li>
               </ul>
             </div>
           </div>
         </div>
+
         {/* Hamburger menu  */}
 
         <div className='hidden sm:flex max-w-full h-14 content-center my-auto bg-white border-b border-gray-200 sm:px-6 lg:px-16 px-8 py-1 sticky top-0 z-50'>

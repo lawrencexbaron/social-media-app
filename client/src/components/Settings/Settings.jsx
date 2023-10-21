@@ -57,7 +57,7 @@ const Settings = () => {
   return (
     <Base>
       <div className='flex flex-col justify-center sm:flex-row sm:space-x-5 space-y-1 sm:space-y-0 mt-8'>
-        <div className='bg-white h-auto border border-slate-300 flex-col px-4 py-5 rounded-lg w-1/2'>
+        <div className='bg-white h-auto border border-slate-300 flex-col px-4 py-5 rounded-lg sm:w-1/2'>
           <p className='font-semibold text-lg'>General Settings</p>
           {error && (
             <div
