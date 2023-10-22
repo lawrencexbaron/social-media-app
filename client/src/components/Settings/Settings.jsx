@@ -7,6 +7,7 @@ import { useAuthStore } from "../../stores/authStore";
 import { useUpdateUser } from "../../hooks/useUpdateUser";
 import { useProfile } from "../../hooks/useProfile";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { ImSpinner8 } from "react-icons/im";
 
 const Settings = () => {
   const { mutate, error, isSuccess } = useUpdateUser();
@@ -153,7 +154,7 @@ const Settings = () => {
                 className='bg-slate-800 hover:bg-slate-700 py-2 font-semibold text-sm text-white w-full my-2'
                 disabled
               >
-                <ImSpinner8 className='animate-spin text-xl text-gray-900' />
+                <ImSpinner8 className='animate-spin text-xl text-white mx-auto' />
               </Button>
             ) : (
               <Button
