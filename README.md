@@ -2,7 +2,7 @@
 
 This project is a simple social media application built with a modern JavaScript stack including a client-side single-page application (SPA) and a server-side API.
 
-Live Demo: https://seocmed.lawrencebaron.com
+Live Demo: https://socmed.lawrencebaron.com
 
 ## Structure
 
