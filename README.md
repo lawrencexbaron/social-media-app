@@ -44,7 +44,7 @@ To install the project, you need to have Node.js installed on your system.
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/lawrencexbaron/social-media-app.git
 
 # Navigate to the client directory
 cd client
