@@ -2,6 +2,8 @@
 
 This project is a simple social media application built with a modern JavaScript stack including a client-side single-page application (SPA) and a server-side API.
 
+Live Demo: https://seocmed.lawrencebaron.com
+
 ## Structure
 
 The application is divided into two main directories: `client` and `server`.
