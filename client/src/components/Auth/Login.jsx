@@ -45,74 +45,76 @@ function Login() {
 
   return (
     <>
-      <div className='w-full min-h-screen flex'>
-        <div className='w-1/2 bg-gray-300'></div>
-        <div className='w-1/2 bg-gray-100 flex mx-auto items-center justify-center'>
+      <div className="w-full min-h-screen flex">
+        <div className="sm:w-1/2 bg-gray-300"></div>
+        <div className="w-full sm:px-0 sm:w-1/2 bg-gray-100 flex mx-auto sm:items-center sm:justify-center">
           <form
-            className='mt-4 max-w-md px-8 py-7 border bg-white shadow-lg w-full items-center justify-center'
+            className="sm:mt-4 justify-center sm:max-w-md px-8 py-7 border bg-white shadow-lg w-full"
             onSubmit={handleSubmit}
           >
-            <h1 className='text-2xl font-bold text-center'>Login</h1>
-            <p className='text-gray-600 text-sm text-center'>
-              Login to your account to continue
-            </p>
+            <div className="flex flex-col mx-auto py-40 sm:py-0">
+              <h1 className="text-2xl font-bold text-center">Login</h1>
+              <p className="text-gray-600 text-sm text-center">
+                Login to your account to continue
+              </p>
 
-            {error && (
-              <div
-                className='flex flex-col text-red-700 relative mt-2'
-                role='alert'
-              >
-                {Array.isArray(error.message) ? (
-                  <ul>
-                    {error.message.map((msg, index) => (
-                      <li key={index}>{msg}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>{error.message}</p>
-                )}
-              </div>
-            )}
-            <div className=''>
-              <Label htmlFor='email'>Email</Label>
-              <TextInput
-                id='email'
-                type='email'
-                placeholder='Email'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className='mb-2'
-              />
-
-              <Label htmlFor='password'>Password</Label>
-              <TextInput
-                id='password'
-                type='password'
-                placeholder='Password'
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className='mb-2'
-              />
-            </div>
-            <Button
-              type='submit'
-              className={`bg-slate-800 hover:bg-slate-700 py-2 font-semibold text-sm text-white w-full my-2`}
-            >
-              {success ? (
-                <AiOutlineLoading3Quarters className='animate-spin mx-auto text-xl' />
-              ) : (
-                "Login"
+              {error && (
+                <div
+                  className="flex flex-col text-red-700 relative mt-2"
+                  role="alert"
+                >
+                  {Array.isArray(error.message) ? (
+                    <ul>
+                      {error.message.map((msg, index) => (
+                        <li key={index}>{msg}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>{error.message}</p>
+                  )}
+                </div>
               )}
-            </Button>
-            <div className='flex  items-center justify-between space-x-2'>
-              <Link
-                className='inline-block align-baseline font-semibold text-sm text-slate-800 hover:text-slate-600'
-                to='/register'
+              <div className="">
+                <Label htmlFor="email">Email</Label>
+                <TextInput
+                  id="email"
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="mb-2"
+                />
+
+                <Label htmlFor="password">Password</Label>
+                <TextInput
+                  id="password"
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="mb-2"
+                />
+              </div>
+              <Button
+                type="submit"
+                className={`bg-slate-800 hover:bg-slate-700 py-2 font-semibold text-sm text-white w-full my-2`}
               >
-                Register now
-              </Link>
+                {success ? (
+                  <AiOutlineLoading3Quarters className="animate-spin mx-auto text-xl" />
+                ) : (
+                  "Login"
+                )}
+              </Button>
+              <div className="flex  items-center justify-between space-x-2">
+                <Link
+                  className="inline-block align-baseline font-semibold text-sm text-slate-800 hover:text-slate-600"
+                  to="/register"
+                >
+                  Register now
+                </Link>
+              </div>
+              <div className="flex items-center justify-end mt-2"></div>
             </div>
-            <div className='flex items-center justify-end mt-2'></div>
           </form>
         </div>
       </div>
