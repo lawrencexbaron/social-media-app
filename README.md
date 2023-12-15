@@ -39,6 +39,7 @@ And models for the database:
 - `FollowRequest.js`: Model for follow requests
 - `Notification.js`: Model for notifications
 - `Post.js`: Model for posts
+- `User.js`: Model for users
 
 ## Installation
 
@@ -70,4 +71,5 @@ npm start
 
 #Usage
 After starting the server and client, access the application at http://localhost:3000
+
 ```
