@@ -67,7 +67,5 @@ cd server
 npm start
 
 #Usage
-
-After starting both the client and the server, you can access the application in your web browser at http://localhost:3000.
-
+After starting the server and client, access the application at http://localhost:3000
 ```
