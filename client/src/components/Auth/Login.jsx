@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useStore } from "zustand";
 import { useAuthStore } from "../../stores/authStore";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-
+import Img from "./../../assets/image/one-one.png";
 function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("demo@account.com");
@@ -46,15 +46,21 @@ function Login() {
   return (
     <>
       <div className="w-full min-h-screen flex">
-        <div className="sm:w-1/2 bg-gray-300"></div>
-        <div className="w-full sm:px-0 sm:w-1/2 bg-gray-100 flex mx-auto sm:items-center sm:justify-center">
+        <div className="hidden sm:flex space-y-10 sm:w-1/2 bg-gray-100 flex-col items-center justify-center">
+          <div className="flex flex-col gap-4">
+            <h1 className="text-4xl font-bold">Good to See You Again!</h1>
+            <p>Dive Back Into Your Social Sphere</p>
+          </div>
+          <img src={Img} alt="login" className="w-3/4" />
+        </div>
+        <div className="w-full border sm:px-0 sm:w-1/2 bg-white flex mx-auto sm:items-center sm:justify-center">
           <form
-            className="sm:mt-4 justify-center sm:max-w-md px-8 py-7 border bg-white shadow-lg w-full"
+            className="sm:mt-4 justify-center shadow-sm border sm:max-w-md px-8 py-7 w-full"
             onSubmit={handleSubmit}
           >
             <div className="flex flex-col mx-auto py-40 sm:py-0">
-              <h1 className="text-2xl font-bold text-center">Login</h1>
-              <p className="text-gray-600 text-sm text-center">
+              <h1 className="text-2xl font-bold">Login</h1>
+              <p className="text-gray-600 text-sm">
                 Login to your account to continue
               </p>
 
