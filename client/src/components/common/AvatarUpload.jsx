@@ -20,22 +20,22 @@ const AvatarUpload = ({ onUpload }) => {
   };
 
   return (
-    <div className=' transform w-28 h-28 sm:w-32 sm:h-32 flex mx-auto rounded-full overflow-hidden border-4 border-red'>
+    <div className=" transform w-20 h-20 sm:w-24 sm:h-24 flex rounded-full overflow-hidden border-4 border-red">
       {!preview && (
         <img
-          src='/images/avatar.jpg'
-          alt='Avatar Preview'
+          src="/images/avatar.jpg"
+          alt="Avatar Preview"
           height={150}
           onClick={triggerFileUpload}
-          className='w-full hover:opacity-80 transition ease-linear h-full object-cover rounded-lg block hover:cursor-pointer'
+          className="w-full hover:opacity-80 transition ease-linear h-full object-cover rounded-lg block hover:cursor-pointer"
           width={150}
         />
       )}
       <input
-        type='file'
+        type="file"
         hidden
-        className=''
-        id='avatar'
+        className=""
+        id="avatar"
         onChange={handleFileChange}
       />
       {preview && (
@@ -43,8 +43,8 @@ const AvatarUpload = ({ onUpload }) => {
           <img
             onClick={triggerFileUpload}
             src={preview}
-            className='w-full hover:opacity-80 transition ease-linear h-full object-cover rounded-lg block hover:cursor-pointer'
-            alt='Avatar Preview'
+            className="w-full hover:opacity-80 transition ease-linear h-full object-cover rounded-lg block hover:cursor-pointer"
+            alt="Avatar Preview"
             width={150}
           />
         </>

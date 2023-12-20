@@ -114,7 +114,7 @@ function Register() {
             className="sm:mt-4 justify-center sm:max-w-md px-8 py-7 border bg-white w-full"
             onSubmit={handleSubmit}
           >
-            <h1 className="text-2xl font-bold text-center">Register</h1>
+            <h1 className="text-2xl font-bold">Register</h1>
             {error && (
               <div
                 className="bg-red-100 border shadow-sm flex flex-col border-red-400 text-red-700 px-4 py-3 rounded relative mt-4"
