@@ -1,5 +1,4 @@
-const express = require("express");
-const {
+import {
   getUsers,
   getUserById,
   updateUser,
@@ -11,7 +10,7 @@ const {
   changeProfilePicture,
   changeCoverPicture,
   getProfile,
-} = require("../controller/UserController");
+} from "../controller/UserController";
 
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });

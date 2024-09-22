@@ -1,8 +1,38 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Notification = require("../models/Notification");
+import User from "./User";
+
+export interface Post {
+  user: mongoose.Schema.Types.ObjectId;
+  sharedBy: mongoose.Schema.Types.ObjectId;
+  content: string;
+  images: string[];
+  videos: string[];
+  likes: string[];
+  sharedDate: Date;
+  comments: Comment[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Comment {
+  [x: string]: string;
+  user: mongoose.Schema.Types.ObjectId;
+  text: string;
+  date?: Date;
+  likes?: string[];
+  replies: Reply[];
+}
+
+export interface Reply {
+  user: mongoose.Schema.Types.ObjectId;
+  text: string;
+  date: Date;
+  likes: string[];
+}
 
 // Create Post schema that belongs to User
-const PostSchema = new mongoose.Schema(
+const PostSchema = new mongoose.Schema<Post>(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -22,7 +52,12 @@ const PostSchema = new mongoose.Schema(
     images: [],
     videos: [],
     // add likes for array of users id without reference to User model
-    likes: [],
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     sharedDate: {
       type: Date,
     },
@@ -70,19 +105,17 @@ const PostSchema = new mongoose.Schema(
             ],
           },
         ],
-        date: {
-          type: Date,
-          default: Date.now,
-        },
       },
     ],
   },
   { timestamps: true }
 );
 
-PostSchema.post("remove", async function (doc) {
+PostSchema.post("deleteOne", { document: true, query: false }, async function (doc) {
   // delete relation Notifications
   await Notification.deleteMany({ post: doc._id });
 });
 
-module.exports = mongoose.model("Post", PostSchema);
+// Export Post model
+export default mongoose.model("Post", PostSchema);
+

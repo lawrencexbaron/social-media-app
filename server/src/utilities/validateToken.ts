@@ -1,7 +1,10 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
+import { Request, Response } from "express";
+import { ENV_CONSTANTS } from "./constants";
+import { User } from "../models/User";
 
 // Validate token with JWT
-const validateToken = (req, res, next) => {
+const validateJwtToken = (req: Request, res: Response, next) => {
   // Get bearer token from header
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
@@ -12,7 +15,7 @@ const validateToken = (req, res, next) => {
   }
 
   // Verify token
-  jwt.verify(token, process.env.TOKEN_KEY, (error, user) => {
+  jwt.verify(token, ENV_CONSTANTS.JWT_SECRET, (error, user) => {
     if (error) {
       return res.status(403).json({ message: "You are not authenticated" });
     }
@@ -21,9 +24,9 @@ const validateToken = (req, res, next) => {
       return res.status(403).json({ message: "You are not authenticated" });
 
     // If token is valid
-    req.user = user;
+    req.user = user as User;
     next();
   });
 };
 
-module.exports = validateToken;
+export default validateJwtToken;

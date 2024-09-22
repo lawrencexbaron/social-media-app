@@ -1,21 +1,21 @@
-const express = require("express");
+import express, {Request, Response} from "express";
 const app = express();
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv").config();
-const helmet = require("helmet");
-const morgan = require("morgan");
-const fs = require("fs");
-const path = require("path");
-const validateToken = require("./utilities/validateToken");
+import cors from "cors";
+import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
+import helmet from "helmet";
+import morgan from "morgan";
+import fs from "fs";
+import path from "path";
 
 // Import Routes
-const userRoutes = require("./routes/userRoutes");
-const postRoutes = require("./routes/postRoutes");
-const authRoutes = require("./routes/authRoutes");
-const notificationRoutes = require("./routes/notificationRoutes");
-const followRoutes = require("./routes/followRoutes");
+import userRoutes from "./src/routes/userRoutes";
+import postRoutes from "./src/routes/postRoutes";
+import authRoutes from "./src/routes/authRoutes";
+import notificationRoutes from "./src/routes/notificationRoutes";
+import followRoutes from "./src/routes/followRoutes";
 
 const PORT = process.env.PORT || 5000;
 
@@ -63,16 +63,16 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/followRequests", followRoutes);
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ message: "Hello World" });
 });
 
 // Add 404 error handler
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: any) => {
   res.status(404).json({ error: "Not found" });
 });
 
 // Add error handler
-app.use((err, req, res, next) => {
+app.use((err: { message: any; }, req: Request, res: Response, next: any) => {
   res.status(500).json({ error: err.message });
 });

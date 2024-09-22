@@ -1,4 +1,12 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+
+export interface Notification {
+  user: mongoose.Schema.Types.ObjectId;
+  relatedUser: mongoose.Schema.Types.ObjectId;
+  post: mongoose.Schema.Types.ObjectId;
+  content: string;
+  isRead: boolean;
+}
 
 const NotificationSchema = new mongoose.Schema(
   {
@@ -28,4 +36,5 @@ const NotificationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Notification", NotificationSchema);
+// Export Notification model
+export default mongoose.model("Notification", NotificationSchema);

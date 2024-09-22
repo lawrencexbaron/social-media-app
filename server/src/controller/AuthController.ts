@@ -1,39 +1,36 @@
-const User = require("../models/User");
-const bcrypt = require("bcrypt");
-const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
-const cloudinary = require("cloudinary").v2;
-const fs = require("fs");
-const dotenv = require("dotenv").config();
-const {
-  registerValidation,
-  loginValidation,
-} = require("../utilities/Validation");
-
-// cloudinary config
-const cloud = cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+import { Request, Response } from "express";
+import User from "../models/User";
+import bcrypt from "bcrypt";
+import mongoose from "mongoose";
+import jwt from "jsonwebtoken";
+import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
+import dotenv from "dotenv";
+dotenv.config();
+import { registerUserValidation, userLoginValidation } from "../utilities/Validation";
+import { ENV_CONSTANTS } from "../utilities/constants";
 
 // refresh token
-const refreshToken = async (req, res) => {
+const refreshToken = async (req: Request, res: Response) => {
   try {
     // get token from authorization header
-    const token = req.headers["authorization"].split(" ")[1];
+    const authHeader = req.headers["authorization"];
+    if (!authHeader) {
+      return res.status(401).send({ message: "Unauthorized" });
+    }
+    const token = authHeader.split(" ")[1];
 
     if (!token) {
       return res.status(401).send({ message: "Unauthorized" });
     }
 
-    const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+    const decoded = jwt.verify(token, ENV_CONSTANTS.JWT_SECRET);
 
     if (!decoded) {
       return res.status(401).send({ message: "Unauthorized" });
     }
 
-    const user = await User.findOne({ _id: decoded.id });
+    const user = await User.findOne({ _id: (decoded as jwt.JwtPayload).id });
 
     if (!user) {
       return res.status(401).send({ message: "Unauthorized" });
@@ -41,7 +38,7 @@ const refreshToken = async (req, res) => {
 
     const newToken = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.TOKEN_KEY,
+      ENV_CONSTANTS.JWT_SECRET,
       {
         expiresIn: "2h",
       }
@@ -63,19 +60,19 @@ const refreshToken = async (req, res) => {
 // @route   POST api/users
 // @desc    Register user
 // @access  Public
-const registerUser = async (req, res) => {
+const registerUser = async (req: Request, res: Response) => {
   try {
     // validate user input
     const { firstname, lastname, username, email, password } = req.body;
 
     // validate user input
-    const { error } = registerValidation(req.body);
+    const { error } = registerUserValidation(req.body);
 
     let profilePictureUrl = "https://i.pravatar.cc/150";
     let publicId = "";
 
     if (error) {
-      const messages = error.details.map((detail) => detail.message);
+      const messages = error.details.map((detail: any) => detail.message);
       return res.status(400).send({ messages });
     }
 
@@ -116,7 +113,7 @@ const registerUser = async (req, res) => {
     });
 
     // create token
-    const token = jwt.sign({ id: user._id, email }, process.env.TOKEN_KEY, {
+    const token = jwt.sign({ id: user._id, email }, ENV_CONSTANTS.JWT_SECRET, {
       expiresIn: "2h",
     });
     // save user token
@@ -133,22 +130,30 @@ const registerUser = async (req, res) => {
 // @route   POST api/users/login
 // @desc    Login user
 // @access  Public
-const loginUser = async (req, res) => {
+const loginUser = async (req: Request, res: Response): Promise<any> => {
   try {
     const { email, password } = req.body;
     // validate user input
-    const { error } = loginValidation(req.body);
+    const { error } = userLoginValidation(req.body);
 
     if (error) {
-      const messages = error.details.map((detail) => detail.message);
+      const messages = error.details.map((detail: { message: any; }) => detail.message);
       return res.status(400).send({ message: messages });
     }
 
     // validate if user exist in our database
     const user = await User.findOne({ email });
-    if (user && (await bcrypt.compare(password, user.password))) {
+
+    if (!user) {
+      return res.status(400).send({ message: "Invalid Credentials" });
+    }
+
+    if (user && user.password && (await bcrypt.compare(password, user.password))) {
       // create token
-      const token = jwt.sign({ id: user._id, email }, process.env.TOKEN_KEY, {
+      if (!ENV_CONSTANTS.JWT_SECRET) {
+        throw new Error("JWT_SECRET is not defined");
+      }
+      const token = jwt.sign({ id: user._id, email }, ENV_CONSTANTS.JWT_SECRET, {
         expiresIn: "2h",
       });
       //remove password from user object

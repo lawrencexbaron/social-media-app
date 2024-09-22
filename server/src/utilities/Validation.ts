@@ -12,7 +12,8 @@ const baseOptions = {
   },
 };
 
-const updateUserValidation = (data) => {
+
+const updateUserValidation = (data: any) => {
   const schema = Joi.object({
     firstname: Joi.string().min(3).max(20).messages({
       "string.empty": `First name is required`,
@@ -55,7 +56,7 @@ const updateUserValidation = (data) => {
 };
 
 // User validation schema
-const registerValidation = (data) => {
+const registerUserValidation = (data: any) => {
   const schema = Joi.object({
     firstname: Joi.string().min(3).max(20).required().messages({
       "string.empty": `First name is required`,
@@ -105,7 +106,7 @@ const registerValidation = (data) => {
   return schema.validate(data, baseOptions);
 };
 
-const loginValidation = (data) => {
+const userLoginValidation = (data: any) => {
   const schema = Joi.object({
     email: Joi.string().min(6).max(255).required().email().messages({
       "string.empty": `Email is required`,
@@ -123,7 +124,7 @@ const loginValidation = (data) => {
   return schema.validate(data, baseOptions);
 };
 
-const postValidation = (data) => {
+const validatePost = (data: any) => {
   const schema = Joi.object({
     content: Joi.string().min(3).max(255).required().messages({
       "string.empty": `Post is required`,
@@ -136,7 +137,7 @@ const postValidation = (data) => {
   return schema.validate(data, baseOptions);
 };
 
-const commentValidation = (data) => {
+const validateComment = (data: any) => {
   const schema = Joi.object({
     text: Joi.string().max(255).required().messages({
       "string.empty": `Comment is required`,
@@ -148,7 +149,7 @@ const commentValidation = (data) => {
   return schema.validate(data, baseOptions);
 };
 
-const replyValidation = (data) => {
+const replyValidation = (data: any) => {
   const schema = Joi.object({
     text: Joi.string().min(3).max(255).required().messages({
       "string.empty": `Reply is required`,
@@ -161,11 +162,12 @@ const replyValidation = (data) => {
   return schema.validate(data, baseOptions);
 };
 
-module.exports = {
-  registerValidation,
-  updateUserValidation,
-  loginValidation,
-  postValidation,
-  commentValidation,
+
+export {
+  registerUserValidation,
+  userLoginValidation,
+  validatePost,
+  validateComment,
   replyValidation,
+  updateUserValidation,
 };

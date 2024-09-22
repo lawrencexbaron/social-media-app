@@ -45,29 +45,29 @@ function Login() {
 
   return (
     <>
-      <div className="w-full min-h-screen flex">
-        <div className="hidden sm:flex space-y-10 sm:w-1/2 bg-gray-100 flex-col items-center justify-center">
-          <div className="flex flex-col gap-4">
-            <h1 className="text-4xl font-bold">Good to See You Again!</h1>
+      <div className='w-full min-h-screen flex'>
+        <div className='hidden sm:flex space-y-10 sm:w-1/2 bg-gray-100 flex-col items-center justify-center'>
+          <div className='flex flex-col gap-4'>
+            <h1 className='text-4xl font-bold'>Good to See You Again!</h1>
             <p>Dive Back Into Your Social Sphere</p>
           </div>
-          <img src={Img} alt="login" className="w-3/4" />
+          <img src={Img} alt='login' className='w-3/4' />
         </div>
-        <div className="w-full border sm:px-0 sm:w-1/2 bg-white flex mx-auto sm:items-center sm:justify-center">
+        <div className='w-full border sm:px-0 sm:w-1/2 bg-white flex mx-auto sm:items-center sm:justify-center'>
           <form
-            className="sm:mt-4 justify-center shadow-sm border sm:max-w-md px-8 py-7 w-full"
+            className='sm:mt-4 justify-center shadow-sm border sm:max-w-md px-8 py-7 w-full'
             onSubmit={handleSubmit}
           >
-            <div className="flex flex-col mx-auto py-40 sm:py-0">
-              <h1 className="text-2xl font-bold">Login</h1>
-              <p className="text-gray-600 text-sm">
+            <div className='flex flex-col mx-auto py-40 sm:py-0'>
+              <h1 className='text-2xl font-bold'>Login</h1>
+              <p className='text-gray-600 text-sm'>
                 Login to your account to continue
               </p>
 
               {error && (
                 <div
-                  className="flex flex-col text-red-700 relative mt-2"
-                  role="alert"
+                  className='flex flex-col text-red-700 relative mt-2'
+                  role='alert'
                 >
                   {Array.isArray(error.message) ? (
                     <ul>
@@ -80,46 +80,46 @@ function Login() {
                   )}
                 </div>
               )}
-              <div className="mt-5">
-                <Label htmlFor="email">Email</Label>
+              <div className='mt-5'>
+                <Label htmlFor='email'>Email</Label>
                 <TextInput
-                  id="email"
-                  type="email"
-                  placeholder="Email"
+                  id='email'
+                  type='email'
+                  placeholder='Email'
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="mb-2"
+                  className='mb-2'
                 />
 
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor='password'>Password</Label>
                 <TextInput
-                  id="password"
-                  type="password"
-                  placeholder="Password"
+                  id='password'
+                  type='password'
+                  placeholder='Password'
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="mb-2"
+                  className='mb-2'
                 />
               </div>
               <Button
-                type="submit"
+                type='submit'
                 className={`bg-slate-800 hover:bg-slate-700 py-2 font-semibold text-sm text-white w-full my-2`}
               >
                 {success ? (
-                  <AiOutlineLoading3Quarters className="animate-spin mx-auto text-xl" />
+                  <AiOutlineLoading3Quarters className='animate-spin mx-auto text-xl' />
                 ) : (
                   "Login"
                 )}
               </Button>
-              <div className="flex  items-center justify-between space-x-2">
+              <div className='flex  items-center justify-between space-x-2'>
                 <Link
-                  className="inline-block align-baseline font-semibold text-sm text-slate-800 hover:text-slate-600"
-                  to="/register"
+                  className='inline-block align-baseline font-semibold text-sm text-slate-800 hover:text-slate-600'
+                  to='/register'
                 >
                   Register now
                 </Link>
               </div>
-              <div className="flex items-center justify-end mt-2"></div>
+              <div className='flex items-center justify-end mt-2'></div>
             </div>
           </form>
         </div>

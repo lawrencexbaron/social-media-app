@@ -1,42 +1,32 @@
-const User = require("../models/User");
-const Post = require("../models/Post");
-const mongoose = require("mongoose");
-const cloudinary = require("cloudinary").v2;
-const dotenv = require("dotenv").config();
-const fs = require("fs");
+import User, {UserRequest} from "../models/User";
+import Post from "../models/Post";
+import mongoose from "mongoose";
+import { v2 as cloudinary } from "cloudinary";
+import dotenv from "dotenv";
+import fs from "fs";
+import { Request, Response } from "express";
+import bcrypt from "bcrypt";
+import { ENV_CONSTANTS } from "../utilities/constants";
+import multer from "multer";
+import { updateUserValidation } from "../utilities/Validation";
 
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-
-const multer = require("multer");
-const { updateUserValidation } = require("../utilities/Validation");
-
-// import dotenv from "dotenv";
-
-// dotenv.config();
-
-// cloudinary config
-const cloud = cloudinary.config({
-  cloud_name: dotenv.CLOUDINARY_CLOUD_NAME,
-  api_key: dotenv.CLOUDINARY_API_KEY,
-  api_secret: dotenv.CLOUDINARY_API_SECRET,
-});
+dotenv.config();
 
 // @route   GET api/users
 // @desc    Get all users
 // @access  Public
-const getUsers = async (req, res) => {
+const getUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find();
     return res.status(200).json({ users });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send({ message: "Server Error" });
   }
 };
 
 // get profile
-const getProfile = async (req, res) => {
+const getProfile = async (req: Request, res: Response) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid user ID" });
@@ -47,6 +37,10 @@ const getProfile = async (req, res) => {
     // get user then include posts and populate following and followers
     const user = await User.findById(userId);
 
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     const posts = await Post.find({
       $or: [{ user: userId }, { sharedBy: userId }],
     })
@@ -55,7 +49,7 @@ const getProfile = async (req, res) => {
       .populate("sharedBy")
       .sort({ updatedAt: -1 });
     // include posts count to user
-    const userWithPosts = { ...user._doc, posts: posts };
+    const userWithPosts = { ...user, posts: posts };
 
     // now get posts with the condition of post.sharedBy._id === req.user.id
 
@@ -65,7 +59,7 @@ const getProfile = async (req, res) => {
     return res
       .status(200)
       .json({ message: "User fetched successfully", data: userWithPosts });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send({ message: "Server Error" });
   }
@@ -74,7 +68,7 @@ const getProfile = async (req, res) => {
 // @route   GET api/users/:id
 // @desc    Get user by ID
 // @access  Public
-const getUserById = async (req, res) => {
+const getUserById = async (req: Request, res: Response) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid user ID" });
@@ -88,14 +82,14 @@ const getUserById = async (req, res) => {
     return res
       .status(200)
       .json({ message: "User fetched successfully", data: user });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send({ message: "Server Error" });
   }
 };
 
 // get user by username
-const getUserByUsername = async (req, res) => {
+const getUserByUsername = async (req: Request, res: Response) => {
   try {
     const user = await User.findOne({ username: req.params.username });
     if (!user) {
@@ -104,7 +98,7 @@ const getUserByUsername = async (req, res) => {
     return res
       .status(200)
       .json({ message: "User fetched successfully", data: user });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send({ message: "Server Error", error: err });
   }
@@ -113,7 +107,7 @@ const getUserByUsername = async (req, res) => {
 // @route   PUT api/users/
 // @desc    Update user
 // @access  Private
-const updateUser = async (req, res) => {
+const updateUser = async (req: Request, res: Response) => {
   try {
     const {
       firstname,
@@ -125,21 +119,23 @@ const updateUser = async (req, res) => {
       coverPicture,
     } = req.body;
 
+    const userId = req.user?._id;
+
     const { error } = updateUserValidation(req.body);
 
     if (error) {
-      const messages = error.details.map((detail) => detail.message);
+      const messages = error.details.map((detail: any) => detail.message);
       return res.status(400).send({ messages });
     }
 
     // check if user exist
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     // check if user is authorized to update
-    if (user._id.toString() !== req.user.id) {
+    if (user._id.toString() !== userId) {
       return res.status(401).json({ message: "Not authorized" });
     }
 
@@ -147,7 +143,7 @@ const updateUser = async (req, res) => {
 
     // update user
     const updated = await User.findByIdAndUpdate(
-      req.user.id,
+      userId,
       {
         $set: {
           firstname,
@@ -163,15 +159,20 @@ const updateUser = async (req, res) => {
     );
 
     return res.status(200).json({ message: "User updated successfully" });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return res.status(500).send({ message: "Server Error", error: err });
   }
 };
 // get list of followers and following
-const getFollowers = async (req, res) => {
+const getFollowers = async (req: Request, res: Response) => {
   try {
     const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     // list followers from user model
     const followers = await Promise.all(
       user.followers.map((followerId) => {
@@ -190,7 +191,7 @@ const getFollowers = async (req, res) => {
       followers,
       following,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return res.status(500).send({ message: "Server Error", error: err });
   }
@@ -199,30 +200,33 @@ const getFollowers = async (req, res) => {
 // @route   DELETE api/users/:id
 // @desc    Delete user
 // @access  Private
-const deleteUser = async (req, res) => {
+const deleteUser = async (req: Request, res: Response) => {
   try {
     // check if user exist
     const user = await User.findById(req.params.id);
+    const userId = req.user?._id;
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     // check if user is authorized to delete
-    if (user._id.toString() !== req.user.id) {
+    if (user._id.toString() !== userId) {
       return res.status(401).json({ message: "Not authorized" });
     }
 
     await User.findByIdAndDelete(req.params.id);
     return res.status(200).json({ message: "User deleted successfully" });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return res.status(500).send({ message: "Server Error", error: err });
   }
 };
 
-const followUser = async (req, res) => {
+const followUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.body;
+    const userId = req.user?._id;
 
     // check if user exist
     const user = await User.findById(id);
@@ -230,50 +234,58 @@ const followUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     // check if user is authorized to follow
-    if (!req.user || !req.user.id) {
+    if (!req.user || !userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const req_user = await User.findById(req.user.id);
+    const req_user = await User.findById(userId);
+
+    if (!req_user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     // check if user is authorized to follow
-    if (user._id.toString() === req.user.id) {
+    if (user._id.toString() === userId) {
       return res.status(401).json({ message: "You cannot follow yourself" });
     }
 
     // check if user has already been followed
-    if (user.followers.includes(req.user.id)) {
+    if (user.followers.includes(userId)) {
       return res.status(401).json({ message: "You already follow this user" });
     }
 
-    await user.updateOne({ $push: { followers: req.user.id } });
+    await user.updateOne({ $push: { followers: userId } });
     // get req.user.id from req.user then update followings
     await req_user.updateOne({ $push: { following: user._id } });
     await user.save();
     return res.status(200).json({ message: "User followed successfully" });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };
 
-const changeCoverPicture = async (req, res) => {
+const changeCoverPicture = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-
+    const userId = req.user?._id;
     // check if user exist
     const user = await User.findById(id);
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     // check if user is authorized to follow
-    if (!req.user || !req.user.id) {
+    if (!req.user || !userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     // check if user is authorized to change cover picture
-    if (user._id.toString() !== req.user.id) {
+    if (user._id.toString() !== userId) {
       return res
         .status(401)
         .json({ message: "You cannot change this user's cover picture" });
@@ -306,15 +318,16 @@ const changeCoverPicture = async (req, res) => {
 
       return res.status(200).json({ message: "Cover picture updated" });
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return res.status(500).send({ message: "Server Error", error: err });
   }
 };
 
-const changeProfilePicture = async (req, res) => {
+const changeProfilePicture = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const userId = req.user?._id;
 
     // check if user exist
     const user = await User.findById(id);
@@ -322,12 +335,12 @@ const changeProfilePicture = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     // check if user is authorized to follow
-    if (!req.user || !req.user.id) {
+    if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     // check if user is authorized to change profile picture
-    if (user._id.toString() !== req.user.id) {
+    if (user._id.toString() !== userId) {
       return res
         .status(401)
         .json({ message: "You cannot change this user's profile picture" });
@@ -356,15 +369,16 @@ const changeProfilePicture = async (req, res) => {
 
       return res.status(200).json({ message: "Profile picture updated" });
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return res.status(500).send({ message: "Server Error", error: err });
   }
 };
 
-const unfollowUser = async (req, res) => {
+const unfollowUser = async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.body;
+    const userId = req.user?._id;
 
     // check if user exist
     const user = await User.findById(id);
@@ -372,28 +386,32 @@ const unfollowUser = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (!req.user || !req.user.id) {
+    if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const req_user = await User.findById(req.user.id);
+    const req_user = await User.findById(userId);
+
+    if (!req_user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
     // check if user is authorized to follow
-    if (user._id.toString() === req.user.id) {
+    if (user._id.toString() === userId) {
       return res.status(401).json({ message: "You cannot unfollow yourself" });
     }
 
     // check if user has already been followed
-    if (!user.followers.includes(req.user.id)) {
+    if (!user.followers.includes(userId)) {
       return res.status(401).json({ message: "You don't follow this user" });
     }
 
-    await user.updateOne({ $pull: { followers: req.user.id } });
+    await user.updateOne({ $pull: { followers: userId } });
     // get req.user.id from req.user then update following
     await req_user.updateOne({ $pull: { following: user._id } });
     await user.save();
     return res.status(200).json({ message: "User unfollowed successfully" });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };

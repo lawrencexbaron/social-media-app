@@ -1,17 +1,16 @@
-const Post = require("../models/Post");
-const mongoose = require("mongoose");
-const User = require("../models/User");
-const fs = require("fs");
-const {
-  postValidation,
-  commentValidation,
-} = require("../utilities/Validation");
-const validateToken = require("../utilities/validateToken");
-const dotenv = require("dotenv").config();
+import { Request, Response } from "express";
+import Post from "../models/Post";
+import mongoose from "mongoose";
+import User from "../models/User";
+import fs from "fs";
+import { validatePost, validateComment } from "../utilities/Validation";
+import validateToken from "../utilities/validateToken";
+import dotenv from "dotenv";
+dotenv.config();
 
-const Notification = require("../models/Notification");
+import Notification from "../models/Notification";
 
-const cloudinary = require("cloudinary").v2;
+import { v2 as cloudinary } from "cloudinary";
 
 // cloudinary config
 const cloud = cloudinary.config({
@@ -23,12 +22,19 @@ const cloud = cloudinary.config({
 // @route   GET api/posts
 // @desc    Get all posts
 // @access  Public
-const getPosts = async (req, res) => {
+const getPosts = async (req: Request, res: Response) => {
   try {
+    const userId = req.user?._id;
+
     // get all ids inside user's following array
-    const following = await User.findById(req.user.id).select("following");
+    const following = await User.findById(userId).select("following");
+
+    if (!following) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     // add user's id to following array
-    following.following.push(req.user.id);
+    following.following.push(userId || "");
 
     // get all posts from users in following array and user from comment
     const posts = await Post.find({ user: { $in: following.following } })
@@ -40,7 +46,7 @@ const getPosts = async (req, res) => {
       });
 
     return res.status(200).json({ data: posts });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send({ message: "Server Error", error: err });
   }
@@ -49,7 +55,7 @@ const getPosts = async (req, res) => {
 // @route   GET api/posts/:id
 // @desc    Get post by ID
 // @access  Public
-const getPostById = async (req, res) => {
+const getPostById = async (req: Request, res: Response) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ message: "Invalid post ID" });
@@ -63,7 +69,7 @@ const getPostById = async (req, res) => {
       return res.status(404).json({ message: "Post not found" });
     }
     return res.json(post);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send({ message: "Server Error", error: err });
   }
@@ -72,26 +78,26 @@ const getPostById = async (req, res) => {
 // @route   POST api/posts
 // @desc    Create a post
 // @access  Private
-const createPost = async (req, res) => {
+const createPost = async (req: Request, res: Response) => {
   try {
     // get form data
     const { content, images, videos } = req.body;
 
     // get user from req.user
-    const user = req.user.id;
+    const user = req.user?._id;
 
     // validate user input
-    const { error } = postValidation(req.body);
+    const { error } = validatePost(req.body);
 
     if (error) {
-      const messages = error.details.map((detail) => detail.message);
+      const messages = error.details.map((detail: any) => detail.message);
       return res.status(400).json({ message: messages });
     }
 
     if (req.files["images"]) {
       // foreach image in images array, upload to cloudinary
       const image = await Promise.all(
-        req.files["images"].map(async (file) => {
+        req.files["images"].map(async (file: any) => {
           const result = await cloudinary.uploader.upload(file.path, {
             folder: "posts",
           });
@@ -122,7 +128,7 @@ const createPost = async (req, res) => {
       return res.status(201).json(post);
     } else if (req.files["videos"]) {
       const video = await Promise.all(
-        req.files["videos"].map(async (file) => {
+        req.files["videos"].map(async (file: any) => {
           const result = await cloudinary.uploader.upload(file.path, {
             folder: "posts",
             resource_type: "video",
@@ -159,15 +165,16 @@ const createPost = async (req, res) => {
       });
       return res.status(201).json(post);
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send("Server Error");
   }
 };
 
-const sharePost = async (req, res) => {
+const sharePost = async (req: Request, res: Response) => {
   try {
     const { user } = req.body;
+    const userId = req.user?._id;
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -176,7 +183,7 @@ const sharePost = async (req, res) => {
     const sharedPost = {
       user: post.user,
       content: post.content,
-      sharedBy: req.user.id,
+      sharedBy: userId,
       images: post.images,
       videos: post.videos,
       sharedDate: post.createdAt,
@@ -187,13 +194,13 @@ const sharePost = async (req, res) => {
 
     const notification = await Notification.create({
       user: post.user,
-      relatedUser: req.user.id,
+      relatedUser: userId,
       post: post._id,
       content: "shared your post",
     });
 
     return res.status(200).json(newPost);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send("Server Error");
   }
@@ -202,7 +209,7 @@ const sharePost = async (req, res) => {
 // @route   PUT api/posts/:id
 // @desc    Update a post
 // @access  Private
-const updatePost = async (req, res) => {
+const updatePost = async (req: Request, res: Response) => {
   try {
     const { user, content, image } = req.body;
     const post = await Post.findById(req.params.id);
@@ -221,7 +228,7 @@ const updatePost = async (req, res) => {
       { new: true }
     );
     return res.status(200).json(updatedPost);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send("Server Error");
   }
@@ -230,9 +237,9 @@ const updatePost = async (req, res) => {
 // @route   DELETE api/posts/:id
 // @desc    Delete a post
 // @access  Private
-const deletePost = async (req, res) => {
+const deletePost = async (req: Request, res: Response) => {
   try {
-    const { id } = req.user;
+    const userId = req.user?._id;
 
     // include user data in post from populate
     const post = await Post.findById(req.params.id).populate("sharedBy");
@@ -244,13 +251,13 @@ const deletePost = async (req, res) => {
     // check if user is authorized to delete post
     if (post.sharedBy) {
       if (
-        post.user._id.toString() !== id &&
-        post.sharedBy._id.toString() !== id
+        post.user.toString() !== userId &&
+        post.sharedBy.toString() !== userId
       ) {
         return res.status(401).json({ message: "Unauthorized" });
       }
     } else {
-      if (post.user._id.toString() !== id) {
+      if (post.user.toString() !== userId) {
         return res.status(401).json({ message: "Unauthorized" });
       }
     }
@@ -258,7 +265,7 @@ const deletePost = async (req, res) => {
     if (post.images.length > 0) {
       // delete images from cloudinary
       await Promise.all(
-        post.images.map(async (image) => {
+        post.images.map(async (image: any) => {
           await cloudinary.uploader.destroy(image.public_id);
         })
       );
@@ -270,51 +277,54 @@ const deletePost = async (req, res) => {
     await Post.findByIdAndRemove(req.params.id);
 
     return res.status(200).json({ message: "Post deleted" });
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send("Server Error");
   }
 };
 
-const likePost = async (req, res) => {
+const likePost = async (req: Request, res: Response) => {
   try {
-    const { id } = req.user;
+    const userId = req.user?._id;
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
     // if post.likes array includes user id, return error
-    if (post.likes.indexOf(id) !== -1) {
+    if (userId && post.likes.indexOf(userId) !== -1) {
       return res.status(400).json({ message: "Post already liked" });
     }
 
     const notification = await Notification.create({
       user: post.user,
-      relatedUser: id,
+      relatedUser: userId,
       post: post._id,
       content: "liked your post",
     });
 
-    post.likes.push(id);
+    if(userId) {
+      post.likes.push(userId);
+    }
+    
     await post.save();
 
     return res.status(200).json(post);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send("Server Error");
   }
 };
 
-const likeComment = async (req, res) => {
+const likeComment = async (req: Request, res: Response) => {
   try {
-    const { id } = req.user;
+    const userId = req.user?._id;
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
     const comment = post.comments.find(
-      (comment) => comment.id === req.params.comment_id
+      (comment) => comment.user.toString() === req.params.comment_id
     );
 
     if (!comment) {
@@ -322,49 +332,54 @@ const likeComment = async (req, res) => {
     }
 
     // if post.comments.likes array includes user id, return error
-    if (comment.likes.indexOf(id) !== -1) {
+    if (userId && comment.likes && comment.likes.indexOf(userId) !== -1) {
       return res.status(400).json({ message: "Comment already liked" });
     }
 
     const notification = await Notification.create({
       user: comment.user,
-      relatedUser: id,
+      relatedUser: userId,
       post: post._id,
       content: "liked your comment",
     });
 
-    comment.likes.push(id);
+    if(userId) {
+      comment.likes?.push(userId);
+    }
+
     await post.save();
 
     return res.status(200).json(comment);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send("Server Error");
   }
 };
 
-const unlikeComment = async (req, res) => {
+const unlikeComment = async (req: Request, res: Response) => {
   try {
-    const { id } = req.user;
+    const userId = req.user?._id;
+
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
     const comment = post.comments.find(
-      (comment) => comment.id === req.params.comment_id
+      (comment) => comment.user.toString() === req.params.comment_id
     );
+
     if (!comment) {
       return res.status(404).json({ message: "Comment does not exist" });
     }
 
-    if (comment.likes.indexOf(id) !== -1) {
+    if (userId && comment && comment?.likes?.indexOf(userId) !== -1) {
       // The id exists in the comment.likes array
-      comment.likes.pull(id);
+      comment.likes = (comment.likes ?? []).filter((likeId) => likeId !== userId);
       await post.save();
 
       const notification = await Notification.findOneAndDelete({
         user: comment.user,
-        relatedUser: id,
+        relatedUser: userId,
         post: post._id,
         content: "liked your comment",
       });
@@ -376,42 +391,44 @@ const unlikeComment = async (req, res) => {
         .status(400)
         .json({ message: "Comment has not yet been liked" });
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send("Server Error");
   }
 };
 
-const unlikePost = async (req, res) => {
+const unlikePost = async (req: Request, res: Response) => {
   try {
-    const { id } = req.user;
+    const userId = req.user?._id;
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
     // if post.likes array includes user id, return error
-    if (post.likes.indexOf(id) === -1) {
+    if (userId && post.likes.indexOf(userId) === -1) {
       return res.status(400).json({ message: "Post has not yet been liked" });
     }
 
-    post.likes.pull(id);
+    if(userId) {
+      post.likes = post.likes.filter((likeId) => likeId !== userId);
+    }
     await post.save();
 
     const notification = await Notification.findOneAndDelete({
       user: post.user,
-      relatedUser: id,
+      relatedUser: userId,
       post: post._id,
       content: "liked your post",
     });
 
     return res.status(200).json(post);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send("Server Error");
   }
 };
 
-const commentPost = async (req, res) => {
+const commentPost = async (req: Request, res: Response) => {
   try {
     const { text } = req.body;
 
@@ -451,9 +468,10 @@ const commentPost = async (req, res) => {
   }
 };
 
-const deleteComment = async (req, res) => {
+const deleteComment = async (req: Request, res: Response) => {
   try {
-    const { id } = req.user;
+    // const { id } = req.user;
+    const userId = req.user?._id;
 
     const post = await Post.findById(req.params.id);
     if (!post) {
@@ -465,154 +483,164 @@ const deleteComment = async (req, res) => {
     if (!comment) {
       return res.status(404).json({ message: "Comment does not exist" });
     }
+    
+    if (!comment) {
+      return res.status(404).json({ message: "Comment does not exist" });
+    }
 
-    if (comment.user.toString() !== id) {
-      if (post.user.toString() !== id) {
+    if (comment.user.toString() !== userId) {
+      if (post.user.toString() !== userId) {
         return res.status(401).json({ message: "Unauthorized" });
       }
     }
 
     const notification = await Notification.findOneAndDelete({
       user: post.user,
-      relatedUser: id,
+      relatedUser: userId,
       post: post._id,
       content: "commented on your post",
     });
 
-    post.comments.pull(comment.id);
+    // post.comments.pull(comment.id);
+
     await post.save();
     return res.status(200).json(post);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send("Server Error");
   }
 };
 
-const commentComment = async (req, res) => {
-  try {
-    const { user, content } = req.body;
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-    const comment = post.comments.find(
-      (comment) => comment.id === req.params.comment_id
-    );
-    if (!comment) {
-      return res.status(404).json({ message: "Comment does not exist" });
-    }
-    const commentComment = {
-      user,
-      content,
-    };
-    comment.comments.push(commentComment);
-    await post.save();
-    return res.status(200).json(post);
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).send("Server Error");
-  }
-};
+// const commentComment = async (req: Request, res: Response) => {
+//   try {
+//     const { user, content } = req.body;
+//     const post = await Post.findById(req.params.id);
+//     if (!post) {
+//       return res.status(404).json({ message: "Post not found" });
+//     }
+//     const comment = post.comments.find(
+//       (comment) => comment.id === req.params.comment_id
+//     );
+//     if (!comment) {
+//       return res.status(404).json({ message: "Comment does not exist" });
+//     }
+//     const commentComment = {
+//       user,
+//       content,
+//     };
+//     comment.comments.push(commentComment);
+//     await post.save();
+//     return res.status(200).json(post);
+//   } catch (err) {
+//     console.error(err.message);
+//     return res.status(500).send("Server Error");
+//   }
+// };
 
-const deleteCommentComment = async (req, res) => {
-  try {
-    const { user } = req.body;
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-    const comment = post.comments.find(
-      (comment) => comment.id === req.params.comment_id
-    );
-    if (!comment) {
-      return res.status(404).json({ message: "Comment does not exist" });
-    }
-    const commentComment = comment.comments.find(
-      (commentComment) => commentComment.id === req.params.comment_comment_id
-    );
-    if (!commentComment) {
-      return res.status(404).json({ message: "Comment does not exist" });
-    }
-    if (commentComment.user != user && post.user != user) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    comment.comments.pull(commentComment.id);
-    await post.save();
-    return res.status(200).json(post);
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).send("Server Error");
-  }
-};
+// const deleteCommentComment = async (req: Request, res: Response) => {
+//   try {
+//     const { user } = req.body;
+//     const post = await Post.findById(req.params.id);
+//     if (!post) {
+//       return res.status(404).json({ message: "Post not found" });
+//     }
+//     const comment = post.comments.find(
+//       (comment) => comment.id === req.params.comment_id
+//     );
+//     if (!comment) {
+//       return res.status(404).json({ message: "Comment does not exist" });
+//     }
+//     const commentComment = comment.comments.find(
+//       (commentComment) => commentComment.id === req.params.comment_comment_id
+//     );
+//     if (!commentComment) {
+//       return res.status(404).json({ message: "Comment does not exist" });
+//     }
+//     if (commentComment.user != user && post.user != user) {
+//       return res.status(401).json({ message: "Unauthorized" });
+//     }
+//     comment.comments.pull(commentComment.id);
+//     await post.save();
+//     return res.status(200).json(post);
+//   } catch (err) {
+//     console.error(err.message);
+//     return res.status(500).send("Server Error");
+//   }
+// };
 
-const likeCommentComment = async (req, res) => {
-  try {
-    const { user } = req.body;
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-    const comment = post.comments.find(
-      (comment) => comment.id === req.params.comment_id
-    );
-    if (!comment) {
-      return res.status(404).json({ message: "Comment does not exist" });
-    }
-    const commentComment = comment.comments.find(
-      (commentComment) => commentComment.id === req.params.comment_comment_id
-    );
-    if (!commentComment) {
-      return res.status(404).json({ message: "Comment does not exist" });
-    }
-    if (commentComment.likes.includes(user)) {
-      return res.status(400).json({ message: "Comment already liked" });
-    }
-    commentComment.likes.push(user);
-    await post.save();
-    return res.status(200).json(post);
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).send("Server Error");
-  }
-};
+// const likeCommentComment = async (req: Request, res: Response) => {
+//   try {
+//     const { user } = req.body;
+//     const post = await Post.findById(req.params.id);
+//     if (!post) {
+//       return res.status(404).json({ message: "Post not found" });
+//     }
+//     const comment = post.comments.find(
+//       (comment) => comment.id === req.params.comment_id
+//     );
+//     if (!comment) {
+//       return res.status(404).json({ message: "Comment does not exist" });
+//     }
+//     const commentComment = comment.comments.find(
+//       (commentComment) => commentComment.id === req.params.comment_comment_id
+//     );
+//     if (!commentComment) {
+//       return res.status(404).json({ message: "Comment does not exist" });
+//     }
+//     if (commentComment.likes.includes(user)) {
+//       return res.status(400).json({ message: "Comment already liked" });
+//     }
+//     commentComment.likes.push(user);
+//     await post.save();
+//     return res.status(200).json(post);
+//   } catch (err) {
+//     console.error(err.message);
+//     return res.status(500).send("Server Error");
+//   }
+// };
 
-const unlikeCommentComment = async (req, res) => {
-  try {
-    const { user } = req.body;
-    const post = await Post.findById(req.params.id);
-    if (!post) {
-      return res.status(404).json({ message: "Post not found" });
-    }
-    const comment = post.comments.find(
-      (comment) => comment.id === req.params.comment_id
-    );
-    if (!comment) {
-      return res.status(404).json({ message: "Comment does not exist" });
-    }
-    const commentComment = comment.comments.find(
-      (commentComment) => commentComment.id === req.params.comment_comment_id
-    );
-    if (!commentComment) {
-      return res.status(404).json({ message: "Comment does not exist" });
-    }
-    if (!commentComment.likes.includes(user)) {
-      return res
-        .status(400)
-        .json({ message: "Comment has not yet been liked" });
-    }
+// const unlikeCommentComment = async (req: Request, res: Response) => {
+//   try {
+//     const { user } = req.body;
 
-    commentComment.likes.pull(user);
-    await post.save();
-    return res.status(200).json(post);
-  } catch (err) {
-    console.error(err.message);
-    return res.status(500).send("Server Error");
-  }
-};
+//     const post = await Post.findById(req.params.id);
+//     if (!post) {
+//       return res.status(404).json({ message: "Post not found" });
+//     }
+//     const comment = post.comments.find(
+//       (comment) => comment.id === req.params.comment_id
+//     );
+//     if (!comment) {
+//       return res.status(404).json({ message: "Comment does not exist" });
+//     }
+//     const commentComment = comment.comments.find(
+//       (commentComment) => commentComment.id === req.params.comment_comment_id
+//     );
+//     if (!commentComment) {
+//       return res.status(404).json({ message: "Comment does not exist" });
+//     }
+//     if (!commentComment.likes.includes(user)) {
+//       return res
+//         .status(400)
+//         .json({ message: "Comment has not yet been liked" });
+//     }
 
-const getTimelinePosts = async (req, res) => {
+//     commentComment.likes.pull(user);
+//     await post.save();
+//     return res.status(200).json(post);
+//   } catch (err: any) {
+//     console.error(err.message);
+//     return res.status(500).send("Server Error");
+//   }
+// };
+
+const getTimelinePosts = async (req: Request, res: Response) => {
   try {
     const currentUser = await User.findById(req.params.id);
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     const userPosts = await Post.find({ user: currentUser._id });
     const friendPosts = await Promise.all(
       currentUser.following.map((friendId) => {
@@ -620,13 +648,13 @@ const getTimelinePosts = async (req, res) => {
       })
     );
     return res.status(200).json(userPosts.concat(...friendPosts));
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send("Server Error");
   }
 };
 
-const getProfilePosts = async (req, res) => {
+const getProfilePosts = async (req: Request, res: Response) => {
   try {
     const currentUser = await User.find({ username: req.params.username });
     if (!currentUser) {
@@ -639,20 +667,20 @@ const getProfilePosts = async (req, res) => {
       .sort({ createdAt: -1 });
 
     return res.status(200).json(userPosts);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send("Server Error");
   }
 };
 
-const getPost = async (req, res) => {
+const getPost = async (req: Request, res: Response) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
     return res.status(200).json(post);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     return res.status(500).send("Server Error");
   }
@@ -668,10 +696,10 @@ module.exports = {
   deleteComment,
   likeComment,
   unlikeComment,
-  commentComment,
-  deleteCommentComment,
-  likeCommentComment,
-  unlikeCommentComment,
+  // commentComment,
+  // deleteCommentComment,
+  // likeCommentComment,
+  // unlikeCommentComment,
   getPostById,
   sharePost,
   getTimelinePosts,
