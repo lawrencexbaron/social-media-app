@@ -9,6 +9,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import fs from "fs";
 import path from "path";
+import "./src/config/Request";
 
 // Import Routes
 import userRoutes from "./src/routes/userRoutes";
@@ -41,16 +42,27 @@ const db = process.env.MONGO_URI;
 // Listen to app port then connect to DB with try catch
 app.listen(PORT, () => {
   try {
+    if (!db) {
+      throw new Error("MONGO_URI is not defined in environment variables");
+    }
     mongoose.connect(db, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      autoIndex: true,
+      autoCreate: true,
     });
+
+    mongoose.connection.on('connected', () => {
+      console.log('Successfully connected to the database');
+    });
+
+    mongoose.connection.on('error', (err) => {
+      console.error('Error connecting to the database:', err);
+    });
+
     console.log(`Server is running on port ${PORT}`);
   } catch (error) {
     console.log(error);
   }
 });
-
 // Routes
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello World" });

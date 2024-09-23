@@ -119,51 +119,56 @@ const updateUser = async (req: Request, res: Response) => {
       coverPicture,
     } = req.body;
 
-    const userId = req.user?._id;
+    const userId = req.user?._id;  // Ensure user is authenticated and userId is present
 
+    // Validate input data
     const { error } = updateUserValidation(req.body);
-
     if (error) {
       const messages = error.details.map((detail: any) => detail.message);
-      return res.status(400).send({ messages });
+      return res.status(400).json({ messages });
     }
 
-    // check if user exist
+    // Find the user by ID
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // check if user is authorized to update
-    if (user._id.toString() !== userId) {
+    // Check if the logged-in user is authorized to update the profile
+    if (user._id.toString() !== userId?.toString()) {
       return res.status(401).json({ message: "Not authorized" });
     }
 
-    let hashedPassword = await bcrypt.hash(password, 10);
+    // Hash the password only if it's provided (i.e., the user is updating it)
+    let hashedPassword = user.password; // Use existing password by default
+    if (password && password !== "") {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
 
-    // update user
-    const updated = await User.findByIdAndUpdate(
+    // Update user data
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
         $set: {
           firstname,
           lastname,
           username,
-          email: email.toLowerCase(),
+          email: email.toLowerCase(),  // Normalize email to lowercase
           password: hashedPassword,
           profilePicture,
           coverPicture,
         },
       },
-      { new: true }
+      { new: true }  // Return the updated document
     );
 
-    return res.status(200).json({ message: "User updated successfully" });
+    return res.status(200).json({ message: "User updated successfully", user: updatedUser });
   } catch (err: any) {
-    console.log(err);
-    return res.status(500).send({ message: "Server Error", error: err });
+    console.error(err);
+    return res.status(500).json({ message: "Server Error", error: err.message });
   }
 };
+
 // get list of followers and following
 const getFollowers = async (req: Request, res: Response) => {
   try {
@@ -416,16 +421,16 @@ const unfollowUser = async (req: Request, res: Response): Promise<any> => {
   }
 };
 
-module.exports = {
+export {
   getUsers,
+  getProfile,
   getUserById,
+  getUserByUsername,
   updateUser,
   deleteUser,
   followUser,
-  getFollowers,
-  unfollowUser,
-  getUserByUsername,
-  changeProfilePicture,
   changeCoverPicture,
-  getProfile,
+  changeProfilePicture,
+  unfollowUser,
+  getFollowers,
 };

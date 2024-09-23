@@ -11,12 +11,13 @@ dotenv.config();
 import Notification from "../models/Notification";
 
 import { v2 as cloudinary } from "cloudinary";
+import { ENV_CONSTANTS } from "../utilities/constants";
 
 // cloudinary config
-const cloud = cloudinary.config({
-  cloud_name: dotenv.CLOUDINARY_CLOUD_NAME,
-  api_key: dotenv.CLOUDINARY_API_KEY,
-  api_secret: dotenv.CLOUDINARY_API_SECRET,
+cloudinary.config({
+  cloud_name: ENV_CONSTANTS.CLOUDINARY_CLOUD_NAME,
+  api_key: ENV_CONSTANTS.CLOUDINARY_API_KEY,
+  api_secret: ENV_CONSTANTS.CLOUDINARY_API_SECRET,
 });
 
 // @route   GET api/posts
@@ -29,15 +30,11 @@ const getPosts = async (req: Request, res: Response) => {
     // get all ids inside user's following array
     const following = await User.findById(userId).select("following");
 
-    if (!following) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
     // add user's id to following array
-    following.following.push(userId || "");
+    following?.following.push(userId || "");
 
     // get all posts from users in following array and user from comment
-    const posts = await Post.find({ user: { $in: following.following } })
+    const posts = await Post.find({ user: { $in: following?.following } })
       .populate("user", ["profilePicture", "firstname", "lastname"])
       .populate("comments.user", ["profilePicture", "firstname", "lastname"])
       .populate("sharedBy", ["profilePicture", "firstname", "lastname"])
@@ -432,13 +429,13 @@ const commentPost = async (req: Request, res: Response) => {
   try {
     const { text } = req.body;
 
-    const user = req.user.id;
+    const user = req.user?._id;
     const post = await Post.findById(req.params.id);
 
     // validate comment
-    const { error } = commentValidation(req.body);
+    const { error } = validateComment(req.body);
     if (error) {
-      const messages = error.details.map((detail) => detail.message);
+      const messages = error.details.map((detail: any) => detail.message);
       return res.status(400).json({ message: messages });
     }
     if (!post) {
@@ -448,6 +445,7 @@ const commentPost = async (req: Request, res: Response) => {
     const comment = {
       user: user,
       text: text,
+      replies: [], // Add the replies property
     };
 
     const notification = await Notification.create({
@@ -457,11 +455,11 @@ const commentPost = async (req: Request, res: Response) => {
       content: "commented on your post",
     });
 
-    post.comments.push(comment);
+    // post.comments.push(comment);
     await post.save();
 
     return res.status(200).json(post);
-  } catch (err) {
+  } catch (err: any) {
     console.error(err.message);
     console.log(err);
     return res.status(500).send("Server Error");
@@ -686,7 +684,9 @@ const getPost = async (req: Request, res: Response) => {
   }
 };
 
-module.exports = {
+export {
+  getPosts,
+  getPostById,
   createPost,
   updatePost,
   deletePost,
@@ -694,15 +694,12 @@ module.exports = {
   unlikePost,
   commentPost,
   deleteComment,
-  likeComment,
-  unlikeComment,
-  // commentComment,
-  // deleteCommentComment,
-  // likeCommentComment,
-  // unlikeCommentComment,
-  getPostById,
-  sharePost,
+  // likeComment,
+  // unlikeComment,
   getTimelinePosts,
   getProfilePosts,
-  getPosts,
-};
+  sharePost,
+  getPost,
+  // likeComment,
+  // unlikeComment,
+}

@@ -1,12 +1,16 @@
 const FollowRequest = require("../models/FollowRequest");
+import { Request, Response } from "express";
 
 // @route   POST api/followRequests
 // @desc    Create follow request
 // @access  Private
-const createFollowRequest = async (req, res) => {
+const createFollowRequest = async (req: Request, res: Response) => {
+  const userId = req.user?._id;
+  const receiverId = req.body.receiverId;
+
   const newFollowRequest = new FollowRequest({
-    sender: req.user._id,
-    receiver: req.body.receiverId,
+    sender: userId,
+    receiver: receiverId,
   });
 
   try {
@@ -20,10 +24,11 @@ const createFollowRequest = async (req, res) => {
 // @route   GET api/followRequests
 // @desc    Get all follow requests
 // @access  Private
-const getFollowRequests = async (req, res) => {
+const getFollowRequests = async (req: Request, res: Response) => {
   try {
+    const receiverId = req.user?._id;
     const followRequests = await FollowRequest.find({
-      receiver: req.user._id,
+      receiver: receiverId
     }).populate("sender");
     res.status(200).json(followRequests);
   } catch (err) {
@@ -34,10 +39,11 @@ const getFollowRequests = async (req, res) => {
 // @route   PUT api/followRequests/:id
 // @desc    Update follow request
 // @access  Private
-const updateFollowRequest = async (req, res) => {
+const updateFollowRequest = async (req: Request, res: Response) => {
   try {
     const followRequest = await FollowRequest.findById(req.params.id);
-    if (followRequest.receiver.toString() === req.user._id.toString()) {
+    const userId = req.user?._id;
+    if (followRequest.receiver.toString() === userId) {
       await followRequest.updateOne({ $set: req.body });
       res.status(200).json("Follow request has been updated");
     } else {
@@ -51,10 +57,11 @@ const updateFollowRequest = async (req, res) => {
 // @route   DELETE api/followRequests/:id
 // @desc    Delete follow request
 // @access  Private
-const deleteFollowRequest = async (req, res) => {
+const deleteFollowRequest = async (req: Request, res: Response) => {
   try {
+    const userId = req.user?._id;
     const followRequest = await FollowRequest.findById(req.params.id);
-    if (followRequest.sender.toString() === req.user._id.toString()) {
+    if (followRequest.sender.toString() === userId) {
       await followRequest.deleteOne();
       res.status(200).json("Follow request has been deleted");
     } else {
@@ -65,9 +72,4 @@ const deleteFollowRequest = async (req, res) => {
   }
 };
 
-module.exports = {
-  createFollowRequest,
-  getFollowRequests,
-  updateFollowRequest,
-  deleteFollowRequest,
-};
+export { createFollowRequest, getFollowRequests, updateFollowRequest, deleteFollowRequest };

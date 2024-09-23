@@ -11,12 +11,13 @@ import {
   changeCoverPicture,
   getProfile,
 } from "../controller/UserController";
+import express from "express";
 
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 
 const router = express.Router();
-const validateToken = require("../utilities/validateToken");
+import validateJwtToken from "../utilities/validateToken";
 
 // @route   GET api/users/:id
 // @desc    Get user profile
@@ -36,7 +37,7 @@ router.get("/", getUsers);
 // @route   PUT api/users/
 // @desc    Update user
 // @access  Private
-router.put("/", validateToken, updateUser);
+router.put("/", validateJwtToken, updateUser);
 
 // @route   DELETE api/users/:id
 // @desc    Delete user
@@ -46,12 +47,12 @@ router.delete("/:id", deleteUser);
 // @route   POST api/users/follow
 // @desc    Follow a user
 // @access  Private
-router.post("/follow", validateToken, followUser);
+router.post("/follow", validateJwtToken, followUser);
 
 // @route   POST api/users/unfollow
 // @desc    Unfollow a user
 // @access  Private
-router.post("/unfollow", validateToken, unfollowUser);
+router.post("/unfollow", validateJwtToken, unfollowUser);
 
 // @route   GET api/users/:id/followers
 // @desc    Get followers of a user
@@ -69,7 +70,7 @@ router.get("/username/:username", getUserByUsername);
 router.put(
   "/:id/profile-picture",
   upload.single("profilePicture"),
-  validateToken,
+  validateJwtToken,
   changeProfilePicture
 );
 
@@ -79,8 +80,8 @@ router.put(
 router.put(
   "/:id/cover-picture",
   upload.single("coverPicture"),
-  validateToken,
+  validateJwtToken,
   changeCoverPicture
 );
 
-module.exports = router;
+export default router;

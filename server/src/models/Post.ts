@@ -16,7 +16,7 @@ export interface Post {
 }
 
 export interface Comment {
-  [x: string]: string;
+  [x: string]: any;
   user: mongoose.Schema.Types.ObjectId;
   text: string;
   date?: Date;

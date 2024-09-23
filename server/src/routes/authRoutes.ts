@@ -1,4 +1,4 @@
-const express = require("express");
+import express from "express";
 const {
   loginUser,
   registerUser,
@@ -23,4 +23,4 @@ router.post("/register", upload.single("profilePicture"), registerUser);
 // refresh token
 router.post("/refresh", refreshToken);
 
-module.exports = router;
+export default router;

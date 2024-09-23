@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { ENV_CONSTANTS } from "./constants";
 import { User } from "../models/User";
 
 // Validate token with JWT
-const validateJwtToken = (req: Request, res: Response, next) => {
+const validateJwtToken = (req: Request, res: Response, next: NextFunction) => {
   // Get bearer token from header
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
