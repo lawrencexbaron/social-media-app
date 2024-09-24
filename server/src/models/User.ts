@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 export interface User {
-  _id: string;
+  id: string;
   firstname: string;
   lastname: string;
   username: string;
@@ -15,6 +15,7 @@ export interface User {
   following: string[];
   isAdmin: boolean;
   token?: string;
+  _doc?: any;
 }
 
 export interface Follower {
@@ -26,7 +27,7 @@ export interface Following {
 };
 
 export interface UserDocument extends User, mongoose.Document {
-  _id: string;
+  id: string;
 }
 
 export interface Document {

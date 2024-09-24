@@ -25,7 +25,7 @@ cloudinary.config({
 // @access  Public
 const getPosts = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = req.user?.id;
 
     // get all ids inside user's following array
     const following = await User.findById(userId).select("following");
@@ -81,7 +81,7 @@ const createPost = async (req: Request, res: Response) => {
     const { content, images, videos } = req.body;
 
     // get user from req.user
-    const user = req.user?._id;
+    const user = req.user?.id;
 
     // validate user input
     const { error } = validatePost(req.body);
@@ -171,7 +171,7 @@ const createPost = async (req: Request, res: Response) => {
 const sharePost = async (req: Request, res: Response) => {
   try {
     const { user } = req.body;
-    const userId = req.user?._id;
+    const userId = req.user?.id;
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -236,7 +236,7 @@ const updatePost = async (req: Request, res: Response) => {
 // @access  Private
 const deletePost = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = req.user?.id;
 
     // include user data in post from populate
     const post = await Post.findById(req.params.id).populate("sharedBy");
@@ -282,7 +282,7 @@ const deletePost = async (req: Request, res: Response) => {
 
 const likePost = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = req.user?.id;
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -314,7 +314,7 @@ const likePost = async (req: Request, res: Response) => {
 
 const likeComment = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = req.user?.id;
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -355,7 +355,7 @@ const likeComment = async (req: Request, res: Response) => {
 
 const unlikeComment = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = req.user?.id;
 
     const post = await Post.findById(req.params.id);
     if (!post) {
@@ -396,7 +396,7 @@ const unlikeComment = async (req: Request, res: Response) => {
 
 const unlikePost = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = req.user?.id;
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -429,7 +429,7 @@ const commentPost = async (req: Request, res: Response) => {
   try {
     const { text } = req.body;
 
-    const user = req.user?._id;
+    const user = req.user?.id;
     const post = await Post.findById(req.params.id);
 
     // validate comment
@@ -469,7 +469,7 @@ const commentPost = async (req: Request, res: Response) => {
 const deleteComment = async (req: Request, res: Response) => {
   try {
     // const { id } = req.user;
-    const userId = req.user?._id;
+    const userId = req.user?.id;
 
     const post = await Post.findById(req.params.id);
     if (!post) {

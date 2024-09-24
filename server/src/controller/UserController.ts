@@ -49,7 +49,7 @@ const getProfile = async (req: Request, res: Response) => {
       .populate("sharedBy")
       .sort({ updatedAt: -1 });
     // include posts count to user
-    const userWithPosts = { ...user, posts: posts };
+    const userWithPosts = { ...user._doc, posts: posts };
 
     // now get posts with the condition of post.sharedBy._id === req.user.id
 
@@ -119,7 +119,7 @@ const updateUser = async (req: Request, res: Response) => {
       coverPicture,
     } = req.body;
 
-    const userId = req.user?._id;  // Ensure user is authenticated and userId is present
+    const userId = req.user?.id;  // Ensure user is authenticated and userId is present
 
     // Validate input data
     const { error } = updateUserValidation(req.body);
@@ -209,7 +209,7 @@ const deleteUser = async (req: Request, res: Response) => {
   try {
     // check if user exist
     const user = await User.findById(req.params.id);
-    const userId = req.user?._id;
+    const userId = req.user?.id;
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -231,7 +231,7 @@ const deleteUser = async (req: Request, res: Response) => {
 const followUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.body;
-    const userId = req.user?._id;
+    const userId = req.user?.id;
 
     // check if user exist
     const user = await User.findById(id);
@@ -272,7 +272,7 @@ const followUser = async (req: Request, res: Response) => {
 const changeCoverPicture = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const userId = req.user?._id;
+    const userId = req.user?.id;
     // check if user exist
     const user = await User.findById(id);
 
@@ -332,7 +332,7 @@ const changeCoverPicture = async (req: Request, res: Response) => {
 const changeProfilePicture = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const userId = req.user?._id;
+    const userId = req.user?.id;
 
     // check if user exist
     const user = await User.findById(id);
@@ -383,7 +383,7 @@ const changeProfilePicture = async (req: Request, res: Response) => {
 const unfollowUser = async (req: Request, res: Response): Promise<any> => {
   try {
     const { id } = req.body;
-    const userId = req.user?._id;
+    const userId = req.user?.id;
 
     // check if user exist
     const user = await User.findById(id);

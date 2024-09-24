@@ -29,7 +29,7 @@ import { Request, Response } from "express";
 const getNotifications = async (req: Request, res: Response) => {
   try {
     const notifications = await Notification.find({
-      user: req.user?._id,
+      user: req.user?.id,
     })
       .populate("user", ["firstname", "lastname", "profilePicture"])
       .populate("relatedUser", ["firstname", "lastname", "profilePicture"])
@@ -52,7 +52,7 @@ const getNotifications = async (req: Request, res: Response) => {
 const markAllAsRead = async (req: Request, res: Response) => {
   try {
     const notifications = await Notification.updateMany(
-      { user: req.user?._id },
+      { user: req.user?.id },
       { isRead: true }
     );
 

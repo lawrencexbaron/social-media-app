@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 // @desc    Create follow request
 // @access  Private
 const createFollowRequest = async (req: Request, res: Response) => {
-  const userId = req.user?._id;
+  const userId = req.user?.id;
   const receiverId = req.body.receiverId;
 
   const newFollowRequest = new FollowRequest({
@@ -26,7 +26,7 @@ const createFollowRequest = async (req: Request, res: Response) => {
 // @access  Private
 const getFollowRequests = async (req: Request, res: Response) => {
   try {
-    const receiverId = req.user?._id;
+    const receiverId = req.user?.id;
     const followRequests = await FollowRequest.find({
       receiver: receiverId
     }).populate("sender");
@@ -42,7 +42,7 @@ const getFollowRequests = async (req: Request, res: Response) => {
 const updateFollowRequest = async (req: Request, res: Response) => {
   try {
     const followRequest = await FollowRequest.findById(req.params.id);
-    const userId = req.user?._id;
+    const userId = req.user?.id;
     if (followRequest.receiver.toString() === userId) {
       await followRequest.updateOne({ $set: req.body });
       res.status(200).json("Follow request has been updated");
@@ -59,7 +59,7 @@ const updateFollowRequest = async (req: Request, res: Response) => {
 // @access  Private
 const deleteFollowRequest = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?._id;
+    const userId = req.user?.id;
     const followRequest = await FollowRequest.findById(req.params.id);
     if (followRequest.sender.toString() === userId) {
       await followRequest.deleteOne();
