@@ -61,7 +61,7 @@ function Login() {
             <div className='flex flex-col mx-auto py-40 sm:py-0'>
               <h1 className='text-2xl font-bold'>Login</h1>
               <p className='text-gray-600 text-sm'>
-                Login to your account to continue
+                Login to your account to continue.
               </p>
 
               {error && (
