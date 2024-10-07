@@ -1,6 +1,6 @@
 import Base from "../Layouts/Base";
 import { useParams, Navigate } from "react-router-dom";
-import ProfileCard from "../Profile/ProfileCard";
+import ProfileCard from "./ProfileCard";
 import PostList from "../Posts/PostList";
 import { useProfile, useProfilePosts } from "../../hooks/useProfile";
 

@@ -1,10 +1,9 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_API;
 
 export const api = axios.create({
   baseURL: BASE_URL,
-  // cors
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
@@ -12,46 +11,79 @@ export const api = axios.create({
   },
 });
 
-export const login = async ({ email, password }) => {
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+interface RegisterData {
+  email: string;
+  password: string;
+  username: string;
+  // Add other fields as necessary
+}
+
+interface User {
+  _id: string;
+  firstname: string;
+  lastname: string;
+  profilePicture: string;
+  email: string;
+  // Add other fields as necessary
+}
+
+interface Post {
+  _id: string;
+  content: string;
+  // Add other fields as necessary
+}
+
+interface Comment {
+  _id: string;
+  content: string;
+  // Add other fields as necessary
+}
+
+export const login = async ({ email, password }: LoginData): Promise<any> => {
   try {
     const res = await api.post("/api/auth/login", { email, password });
     return res.data;
-  } catch (error) {
-    return Promise.reject(error.response.data);
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      return Promise.reject(error.response.data);
+    }
+    return Promise.reject(error);
   }
 };
 
-export const register = async (data) => {
+export const register = async (data: RegisterData): Promise<any> => {
   try {
     const res = await api.post("/api/auth/register", data);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create getUsers
-export const getUsers = async () => {
+export const getUsers = async (): Promise<User[]> => {
   try {
     const { data } = await api.get("/api/users");
     return data.users;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create getUser by id
-export const getUser = async (id) => {
+export const getUser = async (id: string): Promise<User> => {
   try {
     const res = await api.get(`/api/users/${id}`);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create updateUser
-export const updateUser = async (data) => {
+export const updateUser = async (data: Partial<User>): Promise<User> => {
   try {
     const res = await api.put(`/api/users/`, data, {
       headers: {
@@ -59,66 +91,57 @@ export const updateUser = async (data) => {
       },
     });
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create deleteUser
-export const deleteUser = async (id) => {
+export const deleteUser = async (id: string): Promise<any> => {
   try {
     const res = await api.delete(`/api/users/${id}`);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create followUser
-export const followUser = async (id) => {
+export const followUser = async (id: string): Promise<any> => {
   try {
-    const res = await api.put(`/api/users/follow`, {
-      id: id,
-    });
-    console.log(res);
+    const res = await api.put(`/api/users/follow`, { id });
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create unfollowUser
-export const unfollowUser = async (id) => {
+export const unfollowUser = async (id: string): Promise<any> => {
   try {
     const res = await api.put(`/api/users/${id}/unfollow`);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create getPosts
-export const getPosts = async () => {
+export const getPosts = async (): Promise<Post[]> => {
   try {
     const res = await api.get("/api/posts");
     return res.data.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create getPost by id
-export const getPost = async (id) => {
+export const getPost = async (id: string): Promise<Post> => {
   try {
     const res = await api.get(`/api/posts/${id}`);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create createPost validate token with header Authorization
-export const createPost = async (data) => {
+export const createPost = async (data: Partial<Post>): Promise<Post> => {
   try {
     const res = await api.post("/api/posts", data, {
       headers: {
@@ -126,107 +149,97 @@ export const createPost = async (data) => {
       },
     });
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create updatePost
-export const updatePost = async (id, data) => {
+export const updatePost = async (id: string, data: Partial<Post>): Promise<Post> => {
   try {
     const res = await api.put(`/api/posts/${id}`, data);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create deletePost
-export const deletePost = async (id) => {
+export const deletePost = async (id: string): Promise<any> => {
   try {
     const res = await api.delete(`/api/posts/${id}`);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create likePost
-export const likePost = async (id) => {
+export const likePost = async (id: string): Promise<any> => {
   try {
     const res = await api.put(`/api/posts/${id}/like`);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create unlikePost
-export const unlikePost = async (id) => {
+export const unlikePost = async (id: string): Promise<any> => {
   try {
     const res = await api.put(`/api/posts/${id}/unlike`);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create getTimelinePosts
-export const getTimelinePosts = async () => {
+export const getTimelinePosts = async (): Promise<Post[]> => {
   try {
     const res = await api.get("/api/posts/timeline/all");
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create getProfilePosts
-export const getProfilePosts = async (username) => {
+export const getProfilePosts = async (username: string): Promise<Post[]> => {
   try {
     const res = await api.get(`/api/posts/profile/${username}`);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create commentPost
-export const commentPost = async (id, data) => {
+export const commentPost = async (id: string, data: Partial<Comment>): Promise<Comment> => {
   try {
     const res = await api.post(`/api/posts/${id}/comment`, data);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create deleteComment
-export const deleteComment = async (id, commentId) => {
+export const deleteComment = async (id: string, commentId: string): Promise<any> => {
   try {
     const res = await api.delete(`/api/posts/${id}/comment/${commentId}`);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create likeComment
-export const likeComment = async (id, commentId) => {
+export const likeComment = async (id: string, commentId: string): Promise<any> => {
   try {
     const res = await api.put(`/api/posts/${id}/comment/${commentId}/like`);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };
 
-// create unlikeComment
-export const unlikeComment = async (id, commentId) => {
+export const unlikeComment = async (id: string, commentId: string): Promise<any> => {
   try {
     const res = await api.put(`/api/posts/${id}/comment/${commentId}/unlike`);
     return res.data;
-  } catch (error) {
+  } catch (error: any) {
     return Promise.reject(error.response.data);
   }
 };

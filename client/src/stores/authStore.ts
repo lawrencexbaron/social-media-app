@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import axios from "axios";
 import produce from "immer";
 
@@ -16,7 +16,7 @@ const authHeader = () => {
 export const useAuthStore = create(
   persist(
     (set) => ({
-      user: JSON.parse(localStorage.getItem("user")) || null,
+      user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user") as string) : null,
       isLoading: false,
       isAuth: false,
       error: null,
@@ -28,7 +28,7 @@ export const useAuthStore = create(
         );
       },
       success: false,
-      setAuth: (isAuth) => {
+      setAuth: (isAuth: any) => {
         set(
           produce((state) => {
             state.isAuth = isAuth;
@@ -44,7 +44,7 @@ export const useAuthStore = create(
       },
 
       // setters
-      setSuccess: (success) => {
+      setSuccess: (success: any) => {
         set(
           produce((state) => {
             state.success = success;
@@ -60,7 +60,7 @@ export const useAuthStore = create(
         }
         return false;
       },
-      getUser: async (id) => {
+      getUser: async (id: string) => {
         try {
           // get user id from localstorage
 
@@ -77,7 +77,7 @@ export const useAuthStore = create(
           console.log(error);
           set(
             produce((state) => {
-              state.error = error.response.data;
+              state.error = (error as any)?.response?.data;
               state.success = false;
             })
           );
@@ -86,7 +86,7 @@ export const useAuthStore = create(
 
       // actions
 
-      login: async (email, password) => {
+      login: async (email: string, password: string) => {
         // destroy all localstorage
         localStorage.removeItem("user");
         localStorage.removeItem("token");
@@ -108,7 +108,7 @@ export const useAuthStore = create(
         } catch (error) {
           set(
             produce((state) => {
-              state.error = error.response.data;
+              state.error = (error as any)?.response?.data;
               state.success = false;
               state.isAuth = false;
             })
@@ -116,7 +116,7 @@ export const useAuthStore = create(
         }
       },
 
-      register: async (data) => {
+      register: async (data: any) => {
         try {
           const res = await axios.post(`${base_api}/api/auth/register`, data);
           set(
@@ -132,7 +132,7 @@ export const useAuthStore = create(
         } catch (error) {
           set(
             produce((state) => {
-              state.error = error.response.data;
+              state.error = (error as any)?.response?.data;
               state.success = false;
               state.isAuth = false;
             })
@@ -165,7 +165,7 @@ export const useAuthStore = create(
         } catch (error) {
           set(
             produce((state) => {
-              state.error = error.response.data;
+              state.error = (error as any)?.response?.data;
               state.success = false;
               state.isAuth = false;
             })
@@ -188,7 +188,7 @@ export const useAuthStore = create(
     }),
     {
       name: "auth",
-      storage: localStorage,
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );

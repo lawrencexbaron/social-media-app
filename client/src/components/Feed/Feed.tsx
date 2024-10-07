@@ -11,8 +11,8 @@ import { usePostStore } from "../../stores/postStore";
 import PostEditor from "../Posts/PostEditor";
 import PostList from "../Posts/PostList";
 import Activity from "../Profile/Activity";
-import ProfileCardSkeleton from "../common/Skeletons/ProfileCardSkeleton";
 import Skeleton from "../common/SkeletonComponent";
+import React from "react";
 
 const Feed = () => {
   const { user } = useAuthStore();

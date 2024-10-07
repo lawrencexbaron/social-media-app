@@ -1,4 +1,4 @@
-import Avatar from "../Profile/Avatar";
+import Avatar from "./Avatar";
 import { Link } from "react-router-dom";
 import { useUsers } from "../../hooks/useUser";
 import { useUserStore } from "../../stores/userStore";
@@ -8,7 +8,7 @@ import { useQueryClient } from "react-query";
 import { useProfile } from "../../hooks/useProfile";
 import { usePostStore } from "../../stores/postStore";
 
-import Skeleton from "./../common/SkeletonComponent";
+import Skeleton from "../common/SkeletonComponent";
 
 const Activity = ({ userId }) => {
   const queryClient = useQueryClient();

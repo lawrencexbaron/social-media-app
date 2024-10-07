@@ -1,6 +1,13 @@
 import React from "react";
 
-function Button({ type, onClick, className, children }) {
+interface ButtonProps {
+  type?: "button" | "submit" | "reset";
+  onClick?: () => void;
+  className?: string;
+  children: React.ReactNode;
+}
+
+function Button({ type, onClick, className = "", children }: ButtonProps) {
   return (
     <button
       className={` rounded focus:outline-none focus:shadow-outline ${className}`}

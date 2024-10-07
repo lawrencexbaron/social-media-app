@@ -1,6 +1,12 @@
 import React from "react";
 
-function Label({ htmlFor, className, children }) {
+interface LabelProps {
+  htmlFor: string;
+  className?: string;
+  children: React.ReactNode;
+}
+
+function Label({ htmlFor, className = "", children }: LabelProps) {
   return (
     <label
       htmlFor={htmlFor}

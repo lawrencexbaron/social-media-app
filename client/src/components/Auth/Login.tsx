@@ -71,7 +71,7 @@ function Login() {
                 >
                   {Array.isArray(error.message) ? (
                     <ul>
-                      {error.message.map((msg, index) => (
+                      {error.message.map((msg: any, index: any) => (
                         <li key={index}>{msg}</li>
                       ))}
                     </ul>

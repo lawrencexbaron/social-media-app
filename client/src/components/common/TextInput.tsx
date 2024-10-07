@@ -1,21 +1,34 @@
-import React from "react";
+import React, { ChangeEvent, FocusEvent, KeyboardEvent } from "react";
 
-function TextInput({
+interface TextInputProps {
+  id: string;
+  type: string;
+  name?: string;
+  placeholder?: string;
+  value: string;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+  icon?: React.ReactNode;
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+}
+
+const TextInput: React.FC<TextInputProps> = ({
   id,
   type,
   name,
   placeholder,
   value,
   onChange,
-  className,
+  className = "",
   icon,
   onKeyDown,
   onFocus,
-}) {
+}) => {
   return (
-    <div className='relative w-full my-auto'>
+    <div className="relative w-full my-auto">
       {icon && (
-        <span className='absolute inset-y-0 left-0 flex items-center pl-3'>
+        <span className="absolute inset-y-0 left-0 flex items-center pl-3">
           {icon}
         </span>
       )}
@@ -34,6 +47,6 @@ function TextInput({
       />
     </div>
   );
-}
+};
 
 export default TextInput;

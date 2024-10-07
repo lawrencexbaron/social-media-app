@@ -3,18 +3,16 @@ import TextInput from "../common/TextInput";
 import Button from "../common/Button";
 import Label from "../common/Label";
 import { Link, Navigate } from "react-router-dom";
-import { RxAvatar } from "react-icons/rx";
 import axios from "axios";
 import { Toast } from "../common/Alert";
-import { HiOutlineUserCircle } from "react-icons/hi";
 import AvatarUpload from "../common/AvatarUpload";
-import Img from "./../../assets/image/two-two.png";
+import Img from "./../assets/image/two-two.png";
 
 function Register() {
   const BASE_URL = import.meta.env.VITE_BACKEND_API;
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string[] | string | null>(null);
   const [firstname, setFirstName] = useState("");
   const [lastname, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -71,11 +69,11 @@ function Register() {
     }
   };
 
-  const handleAvatarUpload = (data) => {
+  const handleAvatarUpload = (data: any) => {
     setProfilePicture(data);
   };
 
-  const register = async (data) => {
+  const register = async (data: any) => {
     try {
       const res = await axios.post(`${BASE_URL}/api/auth/register`, data, {
         headers: {
@@ -88,7 +86,11 @@ function Register() {
       clearForm();
       return res.data;
     } catch (err) {
-      setError(err.response.data.messages);
+      if (axios.isAxiosError(err) && err.response) {
+        setError(err.response.data.messages);
+      } else {
+        setError("An unexpected error occurred");
+      }
       setSuccess(false);
     }
   };

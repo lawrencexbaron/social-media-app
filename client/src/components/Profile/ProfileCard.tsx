@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState } from "react";
 import { useUserStore } from "../../stores/userStore";
 import { useAuthStore } from "../../stores/authStore";
 import { Toast } from "../common/Alert";
@@ -7,14 +7,13 @@ import Modal from "../common/Modal";
 import { useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import Button from "../common/Button";
-import ProfileCardSkeleton from "../common/Skeletons/ProfileCardSkeleton";
 // import useProifle
 import { useProfile } from "../../hooks/useProfile";
 import { usePostStore } from "../../stores/postStore";
 
 import Skeleton from "../common/SkeletonComponent";
 
-function ProfileCard({ userId }) {
+function ProfileCard({ userId: userId }: { userId: string }) {
   const { data: profile, isLoading, isError, error } = useProfile(userId);
   const [image, setImage] = useState(null);
   const [ImagePreview, setImagePreview] = useState("");
@@ -43,7 +42,7 @@ function ProfileCard({ userId }) {
 
   if (isLoading) return <Skeleton width={342} height={290} />;
 
-  const handleImageChange = async (e) => {
+  const handleImageChange = async (e: any) => {
     e.preventDefault();
 
     const reader = new FileReader();
@@ -51,7 +50,7 @@ function ProfileCard({ userId }) {
 
     reader.onloadend = () => {
       setImage(file);
-      setImagePreview(reader.result);
+      setImagePreview(reader.result as string);
     };
 
     if (file) {
@@ -69,12 +68,12 @@ function ProfileCard({ userId }) {
     }
   };
 
-  const handleImageClick = (e) => {
+  const handleImageClick = (e: any) => {
     e.preventDefault();
-    document.getElementById("fileInput").click();
+    document.getElementById("fileInput")?.click();
   };
 
-  const handleCoverImageChange = async (e) => {
+  const handleCoverImageChange = async (e: any) => {
     e.preventDefault();
 
     const reader = new FileReader();
@@ -82,7 +81,7 @@ function ProfileCard({ userId }) {
 
     reader.onloadend = () => {
       setCoverImage(file);
-      setCoverImagePreview(reader.result);
+      setCoverImagePreview(reader.result as string);
     };
 
     if (file) {
@@ -100,9 +99,9 @@ function ProfileCard({ userId }) {
     console.log(file);
   };
 
-  const handleCoverImageClick = async (e) => {
+  const handleCoverImageClick = async (e: any) => {
     e.preventDefault();
-    document.getElementById("coverFileInput").click();
+    document.getElementById("coverFileInput")?.click();
   };
   const handleFollowersModal = async () => {
     await getFollowers(profile.data._id);
@@ -123,7 +122,7 @@ function ProfileCard({ userId }) {
       >
         {followers && followers.length ? (
           <div className='flex flex-col justify-between w-full overflow-y-auto h-full'>
-            {followers.map((follow) => {
+            {followers.map((follow: any) => {
               const name = `${follow.firstname} ${follow.lastname}`;
               return (
                 <div className='flex mt-2 w-full' key={follow._id}>
@@ -205,7 +204,7 @@ function ProfileCard({ userId }) {
       >
         {following && following.length ? (
           <div className='flex flex-col justify-between w-full overflow-y-auto h-full'>
-            {following.map((follow) => {
+            {following.map((follow: any) => {
               const name = `${follow.firstname} ${follow.lastname}`;
 
               return (
@@ -248,14 +247,14 @@ function ProfileCard({ userId }) {
     );
   };
 
-  const handleFollow = async (id) => {
+  const handleFollow = async (id: string) => {
     await followUser(id);
     await getPosts();
     await getFollowers(profile.data._id);
     queryClient.invalidateQueries(["profile", profile.data._id]);
   };
 
-  const handleUnfollow = async (id) => {
+  const handleUnfollow = async (id: string) => {
     await unfollowUser(id);
     await getPosts();
     await getFollowers(profile.data._id);
@@ -263,7 +262,7 @@ function ProfileCard({ userId }) {
     queryClient.invalidateQueries(["profile", profile.data._id]);
   };
 
-  if (isError) return <div>{error.message}</div>;
+  if (isError) return <div>{(error as Error).message}</div>;
 
   return (
     <>
