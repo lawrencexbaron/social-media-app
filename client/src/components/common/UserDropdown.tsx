@@ -3,11 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../stores/authStore";
 import { useProfile } from "../../hooks/useProfile";
 import Skeleton from "./SkeletonComponent";
+import React from "react";
 
 const UserDropdown = () => {
   const { logout, user, setAuth } = useAuthStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
   const { data: profile, isLoading } = useProfile(user._id);
@@ -18,7 +19,7 @@ const UserDropdown = () => {
     navigate("/");
   };
 
-  const handleClickOutside = (e) => {
+  const handleClickOutside = (e: { target: any; }) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       setDropdownOpen(false);
     }

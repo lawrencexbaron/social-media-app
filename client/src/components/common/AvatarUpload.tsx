@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 
-const AvatarUpload = ({ onUpload }) => {
-  const [preview, setPreview] = useState(null);
+interface AvatarUploadProps {
+  onUpload: (file: File) => void;
+}
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+const AvatarUpload = ({ onUpload }: AvatarUploadProps) => {
+  const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -16,7 +20,10 @@ const AvatarUpload = ({ onUpload }) => {
   };
 
   const triggerFileUpload = () => {
-    document.getElementById("avatar").click();
+    const fileInput = document.getElementById("avatar");
+    if (fileInput) {
+      fileInput.click();
+    }
   };
 
   return (
@@ -42,7 +49,7 @@ const AvatarUpload = ({ onUpload }) => {
         <>
           <img
             onClick={triggerFileUpload}
-            src={preview}
+            src={typeof preview === 'string' ? preview : undefined}
             className="w-full hover:opacity-80 transition ease-linear h-full object-cover rounded-lg block hover:cursor-pointer"
             alt="Avatar Preview"
             width={150}

@@ -1,5 +1,19 @@
+import React from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+
+interface SkeletonComponentProps {
+  count?: number;
+  circle?: boolean;
+  className?: string;
+  width?: number;
+  height?: number;
+  borderRadius?: string;
+  duration?: number;
+  baseColor?: string;
+  direction?: "ltr" | "rtl";
+  highlightColor?: string;
+}
 
 const SkeletonComponent = ({
   count = 1,
@@ -10,11 +24,11 @@ const SkeletonComponent = ({
   borderRadius = "0.25rem",
   duration = 1.5,
   baseColor = "#ebebeb",
-  direction = "ltr",
+  direction = "ltr" as 'ltr' | 'rtl',
   highlightColor = "#444",
-}) => {
+}: SkeletonComponentProps) => {
   return (
-    <SkeletonTheme color={baseColor} highlightColor={highlightColor}>
+    <SkeletonTheme baseColor={baseColor} highlightColor={highlightColor}>
       <Skeleton
         count={count}
         circle={circle}

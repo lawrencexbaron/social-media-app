@@ -3,24 +3,24 @@ import TextInput from "../common/TextInput";
 import Button from "../common/Button";
 import Label from "../common/Label";
 import { Link, Navigate } from "react-router-dom";
-import axios from "axios";
 import { Toast } from "../common/Alert";
 import AvatarUpload from "../common/AvatarUpload";
-import Img from "./../assets/image/two-two.png";
+import { register } from "../../utils/api";
 
 function Register() {
-  const BASE_URL = import.meta.env.VITE_BACKEND_API;
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string[] | string | null>(null);
-  const [firstname, setFirstName] = useState("");
-  const [lastname, setLastName] = useState("");
-  const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [userName, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [shouldRedirect, setShouldRedirect] = useState(false);
 
   const [profilePicture, setProfilePicture] = useState(null);
+
+  const img = './../assets/image/two-two.png';
 
   const clearForm = () => {
     setEmail("");
@@ -32,7 +32,7 @@ function Register() {
     setConfirmPassword("");
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
       if (password !== confirmPassword) {
@@ -41,17 +41,21 @@ function Register() {
 
       const res = await register({
         email,
-        firstname,
-        lastname,
-        username,
+        firstname: firstName,
+        lastname: lastName,
+        username: userName,
         password,
         profilePicture,
         confirmPassword,
       });
 
       if (!res) {
+        setError("An unexpected error occurred");
         return;
       }
+      setSuccess(true);
+      setError(null);
+      clearForm();
 
       // Redirect to login page using Toast countdown
       Toast({
@@ -73,28 +77,6 @@ function Register() {
     setProfilePicture(data);
   };
 
-  const register = async (data: any) => {
-    try {
-      const res = await axios.post(`${BASE_URL}/api/auth/register`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      setSuccess(true);
-
-      setError(null);
-      clearForm();
-      return res.data;
-    } catch (err) {
-      if (axios.isAxiosError(err) && err.response) {
-        setError(err.response.data.messages);
-      } else {
-        setError("An unexpected error occurred");
-      }
-      setSuccess(false);
-    }
-  };
-
   if (shouldRedirect) {
     return <Navigate to="/" />;
   }
@@ -109,12 +91,12 @@ function Register() {
             </h1>
             <p>Create Your Account, Open New Worlds</p>
           </div>
-          <img src={Img} alt="login" className="w-2/3" />
+          <img src={img} alt="login" className="w-2/3" />
         </div>
         <div className="w-full sm:px-0 border sm:w-1/2 bg-white flex mx-auto sm:items-center sm:justify-center">
           <form
             className="sm:mt-4 justify-center sm:max-w-md px-8 py-7 border bg-white w-full"
-            onSubmit={handleSubmit}
+            onSubmit={(e) => handleSubmit(e)}
           >
             <h1 className="text-2xl font-bold">Register</h1>
             {error && (
@@ -153,7 +135,7 @@ function Register() {
                     id="firstName"
                     type="text"
                     placeholder="First Name"
-                    value={firstname}
+                    value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     className="mb-2"
                   />
@@ -164,7 +146,7 @@ function Register() {
                     id="lastName"
                     type="text"
                     placeholder="Last Name"
-                    value={lastname}
+                    value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     className="mb-2"
                   />
@@ -184,7 +166,7 @@ function Register() {
                 id="username"
                 type="text"
                 placeholder="Username"
-                value={username}
+                value={userName}
                 onChange={(e) => setUsername(e.target.value)}
                 className="mb-2"
               />

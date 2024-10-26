@@ -10,8 +10,8 @@ const SearchBar = () => {
   const [query, setQuery] = useState("");
   const { data: users, isLoading } = useUsers();
   // close dropdown when clicked outside
-  const ref = useRef(null);
-  const handleClickOutside = (e) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const handleClickOutside = (e: { target: any; }) => {
     if (ref.current && !ref.current.contains(e.target)) {
       setQuery("");
     }

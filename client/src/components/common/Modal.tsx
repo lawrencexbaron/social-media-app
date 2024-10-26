@@ -1,16 +1,24 @@
+import React from "react";
 import { Fragment, useEffect, useRef } from "react";
 
-function Modal({ isOpen, onClose, title, children }) {
-  const modalContentRef = useRef();
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+}
+
+function Modal({ isOpen, onClose, title, children }: ModalProps) {
+  const modalContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: { key: string; }) => {
       if (isOpen && event.key === "Escape") {
         onClose();
       }
     };
 
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: { target: any; }) => {
       if (
         modalContentRef.current &&
         !modalContentRef.current.contains(event.target)
@@ -35,7 +43,9 @@ function Modal({ isOpen, onClose, title, children }) {
 
   useEffect(() => {
     if (isOpen) {
-      modalContentRef.current.focus();
+      if (modalContentRef.current) {
+        modalContentRef.current.focus();
+      }
     }
   }, [isOpen]);
 
@@ -44,7 +54,7 @@ function Modal({ isOpen, onClose, title, children }) {
       {isOpen ? (
         <div
           className='fixed w-full inset-0 z-50 flex items-center justify-center overflow-x-hidden overflow-y-auto'
-          tabIndex='-1'
+          tabIndex={-1}
         >
           <div className='fixed inset-0 bg-gray-900 opacity-50'></div>
           <div

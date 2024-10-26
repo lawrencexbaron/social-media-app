@@ -1,7 +1,9 @@
 import Skeleton from "../SkeletonComponent";
+import React from "react";
 
 const ProfileCardSkeleton = () => {
   return (
+    <>
     <div className='w-full sm:sticky sm:top-16 top-auto flex flex-col bg-white rounded-lg border border-slate-300'>
       <div className='w-full h-32 bg-cover bg-center'>
         <div className='w-full h-full hover:cursor-pointer object-cover rounded-lg bg-gray-300'></div>
@@ -33,6 +35,7 @@ const ProfileCardSkeleton = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

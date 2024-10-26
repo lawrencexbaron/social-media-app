@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 
-const BASE_URL = import.meta.env.VITE_BACKEND_API;
+const BASE_URL = "http://localhost:4000";
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -20,7 +20,10 @@ interface RegisterData {
   email: string;
   password: string;
   username: string;
-  // Add other fields as necessary
+  firstname: string;
+  lastname: string;
+  confirmPassword: string;
+  profilePicture: string | null;
 }
 
 interface User {
@@ -58,8 +61,14 @@ export const login = async ({ email, password }: LoginData): Promise<any> => {
 
 export const register = async (data: RegisterData): Promise<any> => {
   try {
-    const res = await api.post("/api/auth/register", data);
+    // const res = await api.post("/api/auth/register", data);
+    const res = await axios.post(`${BASE_URL}/api/auth/register`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return res.data;
+
   } catch (error: any) {
     return Promise.reject(error.response.data);
   }

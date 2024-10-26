@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Avatar from "./Avatar";
 import Label from "./Label";
-import TextInput from "./TextInput";
 import { postAgo } from "../utils/api/timeUtils";
+
+interface CommentProps {
+  comment: any;
+  avatar: string;
+  handleLikeComment: (commentId: string) => void;
+  handleUnlikeComment: (commentId: string) => void;
+  handleDeleteComment: (commentId: string) => void;
+}
 
 const Comment = ({
   comment,
@@ -10,7 +17,7 @@ const Comment = ({
   handleLikeComment,
   handleUnlikeComment,
   handleDeleteComment,
-}) => {
+}: CommentProps) => {
   const [isCommentLiked, setIsCommentLiked] = useState(false);
 
   useEffect(() => {
@@ -24,12 +31,12 @@ const Comment = ({
     }
   }, []);
 
-  const handleLike = async (commentId) => {
+  const handleLike = async (commentId: string) => {
     await handleLikeComment(commentId);
     setIsCommentLiked(true);
   };
 
-  const handleUnlike = async (commentId) => {
+  const handleUnlike = async (commentId: string) => {
     await handleUnlikeComment(commentId);
     setIsCommentLiked(false);
   };
@@ -49,7 +56,7 @@ const Comment = ({
             >
               <p
                 onClick={() => {
-                  isCommentLiked[comment._id]
+                  isCommentLiked
                     ? handleUnlike(comment._id)
                     : handleLike(comment._id);
                 }}

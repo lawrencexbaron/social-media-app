@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import axios from "axios";
 import produce from "immer";
+import { ENV_CONST } from "../components/utils/api/constants";
 
-const base_api = import.meta.env.VITE_BACKEND_API;
+const base_api = ENV_CONST.BASE_URL;
 
 export const usePostStore = create((set) => {
   const authHeader = () => {
@@ -18,8 +19,8 @@ export const usePostStore = create((set) => {
     post: [],
     isLoading: false,
     isError: false,
-    setPosts: (posts) => set({ posts }),
-    setPost: (post) => set({ post }),
+    setPosts: (posts: any) => set({ posts }),
+    setPost: (post: any) => set({ post }),
     clearPosts: () => set({ posts: [] }),
     getPosts: async () => {
       set({ isLoading: true });
@@ -43,7 +44,7 @@ export const usePostStore = create((set) => {
       }
     },
 
-    getProfilePosts: async (username) => {
+    getProfilePosts: async (username: any) => {
       set({ isLoading: true });
       try {
         const res = await axios.get(
@@ -56,7 +57,7 @@ export const usePostStore = create((set) => {
       }
     },
 
-    getPost: async (id) => {
+    getPost: async (id: string) => {
       set({ isLoading: true });
       try {
         const res = await axios.get(`${base_api}/api/posts/${id}`);
@@ -66,7 +67,7 @@ export const usePostStore = create((set) => {
         set({ isError: true, isLoading: false });
       }
     },
-    sharePost: async (id) => {
+    sharePost: async (id: string) => {
       set({ isLoading: true });
       try {
         const res = await axios.post(
@@ -84,17 +85,17 @@ export const usePostStore = create((set) => {
         set({ isError: true });
       }
     },
-    createPost: async (data) => {
+    createPost: async (data: { content: any; images: any; videos: any; }) => {
       const { content, images, videos } = data;
 
       const formData = new FormData();
       formData.append("content", content);
 
-      images.forEach((image) => {
+      images.forEach((image: string | Blob) => {
         formData.append("images", image);
       });
 
-      videos.forEach((video) => {
+      videos.forEach((video: string | Blob) => {
         formData.append("videos", video);
       });
 
@@ -112,7 +113,7 @@ export const usePostStore = create((set) => {
         set({ isError: true });
       }
     },
-    updatePost: async (id, content) => {
+    updatePost: async (id: any, content: any) => {
       set({ isLoading: true });
       try {
         const res = await axios.put(`${base_api}/api/posts/${id}`, { content });
@@ -125,7 +126,7 @@ export const usePostStore = create((set) => {
       }
     },
 
-    deletePost: async (id) => {
+    deletePost: async (id: any) => {
       set({ isLoading: true });
       try {
         await axios.delete(`${base_api}/api/posts/${id}`, {
@@ -140,10 +141,10 @@ export const usePostStore = create((set) => {
       }
     },
 
-    likePost: async (id) => {
+    likePost: async (id: any) => {
       set({ isLoading: true });
       try {
-        const res = await axios.put(
+        await axios.put(
           `${base_api}/api/posts/${id}/like`,
           {},
           {
@@ -155,10 +156,10 @@ export const usePostStore = create((set) => {
       }
     },
 
-    unlikePost: async (id) => {
+    unlikePost: async (id: any) => {
       set({ isLoading: true });
       try {
-        const res = await axios.put(
+        await axios.put(
           `${base_api}/api/posts/${id}/unlike`,
           {},
           {
@@ -180,7 +181,7 @@ export const usePostStore = create((set) => {
       }
     },
 
-    deleteComment: async (id, commentId) => {
+    deleteComment: async (id: any, commentId: any) => {
       set({ isLoading: true });
       try {
         const res = await axios.delete(
@@ -196,7 +197,7 @@ export const usePostStore = create((set) => {
       }
     },
 
-    commentPost: async (id, content) => {
+    commentPost: async (id: any, content: any) => {
       // set({ isLoading: true });
       try {
         const res = await axios.post(
@@ -213,7 +214,7 @@ export const usePostStore = create((set) => {
       }
     },
 
-    likeComment: async (id, commentId) => {
+    likeComment: async (id: any, commentId: any) => {
       set({ isLoading: true });
       try {
         const res = await axios.put(
@@ -230,7 +231,7 @@ export const usePostStore = create((set) => {
       }
     },
 
-    unlikeComment: async (id, commentId) => {
+    unlikeComment: async (id: any, commentId: any) => {
       set({ isLoading: true });
       try {
         const res = await axios.put(

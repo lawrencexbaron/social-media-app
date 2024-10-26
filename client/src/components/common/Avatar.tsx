@@ -1,6 +1,12 @@
 import React from "react";
 
-function Avatar({ avatar, size, className }) {
+interface AvatarProps {
+  avatar: string;
+  size: number;
+  className?: string;
+}
+
+function Avatar({ avatar, size, className }: AvatarProps) {
   return (
     <>
       <div

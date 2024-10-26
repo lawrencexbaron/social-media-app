@@ -88,3 +88,5 @@ app.use((req: Request, res: Response, next: any) => {
 app.use((err: { message: any; }, req: Request, res: Response, next: any) => {
   res.status(500).json({ error: err.message });
 });
+
+export default app;

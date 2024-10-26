@@ -10,7 +10,7 @@ export function useUsers() {
   return { data, isLoading, error };
 }
 
-export function useUser(id) {
+export function useUser(id: string) {
   const { data, isLoading, error } = useQuery({
     queryKey: ["user", id],
     queryFn: () => getUser(id),
@@ -19,7 +19,7 @@ export function useUser(id) {
   return { data, isLoading, error };
 }
 
-export function useFollowUser(id) {
+export function useFollowUser(id: string) {
   const queryClient = useQueryClient();
 
   return useMutation(() => followUser(id), {

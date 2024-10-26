@@ -6,13 +6,13 @@ import { useState, useEffect } from "react";
 import { useAuthStore } from "../../stores/authStore";
 import { useUpdateUser } from "../../hooks/useUpdateUser";
 import { useProfile } from "../../hooks/useProfile";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { ImSpinner8 } from "react-icons/im";
+import React from "react";
 
 const Settings = () => {
   const { mutate, error, isSuccess } = useUpdateUser();
   const { user } = useAuthStore();
-  const { data: profile, isLoading } = useProfile(user._id);
+  const { data: profile } = useProfile(user._id);
 
   const [formData, setFormData] = useState({
     firstname: "",
@@ -37,11 +37,11 @@ const Settings = () => {
 
   const [isSaving, setIsSaving] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e: { target: { name: any; value: any; }; }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     try {
       setIsSaving(true);

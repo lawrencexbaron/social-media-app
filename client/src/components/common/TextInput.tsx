@@ -1,8 +1,8 @@
 import React, { ChangeEvent, FocusEvent, KeyboardEvent } from "react";
 
 interface TextInputProps {
-  id: string;
-  type: string;
+  id?: string;
+  type?: string;
   name?: string;
   placeholder?: string;
   value: string;

@@ -2,8 +2,9 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import axios from "axios";
 import produce from "immer";
+import { ENV_CONST } from "../components/utils/api/constants";
 
-const base_api = import.meta.env.VITE_BACKEND_API;
+const base_api = ENV_CONST.BASE_URL;
 
 const authHeader = () => {
   const token = localStorage.getItem("token");

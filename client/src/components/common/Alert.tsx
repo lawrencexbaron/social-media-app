@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 
-export const Alert = (options) => {
+
+export const Alert = (options: any) => {
   const {
     title = "Alert",
     text = "Alert text",
@@ -18,7 +19,7 @@ export const Alert = (options) => {
   });
 };
 
-export const ConfirmToast = (options) => {
+export const ConfirmToast = (options: any) => {
   const {
     toast = true,
     text = "Toast text",
@@ -48,7 +49,7 @@ export const ConfirmToast = (options) => {
   });
 };
 
-export const Toast = (options) => {
+export const Toast = (options: any) => {
   const {
     toast = true,
     text = "Toast text",

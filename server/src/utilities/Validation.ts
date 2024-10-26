@@ -15,17 +15,17 @@ const baseOptions = {
 
 const updateUserValidation = (data: any) => {
   const schema = Joi.object({
-    firstname: Joi.string().min(3).max(20).messages({
+    firstName: Joi.string().min(3).max(20).messages({
       "string.empty": `First name is required`,
       "string.min": `First name should have a minimum length of {#limit}`,
     }),
 
-    lastname: Joi.string().min(3).max(20).messages({
+    lastName: Joi.string().min(3).max(20).messages({
       "string.empty": `Last name is required`,
       "string.min": `Last name should have a minimum length of {#limit}`,
     }),
 
-    username: Joi.string().min(3).max(20).messages({
+    userName: Joi.string().min(3).max(20).messages({
       "string.empty": `Username is required`,
       "string.min": `Username should have a minimum length of {#limit}`,
     }),

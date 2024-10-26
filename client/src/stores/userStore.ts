@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import axios from "axios";
 import produce from "immer";
+import { ENV_CONST } from "../components/utils/api/constants";
 
-const base_api = import.meta.env.VITE_BACKEND_API;
+const base_api = ENV_CONST.BASE_URL;
 
 export const useUserStore = create((set) => {
   const authHeader = () => {
@@ -24,7 +25,7 @@ export const useUserStore = create((set) => {
     followers: [],
 
     // setters
-    setSuccess: (success) => {
+    setSuccess: (success: string) => {
       set(
         produce((state) => {
           state.success = success;
@@ -55,7 +56,7 @@ export const useUserStore = create((set) => {
       }
     },
 
-    changeCoverPhoto: async (id, data) => {
+    changeCoverPhoto: async (id: string, data: string | Blob) => {
       const formData = new FormData();
       formData.append("coverPicture", data);
 
@@ -78,7 +79,7 @@ export const useUserStore = create((set) => {
             state.success = true; // Setting success to true
           })
         );
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error updating cover photo:", error); // Logging the error
         set(
           produce((state) => {
@@ -91,7 +92,7 @@ export const useUserStore = create((set) => {
       }
     },
 
-    changeProfilePicture: async (id, data) => {
+    changeProfilePicture: async (id: any, data: string | Blob) => {
       const formData = new FormData();
       formData.append("profilePicture", data);
 
@@ -114,7 +115,7 @@ export const useUserStore = create((set) => {
             state.success = true; // Setting success to true
           })
         );
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error updating profile picture:", error); // Logging the error
         set(
           produce((state) => {
@@ -127,7 +128,7 @@ export const useUserStore = create((set) => {
       }
     },
 
-    getFollowers: async (id) => {
+    getFollowers: async (id: string) => {
       try {
         const res = await axios.get(`${base_api}/api/users/${id}/followers`, {
           headers: authHeader(),
@@ -150,7 +151,7 @@ export const useUserStore = create((set) => {
       }
     },
 
-    getUser: async (id) => {
+    getUser: async (id: string) => {
       try {
         const res = await axios.get(`${base_api}/api/users/${id}`, {
           headers: authHeader(),
@@ -161,7 +162,7 @@ export const useUserStore = create((set) => {
             state.error = null;
           })
         );
-      } catch (error) {
+      } catch (error: any) {
         set(
           produce((state) => {
             state.error = error.response.data;
@@ -171,7 +172,7 @@ export const useUserStore = create((set) => {
       }
     },
 
-    followUser: async (id) => {
+    followUser: async (id: string) => {
       try {
         const res = await axios.post(
           `${base_api}/api/users/follow`,
@@ -190,7 +191,7 @@ export const useUserStore = create((set) => {
             state.error = null;
           })
         );
-      } catch (error) {
+      } catch (error: any) {
         set(
           produce((state) => {
             state.error = error.response.data;
@@ -199,7 +200,7 @@ export const useUserStore = create((set) => {
         );
       }
     },
-    unfollowUser: async (id) => {
+    unfollowUser: async (id: string) => {
       try {
         const res = await axios.post(
           `${base_api}/api/users/unfollow`,
@@ -218,7 +219,7 @@ export const useUserStore = create((set) => {
             state.error = null;
           })
         );
-      } catch (error) {
+      } catch (error: any) {
         set(
           produce((state) => {
             state.error = error.response.data;
@@ -229,7 +230,7 @@ export const useUserStore = create((set) => {
     },
 
     // get user by username
-    getUserByUsername: async (username) => {
+    getUserByUsername: async (username: string) => {
       try {
         const res = await axios.get(
           `${base_api}/api/users/username/${username}`,
@@ -243,7 +244,7 @@ export const useUserStore = create((set) => {
             state.error = null;
           })
         );
-      } catch (error) {
+      } catch (error: any) {
         set(
           produce((state) => {
             state.error = error.response.data;
@@ -253,7 +254,7 @@ export const useUserStore = create((set) => {
       }
     },
 
-    updateUser: async (id, data) => {
+    updateUser: async (id: any, data: any) => {
       try {
         const res = await axios.put(`${base_api}/api/users/${id}`, data, {
           headers: {
@@ -266,7 +267,7 @@ export const useUserStore = create((set) => {
             state.error = null;
           })
         );
-      } catch (error) {
+      } catch (error: any) {
         set(
           produce((state) => {
             state.error = error.response.data;
@@ -276,7 +277,7 @@ export const useUserStore = create((set) => {
       }
     },
 
-    deleteUser: async (id) => {
+    deleteUser: async (id: string) => {
       try {
         const res = await axios.delete(`${base_api}/api/users/${id}`, {
           headers: authHeader(),
@@ -287,7 +288,7 @@ export const useUserStore = create((set) => {
             state.error = null;
           })
         );
-      } catch (error) {
+      } catch (error: any) {
         set(
           produce((state) => {
             state.error = error.response.data;
@@ -297,7 +298,7 @@ export const useUserStore = create((set) => {
       }
     },
 
-    createUser: async (data) => {
+    createUser: async (data: any) => {
       try {
         const res = await axios.post(`${base_api}/api/users`, data, {
           headers: authHeader(),
@@ -308,7 +309,7 @@ export const useUserStore = create((set) => {
             state.error = null;
           })
         );
-      } catch (error) {
+      } catch (error: any) {
         set(
           produce((state) => {
             state.error = error.response.data;

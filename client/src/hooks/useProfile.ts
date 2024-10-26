@@ -1,9 +1,10 @@
 import { useQuery } from "react-query";
 import axios from "axios";
+import { ENV_CONST } from "../components/utils/api/constants";
 
-const base_api = import.meta.env.VITE_BACKEND_API;
+const base_api = ENV_CONST.BASE_URL;
 
-export const useProfile = (userId) => {
+export const useProfile = (userId: string) => {
   const { data, isLoading, isError, error } = useQuery(
     ["profile", userId],
     async () => {
@@ -16,7 +17,7 @@ export const useProfile = (userId) => {
   return { data, isLoading, isError, error };
 };
 
-export const useProfilePosts = (userId) => {
+export const useProfilePosts = (userId: string) => {
   const { data, isLoading, isError, error } = useQuery(
     ["profilePosts", userId],
     () => axios.get(`/api/posts/user/${userId}`).then((res) => res.data),

@@ -1,7 +1,15 @@
 import Modal from "./Modal";
 import ImageGallery from "react-image-gallery";
+import React from "react";
 
-const GalleryModal = ({ isOpen, onClose, images, title }) => {
+interface GalleryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  images: { url: string }[];
+  title: string;
+}
+
+const GalleryModal = ({ isOpen, onClose, images, title }: GalleryModalProps) => {
   const imagesList = images.map((image) => ({
     original: image.url,
     thumbnail: image.url,
