@@ -6,6 +6,7 @@ import { Link, Navigate } from "react-router-dom";
 import { Toast } from "../common/Alert";
 import AvatarUpload from "../common/AvatarUpload";
 import { register } from "../../utils/api";
+import Img from "./../../assets/image/two-two.png";
 
 function Register() {
   const [email, setEmail] = useState("");
@@ -19,9 +20,7 @@ function Register() {
   const [shouldRedirect, setShouldRedirect] = useState(false);
 
   const [profilePicture, setProfilePicture] = useState(null);
-
-  const img = './../assets/image/two-two.png';
-
+  
   const clearForm = () => {
     setEmail("");
     setFirstName("");
@@ -91,7 +90,7 @@ function Register() {
             </h1>
             <p>Create Your Account, Open New Worlds</p>
           </div>
-          <img src={img} alt="login" className="w-2/3" />
+          <img src={Img} alt="login" className="w-2/3" />
         </div>
         <div className="w-full sm:px-0 border sm:w-1/2 bg-white flex mx-auto sm:items-center sm:justify-center">
           <form
